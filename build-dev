@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if [ ! -f ./app/config/build.settings ]
+then
+    cp ./app/config/build.settings.template ./app/config/build.settings
+fi
+
+if [ ! -d log ]
+then
+    mkdir log
+fi
+
+phing -e -Dsettings=build.settings -f app/config/phing.xml -logger phing.listener.DefaultLogger configure
+echo
+composer install --no-ansi
+echo
+compass compile src/Orderware/AppBundle/Resources/config/compass
+echo
+php bin/phinx --configuration=app/config/phinx.yml --environment=dev --no-interaction --no-ansi migrate
+php bin/phinx --configuration=app/config/phinx.yml --environment=test --no-interaction --no-ansi migrate
+echo
+psql -hlocalhost -Uorderware orderware < app/config/initdb.sql
+echo "\n"
+echo "Orderware has been built successfully!\n"
+echo "Use ./start-server to start the development server."
+echo "Navigate to http://orderware.dev:8000/admin to sign in.\n"
+echo "Username: admin@orderware.io"
+echo "Password: password"

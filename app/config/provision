@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+su - postgres -c "createuser -d -e -hlocalhost -Upostgres orderware"
+su - postgres -c "createdb -E 'UTF-8' -O orderware -hlocalhost -Uorderware orderware"
+
+su - postgres -c "createuser -d -e -hlocalhost -Upostgres orderware_test"
+su - postgres -c "createdb -E 'UTF-8' -O orderware_test -hlocalhost -Uorderware_test orderware_test"
+
+echo 'alias cd-apps="cd /var/apps/orderware"' >> /home/vagrant/.bash_aliases
+echo >> /home/vagrant/.bash_aliases
+echo 'alias db-orderware="psql -hlocalhost -Uorderware orderware"' >> /home/vagrant/.bash_aliases
+echo 'alias db-orderware_test="psql -hlocalhost -Uorderware_test orderware_test"' >> /home/vagrant/.bash_aliases

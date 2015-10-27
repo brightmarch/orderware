@@ -1,0 +1,3 @@
+#!/bin/bash
+
+php bin/phinx --configuration=app/config/phinx.yml $*
