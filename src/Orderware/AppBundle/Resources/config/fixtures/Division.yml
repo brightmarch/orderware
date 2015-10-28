@@ -3,6 +3,10 @@ Orderware\AppBundle\Entity\Division:
         division: GROWERS
         createdBy: test_runner
         updatedBy: test_runner
+        statusId: 1
         displayName: Growers Coffee
         currency: USD
         timeZone: America/Chicago
+        primaryEmail: orders@growerscoffee.com
+        notificationEmail: orders@growerscoffee.com
+        merchDescription: organic coffee
