@@ -22,7 +22,7 @@ class ApiIndexController extends Controller
         $data = [
             'version' => $_params['version'],
             'api_version' => $_params['api_version'],
-            'build_date' => $_params['build_date']
+            'build_date' => date_create($_params['build_date'])
         ];
 
         return $this->get('responder')
