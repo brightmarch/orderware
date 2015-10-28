@@ -1,0 +1,54 @@
+Orderware\AppBundle\Entity\User:
+    type: entity
+    table: login
+    id:
+        loginId:
+            column: login_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: login_login_id_seq
+                allocationSize: 1
+                initialValue: 1 
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: text
+        updatedBy:
+            column: updated_by
+            type: text
+        statusId:
+            column: status_id
+            type: integer
+        fullName:
+            column: full_name
+            type: text
+        username:
+            column: username
+            type: text
+        passwordHash:
+            column: password_hash
+            type: text
+        timeZone:
+            column: time_zone
+            type: text
+        role:
+            column: role
+            type: text
+    manyToOne:
+        division:
+            targetEntity: Division
+            inversedBy: users
+            joinColumn:
+                name: division
+                referencedColumnName: division
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]

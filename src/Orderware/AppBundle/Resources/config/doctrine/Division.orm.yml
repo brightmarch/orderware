@@ -1,0 +1,50 @@
+Orderware\AppBundle\Entity\Division:
+    type: entity
+    table: division
+    id:
+        division:
+            type: text
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: text
+        updatedBy:
+            column: updated_by
+            type: text
+        statusId:
+            column: status_id
+            type: integer
+        displayName:
+            column: display_name
+            type: text
+        currency:
+            column: currency
+            type: text
+        timeZone:
+            column: time_zone
+            type: text
+        primaryEmail:
+            column: primary_email
+            type: text
+            nullable: true
+        notificationEmail:
+            column: notification_email
+            type: text
+            nullable: true
+        merchDescription:
+            column: merch_description
+            type: text
+            nullable: true
+    oneToMany:
+        users:
+            targetEntity: User
+            mappedBy: division
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]
