@@ -1,9 +1,61 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/book/service_container.html
 parameters:
-#    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    # Global
+    session.handler.redis:
+        class: Drak\NativeSession\NativeRedisSessionHandler
+        arguments: ["tcp://%redis_host%:%redis_port%?timeout=2&prefix=SESSION:"]
+
+    redis:
+        class: Redis
+        calls:
+            - [connect, ["%redis_host%", "%redis_port%"]]
+
+    # Core
+    #request_listener:
+    #    class: Orderware\AppBundle\Listeners\RequestListener
+    #    arguments: [@doctrine.orm.orderware_entity_manager]
+    #    tags:
+    #        - { name: kernel.event_listener, event: kernel.controller, method: onRequest }
+    #        - { name: kernel.event_listener, event: kernel.response, method: onResponse }
+
+    exception_listener:
+        class: Orderware\AppBundle\Listeners\ExceptionListener
+        arguments: [@logger, @templating, @orderware.responder]
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onException }
+
+    # Internal
+    payload_validator:
+        class: Orderware\AppBundle\Library\Services\PayloadValidator
+
+    # API
+    responder:
+        class: Orderware\AppBundle\Library\Services\Responder
+        arguments: [@jms_serializer, @request_stack]
+
+    # Orders
+    order_importer:
+        class: Orderware\AppBundle\Library\Orders\Importer
+        arguments: [@doctrine.orm.orderware_entity_manager, @validator]
+
+    # Feeds
+    feed_importer:
+        class: Orderware\AppBundle\Library\Feeds\Importer
+        arguments: [@doctrine.orm.orderware_entity_manager]
+
+    #orderware.feed_consumer:
+    #    class: Orderware\AppBundle\Library\Consumers\FeedConsumer
+    #    arguments: [@doctrine.orm.orderware_entity_manager]
+
+    #orderware.feed_processor_factory:
+    #    class: Orderware\AppBundle\Library\Feeds\ProcessorFactory
+    #    arguments: [@service_container]
+
+    #orderware.feed_processor_inventory:
+    #    class: Orderware\AppBundle\Library\Feeds\InventoryProcessor
+    #    arguments: [@doctrine.orm.orderware_entity_manager, @validator]
+
+    #orderware.feed_processor_product:
+    #    class: Orderware\AppBundle\Library\Feeds\ProductProcessor
+    #    arguments: [@doctrine.orm.orderware_entity_manager, @validator, @orderware.payload_validator]
