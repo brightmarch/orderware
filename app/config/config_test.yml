@@ -12,5 +12,17 @@ web_profiler:
     toolbar: false
     intercept_redirects: false
 
+doctrine:
+    dbal:
+        connections:
+            orderware:
+                driver: "%postgres_driver_test%"
+                host: "%postgres_host_test%"
+                port: "%postgres_port_test%"
+                dbname: "%postgres_database_test%"
+                user: "%postgres_username_test%"
+                password: "%postgres_password_test%"
+                charset: UTF8
+
 swiftmailer:
     disable_delivery: true

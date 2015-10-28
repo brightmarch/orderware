@@ -1,0 +1,54 @@
+{
+    "division": "GROWERS",
+    "vendors": [
+        {
+            "vendor_num": "11110000",
+            "display_name": "Starbucks",
+            "primary_contact": "Joe Bucks <joe@starbucks.com>",
+            "address1": "1 Starbucks Way.",
+            "address2": null,
+            "city_name": "Seattle",
+            "postal_code": "98101",
+            "state_code": "WA",
+            "state_name": "Washington",
+            "country_code": "US",
+            "country_name": "United States",
+            "email_address": "joe@starbucks.com",
+            "phone_number": "+1 908-333-1100",
+            "fax_number": null
+        }
+    ],
+    "items": [
+        {
+            "status": "enabled",
+            "item_num": "G100001",
+            "display_name": "Sumatra",
+            "weight": "16.00",
+            "length": "8.00",
+            "width": "4.00",
+            "depth": "4.00",
+            "ship_alone": false,
+            "taxable": true,
+            "virtual": false,
+            "track_inventory": true,
+            "skus": [
+                {
+                    "status": "enabled",
+                    "skucode": "G100001B",
+                    "barcode": "00000001",
+                    "cost_price": 549,
+                    "retail_price": 1299,
+                    "pick_description": "SUMATRA BOLD"
+                },
+                {
+                    "status": "disabled",
+                    "skucode": "G100001L",
+                    "barcode": "00000002",
+                    "cost_price": 549,
+                    "retail_price": 1299,
+                    "pick_description": "SUMATRA LIGHT"
+                }
+            ]
+        }
+    ]
+}

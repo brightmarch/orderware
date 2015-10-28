@@ -6,6 +6,8 @@ imports:
 #        cache: validator.mapping.cache.apc
 #    serializer:
 #        cache: serializer.mapping.cache.apc
+    templating:
+        assets_version: "%built_at%"
 
 #doctrine:
 #    orm:
@@ -16,12 +18,12 @@ imports:
 monolog:
     handlers:
         main:
-            type:         fingers_crossed
+            type: fingers_crossed
             action_level: error
-            handler:      nested
+            handler: nested
         nested:
-            type:  stream
-            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            type: stream
+            path: "%kernel.root_dir%/../log/%kernel.environment%.log"
             level: debug
         console:
             type:  console

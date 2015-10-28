@@ -1,0 +1,6 @@
+"Bad credentials.": "The username and password you provided were incorrect."
+"User account is disabled.": "The username and password you provided were incorrect."
+"ROLE_ADMINISTRATOR": "Administrator"
+"ROLE_MANAGER": "Manager"
+"ROLE_USER": "User"
+"ROLE_STATELESS": "Remote API"

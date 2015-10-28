@@ -1,0 +1,26 @@
+# Orderware
+orderware_index:
+    path: /
+    defaults: { _controller: OrderwareAppBundle:Index:index }
+
+# API
+orderware_api_index:
+    path: /api
+    defaults: { _controller: OrderwareAppBundle:ApiIndex:index }
+
+orderware_api_error:
+    path: /api/error
+    defaults: { _controller: OrderwareAppBundle:ApiIndex:error }
+
+# API / Orders
+
+# API / Feeds
+orderware_api_get_feed:
+    path: /api/v1/feeds/{feedId}
+    defaults: { _controller: OrderwareAppBundle:ApiFeeds:get }
+    methods: [GET]
+
+orderware_api_upload_feed:
+    path: /api/v1/feeds
+    defaults: { _controller: OrderwareAppBundle:ApiFeeds:upload }
+    methods: [POST]

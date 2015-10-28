@@ -1,0 +1,50 @@
+{
+    "division": "GROWERS",
+    "quantity_type": "full",
+    "facilities": [
+        {
+            "facility_code": "GROWERS01",
+            "name": "Growers Coffee - Dallas, TX",
+            "address1": "1000 Place Road",
+            "address2": null,
+            "city_name": "Dallas",
+            "postal_code": "75228",
+            "state_code": "TX",
+            "state_name": "Texas",
+            "country_code": "US",
+            "country_name": "United States",
+            "longitude": "0.0",
+            "latitude": "0.0",
+            "units_per_day": 9999,
+            "master": true
+        },
+        {
+            "facility_code": "GROWERS02",
+            "name": "Growers Coffee - Pataskala, OH",
+            "address1": "999 Shipment Place",
+            "address2": "Suite #1445",
+            "city_name": "Pataskala",
+            "postal_code": "69930",
+            "state_code": "OH",
+            "state_name": "Ohio",
+            "country_code": "US",
+            "country_name": "United States",
+            "longitude": "0.0",
+            "latitude": "0.0",
+            "units_per_day": 99999,
+            "master": false
+        }
+    ],
+    "skus": [
+        {
+            "skucode": "G100001B",
+            "facility_code": "GROWERS01",
+            "quantity": 10
+        },
+        {
+            "skucode": "G100001B",
+            "facility_code": "GROWERS02",
+            "quantity": 33
+        }
+    ]
+}

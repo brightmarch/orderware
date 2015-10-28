@@ -1,0 +1,31 @@
+{
+    "id": "https://orderware.io/bundles/orderwareapp/schemas/feed_v1.request.json",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "division": {
+            "type": "string"
+        },
+        "type": {
+            "type": "string"
+        },
+        "file_size": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "file_hash": {
+            "type": "string"
+        },
+        "file_name": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "division",
+        "type",
+        "file_size",
+        "file_hash",
+        "file_name"
+    ]
+}

@@ -1,0 +1,229 @@
+{
+    "id": "https://app.orderware.io/bundles/orderwareapp/schemas/order_v1.request.json",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "division": {
+            "type": "string"
+        },
+        "ordered_at": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "order_number": {
+            "type": "string"
+        },
+        "salesperson": {
+            "type": ["string", "null"]
+        },
+        "source_code": {
+            "type": "string"
+        },
+        "order_type": {
+            "type": "string"
+        },
+        "customer_notes": {
+            "type": ["string", "null"]
+        },
+        "store_notes": {
+            "type": ["string", "null"]
+        },
+        "ip_address": {
+            "type": "string",
+            "format": "ipv4"
+        },
+        "shipping_amount": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "shipping_local_tax_amount": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "shipping_county_tax_amount": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "shipping_state_tax_amount": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "shipments": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "shipment_method": {
+                        "type": "string"
+                    },
+                    "first_name": {
+                        "type": ["string", "null"]
+                    },
+                    "middle_name": {
+                        "type": ["string", "null"]
+                    },
+                    "last_name": {
+                        "type": ["string", "null"]
+                    },
+                    "address1": {
+                        "type": ["string", "null"]
+                    },
+                    "address2": {
+                        "type": ["string", "null"]
+                    },
+                    "city_name": {
+                        "type": ["string", "null"]
+                    },
+                    "state_name": {
+                        "type": ["string", "null"]
+                    },
+                    "state_code": {
+                        "type": ["string", "null"]
+                    },
+                    "postal_code": {
+                        "type": ["string", "null"]
+                    },
+                    "country_name": {
+                        "type": ["string", "null"]
+                    },
+                    "country_code": {
+                        "type": ["string", "null"]
+                    },
+                    "email_address": {
+                        "type": ["string", "null"],
+                        "format": "email"
+                    },
+                    "phone_number": {
+                        "type": ["string", "null"]
+                    },
+                    "notify_by": {
+                        "type": "string"
+                    },
+                    "notification_enabled": {
+                        "type": "boolean"
+                    },
+                    "facility_code": {
+                        "type": ["string", "null"]
+                    },
+                    "lines": {
+                        "type": "array",
+                        "minItems": 0,
+                        "items": {
+                            "properties": {
+                                "line_number": {
+                                    "type": "string"
+                                },
+                                "skucode": {
+                                    "type": "string"
+                                },
+                                "retail_amount": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "discount_amount": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "local_tax_amount": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "county_tax_amount": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "state_tax_amount": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "quantity": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                                "line_number",
+                                "skucode",
+                                "retail_amount",
+                                "discount_amount",
+                                "local_tax_amount",
+                                "county_tax_amount",
+                                "state_tax_amount",
+                                "quantity"
+                            ]
+                        }
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "shipment_method",
+                    "first_name",
+                    "middle_name",
+                    "last_name",
+                    "address1",
+                    "address2",
+                    "city_name",
+                    "state_name",
+                    "state_code",
+                    "postal_code",
+                    "country_name",
+                    "country_code",
+                    "email_address",
+                    "phone_number",
+                    "notify_by",
+                    "notification_enabled",
+                    "facility_code",
+                    "lines"
+                ]
+            }
+        },
+        "payments": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "properties": {
+                    "payment_method": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "transaction_code": {
+                        "type": "string"
+                    },
+                    "currency": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "payment_method",
+                    "amount",
+                    "transaction_code",
+                    "currency"
+                ]
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "division",
+        "ordered_at",
+        "order_number",
+        "salesperson",
+        "source_code",
+        "order_type",
+        "customer_notes",
+        "store_notes",
+        "ip_address",
+        "shipping_amount",
+        "shipping_local_tax_amount",
+        "shipping_county_tax_amount",
+        "shipping_state_tax_amount",
+        "shipments",
+        "payments"
+    ]
+}

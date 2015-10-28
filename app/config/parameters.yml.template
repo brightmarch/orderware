@@ -1,0 +1,41 @@
+parameters:
+    postgres_driver: "pdo_pgsql"
+    postgres_host: "@@POSTGRES_HOST@@"
+    postgres_port: ~
+    postgres_database: "@@POSTGRES_DATABASE@@"
+    postgres_username: "@@POSTGRES_USERNAME@@"
+    postgres_password: "@@POSTGRES_PASSWORD@@"
+
+    postgres_driver_test: "pdo_pgsql"
+    postgres_host_test: "@@POSTGRES_HOST_TEST@@"
+    postgres_port_test: ~
+    postgres_database_test: "@@POSTGRES_DATABASE_TEST@@"
+    postgres_username_test: "@@POSTGRES_USERNAME_TEST@@"
+    postgres_password_test: "@@POSTGRES_PASSWORD_TEST@@"
+
+    mailer_transport: smtp
+    mailer_host: "@@MAILER_HOST@@"
+    mailer_user: "@@MAILER_USERNAME@@"
+    mailer_password: "@@MAILER_PASSWORD@@"
+    mailer_default_email: "@@MAILER_DEFAULT_EMAIL@@"
+
+    router.request_context.host: "@@REQUEST_HOST@@"
+    router.request_context.scheme: "@@REQUEST_SCHEME@@"
+
+    redis_host: "@@REDIS_HOST@@"
+    redis_port: "@@REDIS_PORT@@"
+    resque_dsn: "@@REDIS_HOST@@:@@REDIS_PORT@@"
+
+    secret: eXV0F4OGwzUJqgw3weCN2RAE200yBqzz9dOzKDEN
+    timezone: "America/Chicago"
+
+    file_bucket: "@@FILE_BUCKET@@"
+    file_directory: "@@FILE_DIRECTORY@@"
+
+    orderware_version: "0.0.1"
+    orderware_api_version: 1
+    default_author: "orderware"
+
+    built_at: "@@BUILT_AT@@"
+    build_date: "@@BUILD_DATE@@"
+    hostname: "@@HOSTNAME@@"

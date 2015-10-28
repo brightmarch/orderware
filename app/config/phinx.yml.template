@@ -1,0 +1,29 @@
+paths:
+    migrations: %%PHINX_CONFIG_DIR%%/../migrations
+
+environments:
+    default_migration_table: _migrations
+    default_database: test
+    prod:
+        adapter: pgsql
+        host: "@@POSTGRES_HOST@@"
+        name: "@@POSTGRES_DATABASE@@"
+        user: "@@POSTGRES_USERNAME@@"
+        pass: "@@POSTGRES_PASSWORD@@"
+        charset: utf8
+
+    dev:
+        adapter: pgsql
+        host: "@@POSTGRES_HOST@@"
+        name: "@@POSTGRES_DATABASE@@"
+        user: "@@POSTGRES_USERNAME@@"
+        pass: "@@POSTGRES_PASSWORD@@"
+        charset: utf8
+
+    test:
+        adapter: pgsql
+        host: "@@POSTGRES_HOST_TEST@@"
+        name: "@@POSTGRES_DATABASE_TEST@@"
+        user: "@@POSTGRES_USERNAME_TEST@@"
+        pass: "@@POSTGRES_PASSWORD_TEST@@"
+        charset: utf8

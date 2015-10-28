@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Orderware" default="configure">
+    <resolvepath propertyName="root_path" file="../../" />
+    <resolvepath propertyName="config_path" file="../../app/config/" />
+
+    <php function="gethostname" returnProperty="hostname" />
+    <php function="time" returnProperty="built_at" />
+    <php function="date" returnProperty="build_date">
+        <param value="c" />
+    </php>
+
+    <property file="${settings}" />
+
+    <target name="configure">
+        <copy file="${config_path}/parameters.yml.template" tofile="${config_path}/parameters.yml" overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="@@" endtoken="@@">
+                    <token key="POSTGRES_HOST" value="${postgres_host}" />
+                    <token key="POSTGRES_DATABASE" value="${postgres_database}" />
+                    <token key="POSTGRES_USERNAME" value="${postgres_username}" />
+                    <token key="POSTGRES_PASSWORD" value="${postgres_password}" />
+
+                    <token key="POSTGRES_HOST_TEST" value="${postgres_host_test}" />
+                    <token key="POSTGRES_DATABASE_TEST" value="${postgres_database_test}" />
+                    <token key="POSTGRES_USERNAME_TEST" value="${postgres_username_test}" />
+                    <token key="POSTGRES_PASSWORD_TEST" value="${postgres_password_test}" />
+
+                    <token key="MAILER_HOST" value="${mailer_host}" />
+                    <token key="MAILER_USERNAME" value="${mailer_username}" />
+                    <token key="MAILER_PASSWORD" value="${mailer_password}" />
+                    <token key="MAILER_DEFAULT_EMAIL" value="${mailer_default_email}" />
+
+                    <token key="REQUEST_HOST" value="${request_host}" />
+                    <token key="REQUEST_SCHEME" value="${request_scheme}" />
+
+                    <token key="REDIS_HOST" value="${redis_host}" />
+                    <token key="REDIS_PORT" value="${redis_port}" />
+
+                    <token key="FILE_BUCKET" value="${file_bucket}" />
+                    <token key="FILE_DIRECTORY" value="${file_directory}" />
+
+                    <token key="BUILT_AT" value="${built_at}" />
+                    <token key="BUILD_DATE" value="${build_date}" />
+                    <token key="HOSTNAME" value="${hostname}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <copy file="${config_path}/phinx.yml.template" tofile="${config_path}/phinx.yml" overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="@@" endtoken="@@">
+                    <token key="POSTGRES_HOST" value="${postgres_host}" />
+                    <token key="POSTGRES_DATABASE" value="${postgres_database}" />
+                    <token key="POSTGRES_USERNAME" value="${postgres_username}" />
+                    <token key="POSTGRES_PASSWORD" value="${postgres_password}" />
+
+                    <token key="POSTGRES_HOST_TEST" value="${postgres_host_test}" />
+                    <token key="POSTGRES_DATABASE_TEST" value="${postgres_database_test}" />
+                    <token key="POSTGRES_USERNAME_TEST" value="${postgres_username_test}" />
+                    <token key="POSTGRES_PASSWORD_TEST" value="${postgres_password_test}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+</project>

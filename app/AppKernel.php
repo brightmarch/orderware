@@ -19,7 +19,7 @@ class AppKernel extends Kernel
             #new JMS\SerializerBundle\JMSSerializerBundle(),
             #new Sonata\IntlBundle\SonataIntlBundle(),
 
-            new AppBundle\AppBundle(),
+            new Orderware\AppBundle\OrderwareAppBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -23,6 +23,3 @@ psql -hlocalhost -Uorderware orderware < app/config/initdb.sql
 echo "\n"
 echo "Orderware has been built successfully!\n"
 echo "Use ./start-server to start the development server."
-echo "Navigate to http://orderware.dev:8000/admin to sign in.\n"
-echo "Username: admin@orderware.io"
-echo "Password: password"

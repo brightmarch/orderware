@@ -1,0 +1,88 @@
+parameters:
+
+services:
+    redis:
+        class: Redis
+        calls:
+            - [connect, ["%redis_host%", "%redis_port%"]]
+
+    # Core
+    orderware.request_listener:
+        class: Orderware\AppBundle\Listeners\RequestListener
+        arguments: [@doctrine.orm.orderware_entity_manager]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onRequest }
+            - { name: kernel.event_listener, event: kernel.response, method: onResponse }
+
+    orderware.exception_listener:
+        class: Orderware\AppBundle\Listeners\ExceptionListener
+        arguments: [@logger, @templating, @orderware.responder]
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onException }
+
+    orderware.division_param_converter:
+        class: Orderware\AppBundle\Request\ParamConverter\DivisionConverter
+        arguments: [@security.token_storage]
+        tags:
+            - { name: request.param_converter, priority: 0, converter: orderware.division_param_converter }
+
+    orderware.user_param_converter:
+        class: Orderware\AppBundle\Request\ParamConverter\UserConverter
+        arguments: [@doctrine.orm.orderware_entity_manager, @security.token_storage]
+        tags:
+            - { name: request.param_converter, priority: 0, converter: orderware.user_param_converter }
+
+    orderware.twig_currency_extension:
+        class: Orderware\AppBundle\Twig\CurrencyExtension
+        arguments: [@sonata.intl.templating.helper.number]
+        tags:
+            - { name: twig.extension }
+
+    orderware.twig_status_extension:
+        class: Orderware\AppBundle\Twig\StatusExtension
+        arguments: ~
+        tags:
+            - { name: twig.extension }
+
+    # Internal
+    orderware.payload_validator:
+        class: Orderware\AppBundle\Library\Services\PayloadValidator
+
+    # API
+    orderware.responder:
+        class: Orderware\AppBundle\Library\Services\Responder
+        arguments: [@jms_serializer, @request_stack]
+
+    # Orders
+    orderware.order_importer:
+        class: Orderware\AppBundle\Library\Orders\Importer
+        arguments: [@doctrine.orm.orderware_entity_manager, @validator]
+
+    orderware.order_allocator:
+        class: Orderware\AppBundle\Library\Orders\Allocator
+        arguments: [@doctrine.orm.orderware_entity_manager]
+
+    orderware.order_picker:
+        class: Orderware\AppBundle\Library\Orders\Picker
+        arguments: [@doctrine.orm.orderware_entity_manager]
+
+    orderware.order_processor:
+        class: Orderware\AppBundle\Library\Orders\Processor
+        arguments: [@doctrine.orm.orderware_entity_manager]
+
+    # Feeds
+    orderware.feed_consumer:
+        class: Orderware\AppBundle\Library\Consumers\FeedConsumer
+        arguments: [@doctrine.orm.orderware_entity_manager]
+
+    orderware.feed_processor_factory:
+        class: Orderware\AppBundle\Library\Feeds\ProcessorFactory
+        arguments: [@service_container]
+
+    orderware.feed_processor_inventory:
+        class: Orderware\AppBundle\Library\Feeds\InventoryProcessor
+        arguments: [@doctrine.orm.orderware_entity_manager, @validator]
+
+    orderware.feed_processor_product:
+        class: Orderware\AppBundle\Library\Feeds\ProductProcessor
+        arguments: [@doctrine.orm.orderware_entity_manager, @validator, @orderware.payload_validator]
