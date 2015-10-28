@@ -25,7 +25,7 @@ class ApiIndexController extends Controller
             'build_date' => $_params['build_date']
         ];
 
-        return $this->get('orderware.responder')
+        return $this->get('responder')
             ->send('heartbeat', $data);
     }
 
