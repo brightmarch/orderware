@@ -23,7 +23,7 @@ class AppKernel extends Kernel
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
-            $bundles[] = new Brightmarch\TestingBundle\BrightmarchTestingBundle();
+            $bundles[] = new Liip\FunctionalTestBundle\LiipFunctionalTestBundle();
 
             $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();

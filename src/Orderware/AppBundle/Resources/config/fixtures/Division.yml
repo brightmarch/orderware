@@ -1,0 +1,8 @@
+Orderware\AppBundle\Entity\Division:
+    division:
+        division: GROWERS
+        createdBy: test_runner
+        updatedBy: test_runner
+        displayName: Growers Coffee
+        currency: USD
+        timeZone: America/Chicago

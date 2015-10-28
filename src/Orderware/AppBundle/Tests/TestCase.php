@@ -2,12 +2,14 @@
 
 namespace Orderware\AppBundle\Tests;
 
-abstract class TestCase extends \Brightmarch\TestingBundle\TestCase
+abstract class TestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
 {
 
     public function setUp()
     {
-        //$this->installDataFixtures('orderware');
+        $fixtures = $this->loadFixtureFiles([
+            '@OrderwareAppBundle/Resources/config/fixtures/Division.yml'
+        ]);
     }
 
 }

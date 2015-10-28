@@ -18,16 +18,17 @@
         "sensio/framework-extra-bundle": "^3.0.2",
 
         "chrisboulton/php-resque": "dev-master",
-        "jms/serializer-bundle": "~1.0",
-        "justinrainbow/json-schema": "~1.5",
-        "ramsey/uuid": "~3.0",
-        "robmorgan/phinx": "~0.4",
-        "sonata-project/intl-bundle": "~2.2"
+        "jms/serializer-bundle": "^1.0",
+        "justinrainbow/json-schema": "^1.5",
+        "ramsey/uuid": "^3.0",
+        "robmorgan/phinx": "^0.4",
+        "sonata-project/intl-bundle": "^2.2"
     },
     "require-dev": {
-        "liip/functional-test-bundle": "^1.2",
+        "doctrine/data-fixtures": "^1.1",
+        "liip/functional-test-bundle": "dev-master",
         "nelmio/alice": "^2.1",
-        "phpunit/phpunit": "~5.0",
+        "phpunit/phpunit": "^5.0",
         "sensio/generator-bundle": "~2.3"
     },
     "scripts": {
