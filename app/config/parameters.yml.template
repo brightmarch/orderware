@@ -32,8 +32,8 @@ parameters:
     file_bucket: "@@FILE_BUCKET@@"
     file_directory: "@@FILE_DIRECTORY@@"
 
-    orderware_version: "0.0.1"
-    orderware_api_version: 1
+    version: "0.0.1"
+    api_version: "1"
     default_author: "orderware"
 
     built_at: "@@BUILT_AT@@"
