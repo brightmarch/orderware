@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9e6da27fc4eb16ba25f213d01fa8f121",
-    "content-hash": "2ceb5462812f0191ef31edd9afe11a13",
+    "hash": "49e24f251d28185833dc4f8078ecda32",
+    "content-hash": "006f15a63bd14f6894edd9df16da6bcf",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -2129,27 +2129,38 @@
     ],
     "packages-dev": [
         {
-            "name": "brightmarch/testing-bundle",
-            "version": "2.0.3",
-            "target-dir": "Brightmarch/TestingBundle",
+            "name": "fzaninotto/faker",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/brightmarch/testing-bundle.git",
-                "reference": "db4e1cba2b2e0303113ff8ef24dce3660461ae1b"
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "d0190b156bcca848d401fb80f31f504f37141c8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brightmarch/testing-bundle/zipball/db4e1cba2b2e0303113ff8ef24dce3660461ae1b",
-                "reference": "db4e1cba2b2e0303113ff8ef24dce3660461ae1b",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/d0190b156bcca848d401fb80f31f504f37141c8d",
+                "reference": "d0190b156bcca848d401fb80f31f504f37141c8d",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "php": ">=5.3.3"
             },
-            "type": "symfony-bundle",
+            "require-dev": {
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "suggest": {
+                "ext-intl": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.5.x-dev"
+                }
+            },
             "autoload": {
-                "psr-0": {
-                    "Brightmarch\\TestingBundle": ""
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2158,21 +2169,73 @@
             ],
             "authors": [
                 {
-                    "name": "Vic Cherubini",
-                    "email": "vic@leftnode.org",
-                    "homepage": "https://leftnode.org",
-                    "role": "developer"
+                    "name": "François Zaninotto"
                 }
             ],
-            "description": "Symfony bundle to aid with functional and unit testing.",
-            "homepage": "https://github.com/brightmarch/testing-bundle",
+            "description": "Faker is a PHP library that generates fake data for you.",
             "keywords": [
-                "Symfony2",
-                "phpunit",
-                "testing",
-                "tests"
+                "data",
+                "faker",
+                "fixtures"
             ],
-            "time": "2015-08-23 16:14:15"
+            "time": "2015-05-29 06:29:14"
+        },
+        {
+            "name": "liip/functional-test-bundle",
+            "version": "1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/liip/LiipFunctionalTestBundle.git",
+                "reference": "57ef24d843d8e3133b201f7bfe722dcea115a546"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/57ef24d843d8e3133b201f7bfe722dcea115a546",
+                "reference": "57ef24d843d8e3133b201f7bfe722dcea115a546",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/common": "2.*",
+                "php": ">=5.3.2",
+                "symfony/browser-kit": "~2.0",
+                "symfony/framework-bundle": "~2.0"
+            },
+            "suggest": {
+                "doctrine/dbal": "Required when using the fixture loading functionality with an ORM and SQLite",
+                "doctrine/doctrine-fixtures-bundle": "Required when using the fixture loading functionality",
+                "doctrine/orm": "Required when using the fixture loading functionality with an ORM and SQLite",
+                "nelmio/alice": "Required when using loadFixtureFiles functionality"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Liip\\FunctionalTestBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Liip AG",
+                    "homepage": "http://www.liip.ch/"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "https://github.com/liip/LiipFunctionalTestBundle/contributors"
+                }
+            ],
+            "description": "This bundles provides additional functional test-cases for Symfony2 applications",
+            "keywords": [
+                "Symfony2"
+            ],
+            "time": "2015-05-09 08:22:16"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2215,6 +2278,64 @@
                 "object graph"
             ],
             "time": "2015-10-05 15:07:09"
+        },
+        {
+            "name": "nelmio/alice",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nelmio/alice.git",
+                "reference": "e4b48d08ac935650747a2f3041c3577a4bed443d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nelmio/alice/zipball/e4b48d08ac935650747a2f3041c3577a4bed443d",
+                "reference": "e4b48d08ac935650747a2f3041c3577a4bed443d",
+                "shasum": ""
+            },
+            "require": {
+                "fzaninotto/faker": "~1.0",
+                "php": ">=5.4",
+                "symfony/yaml": "~2.0"
+            },
+            "require-dev": {
+                "doctrine/common": "~2.3",
+                "phpunit/phpunit": "3.7.*",
+                "symfony/property-access": "~2.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nelmio\\Alice\\": "src/Nelmio/Alice"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be"
+                },
+                {
+                    "name": "Tim Shelburne",
+                    "email": "shelburt02@gmail.com"
+                }
+            ],
+            "description": "Expressive fixtures generator",
+            "keywords": [
+                "Fixture",
+                "data",
+                "orm",
+                "test"
+            ],
+            "time": "2015-10-01 16:43:07"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
