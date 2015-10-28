@@ -18,6 +18,7 @@
         "sensio/framework-extra-bundle": "^3.0.2",
 
         "chrisboulton/php-resque": "dev-master",
+        "drak/native-session": "^1.0",
         "jms/serializer-bundle": "^1.0",
         "justinrainbow/json-schema": "^1.5",
         "ramsey/uuid": "^3.0",

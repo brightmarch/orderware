@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3936005fce34c6bc2f2ffcf51e8c887f",
-    "content-hash": "cc16bc9fdb6670f2a190c4eb0ccf1e98",
+    "hash": "b679dde129d3ba0556ee74a7dc8f2bfa",
+    "content-hash": "abc2a0601426faa419e994326e335425",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -863,6 +863,43 @@
                 "orm"
             ],
             "time": "2015-08-31 12:59:39"
+        },
+        {
+            "name": "drak/native-session",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zikula/NativeSession.git",
+                "reference": "81653296944b00be03364a6ccc111ccafa52f087"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zikula/NativeSession/zipball/81653296944b00be03364a6ccc111ccafa52f087",
+                "reference": "81653296944b00be03364a6ccc111ccafa52f087",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/http-foundation": ">=2.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Drak": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Drak",
+                    "email": "drak@zikula.org"
+                }
+            ],
+            "description": "Native session handlers for Symfony2",
+            "time": "2015-03-31 17:40:46"
         },
         {
             "name": "jdorn/sql-formatter",
@@ -2243,12 +2280,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipFunctionalTestBundle.git",
-                "reference": "2198bf985721549b87626ff61d26e9a313d741d7"
+                "reference": "a824aeda55a370ba21740a6464eed38c93f06dd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/2198bf985721549b87626ff61d26e9a313d741d7",
-                "reference": "2198bf985721549b87626ff61d26e9a313d741d7",
+                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/a824aeda55a370ba21740a6464eed38c93f06dd0",
+                "reference": "a824aeda55a370ba21740a6464eed38c93f06dd0",
                 "shasum": ""
             },
             "require": {
@@ -2293,7 +2330,7 @@
             "keywords": [
                 "Symfony2"
             ],
-            "time": "2015-10-27 22:09:05"
+            "time": "2015-10-28 19:29:25"
         },
         {
             "name": "myclabs/deep-copy",
