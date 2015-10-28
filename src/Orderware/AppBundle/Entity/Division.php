@@ -2,6 +2,8 @@
 
 namespace Orderware\AppBundle\Entity;
 
+use Orderware\AppBundle\Library\Status;
+
 /**
  * Division
  */
@@ -36,7 +38,7 @@ class Division
     /**
      * @var integer
      */
-    private $statusId;
+    private $statusId = Status::DISABLED;
 
     /**
      * @var string
@@ -82,6 +84,16 @@ class Division
     }
 
     /**
+     * To string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getDivision();
+    }
+
+    /**
      * Set division
      *
      * @param string $division
@@ -90,7 +102,7 @@ class Division
      */
     public function setDivision($division)
     {
-        $this->division = $division;
+        $this->division = strtoupper($division);
 
         return $this;
     }
