@@ -86,7 +86,7 @@ class Request
     /**
      * @var integer
      */
-    private $payloadLength;
+    private $payloadLength = 0;
 
     /**
      * @var string
@@ -96,7 +96,7 @@ class Request
     /**
      * @var integer
      */
-    private $statusCode;
+    private $statusCode = 0;
 
     /**
      * @var string
@@ -106,7 +106,7 @@ class Request
     /**
      * @var integer
      */
-    private $responseLength;
+    private $responseLength = 0;
 
     /**
      * @var string
@@ -116,17 +116,17 @@ class Request
     /**
      * @var integer
      */
-    private $startTime;
+    private $startTime = 0;
 
     /**
      * @var integer
      */
-    private $endTime;
+    private $endTime = 0;
 
     /**
      * @var integer
      */
-    private $totalTime;
+    private $totalTime = 0;
 
     /**
      * @var \Orderware\AppBundle\Entity\Division

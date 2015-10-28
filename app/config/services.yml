@@ -12,16 +12,16 @@ services:
             - [connect, ["%redis_host%", "%redis_port%"]]
 
     # Core
-    #request_listener:
-    #    class: Orderware\AppBundle\Listeners\RequestListener
-    #    arguments: [@doctrine.orm.orderware_entity_manager]
-    #    tags:
-    #        - { name: kernel.event_listener, event: kernel.controller, method: onRequest }
-    #        - { name: kernel.event_listener, event: kernel.response, method: onResponse }
+    request_listener:
+        class: Orderware\AppBundle\Listeners\RequestListener
+        arguments: [@doctrine.orm.orderware_entity_manager]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onRequest }
+            - { name: kernel.event_listener, event: kernel.response, method: onResponse }
 
     exception_listener:
         class: Orderware\AppBundle\Listeners\ExceptionListener
-        arguments: [@logger, @templating, @orderware.responder]
+        arguments: [@logger, @templating, @responder]
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onException }
 
