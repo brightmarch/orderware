@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateOrderwareTables extends AbstractMigration
+class CreateInitialOrderwareTables extends AbstractMigration
 {
 
     public function up()
