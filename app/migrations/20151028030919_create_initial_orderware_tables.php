@@ -286,10 +286,52 @@ class CreateInitialOrderwareTables extends AbstractMigration
         $this->execute("CREATE INDEX login_status_id_idx ON login (status_id)");
         $this->execute("CREATE INDEX login_role_idx ON login (role)");
         $this->execute("CREATE UNIQUE INDEX login_username_idx ON login (username)");
+
+        $this->execute("
+            CREATE TABLE request (
+                log_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                login_id integer NOT NULL REFERENCES login (login_id) ON DELETE CASCADE,
+                request_id text NOT NULL,
+                order_number text,
+                ip_address text NOT NULL,
+                request_method text,
+                accept text,
+                content_type text,
+                user_agent text,
+                route_name text,
+                parameters json,
+                payload text,
+                payload_length integer NOT NULL DEFAULT 0,
+                payload_hash text,
+                status_code integer NOT NULL DEFAULT 0,
+                response text,
+                response_length integer NOT NULL DEFAULT 0,
+                response_hash text,
+                start_time bigint NOT NULL DEFAULT 0,
+                end_time bigint NOT NULL DEFAULT 0,
+                total_time integer NOT NULL DEFAULT 0,
+                CONSTRAINT request_pkey PRIMARY KEY (log_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX request_division_idx ON request (division)");
+        $this->execute("CREATE INDEX request_login_id_idx ON request (login_id)");
+        $this->execute("CREATE INDEX request_order_number_idx ON request (order_number) WHERE order_number IS NOT NULL");
+        $this->execute("CREATE INDEX request_ip_address_idx ON request (ip_address)");
+        $this->execute("CREATE INDEX request_route_name_idx ON request (route_name)");
+        $this->execute("CREATE INDEX request_status_code_idx ON request (status_code)");
+        $this->execute("CREATE INDEX request_total_time_idx ON request (total_time)");
+        $this->execute("CREATE UNIQUE INDEX request_request_id_idx ON request (request_id)");
     }
 
     public function down()
     {
+        $this->execute("DROP TABLE IF EXISTS request CASCADE");
         $this->execute("DROP TABLE IF EXISTS login CASCADE");
 
         $this->execute("DROP TABLE IF EXISTS inventory CASCADE");

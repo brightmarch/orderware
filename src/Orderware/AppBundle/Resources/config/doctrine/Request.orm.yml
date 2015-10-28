@@ -1,0 +1,108 @@
+Orderware\AppBundle\Entity\Request:
+    type: entity
+    table: request
+    id:
+        logId:
+            column: log_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: request_log_id_seq
+                allocationSize: 1
+                initialValue: 1 
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: text
+        updatedBy:
+            column: updated_by
+            type: text
+        requestId:
+            column: request_id
+            type: text
+        orderNumber:
+            column: order_number
+            type: text
+            nullable: true
+        ipAddress:
+            column: ip_address
+            type: text
+        requestMethod:
+            column: request_method
+            type: text
+            nullable: true
+        accept:
+            column: accept
+            type: text
+            nullable: true
+        contentType:
+            column: content_type
+            type: text
+            nullable: true
+        userAgent:
+            column: user_agent
+            type: text
+            nullable: true
+        routeName:
+            column: route_name
+            type: text
+            nullable: true
+        parameters:
+            column: parameters
+            type: json_array
+            nullable: true
+        payload:
+            column: payload
+            type: text
+            nullable: true
+        payloadLength:
+            column: payload_length
+            type: integer
+        payloadHash:
+            column: payload_hash
+            type: text
+            nullable: true
+        statusCode:
+            column: status_code
+            type: integer
+        response:
+            column: response
+            type: text
+            nullable: true
+        responseLength:
+            column: response_length
+            type: integer
+        responseHash:
+            column: response_hash
+            type: text
+            nullable: true
+        startTime:
+            column: start_time
+            type: integer
+        endTime:
+            column: end_time
+            type: integer
+        totalTime:
+            column: total_time
+            type: integer
+    manyToOne:
+        division:
+            targetEntity: Division
+            joinColumn:
+                name: division
+                referencedColumnName: division
+        user:
+            targetEntity: User
+            joinColumn:
+                name: login_id
+                referencedColumnName: login_id
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]
