@@ -256,7 +256,7 @@ class User implements
      */
     public function setUsername($username)
     {
-        $this->username = $username;
+        $this->username = strtolower($username);
 
         return $this;
     }
@@ -328,7 +328,7 @@ class User implements
      */
     public function setRole($role)
     {
-        $this->role = $role;
+        $this->role = strtoupper($role);
 
         return $this;
     }
@@ -496,6 +496,16 @@ class User implements
     public function onUpdate()
     {
         $this->setUpdatedAt(date_create());
+    }
+
+    /**
+     * Is stateless
+     *
+     * @return boolean
+     */
+    public function isStateless()
+    {
+        return (Constants::ROLE_STATELESS === $this->getRole());
     }
 
 }
