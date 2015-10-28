@@ -25,6 +25,7 @@
         "sonata-project/intl-bundle": "~2.2"
     },
     "require-dev": {
+        "brightmarch/testing-bundle": "2.0.3",
         "phpunit/phpunit": "~5.0",
         "sensio/generator-bundle": "~2.3"
     },

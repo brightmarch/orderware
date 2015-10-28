@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "013c785be011bef3ed0a6070e9d7efcb",
-    "content-hash": "0361f5897322e937ab22a68dfdb0bca9",
+    "hash": "9e6da27fc4eb16ba25f213d01fa8f121",
+    "content-hash": "2ceb5462812f0191ef31edd9afe11a13",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -2128,6 +2128,52 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "brightmarch/testing-bundle",
+            "version": "2.0.3",
+            "target-dir": "Brightmarch/TestingBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/brightmarch/testing-bundle.git",
+                "reference": "db4e1cba2b2e0303113ff8ef24dce3660461ae1b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/brightmarch/testing-bundle/zipball/db4e1cba2b2e0303113ff8ef24dce3660461ae1b",
+                "reference": "db4e1cba2b2e0303113ff8ef24dce3660461ae1b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "Brightmarch\\TestingBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vic Cherubini",
+                    "email": "vic@leftnode.org",
+                    "homepage": "https://leftnode.org",
+                    "role": "developer"
+                }
+            ],
+            "description": "Symfony bundle to aid with functional and unit testing.",
+            "homepage": "https://github.com/brightmarch/testing-bundle",
+            "keywords": [
+                "Symfony2",
+                "phpunit",
+                "testing",
+                "tests"
+            ],
+            "time": "2015-08-23 16:14:15"
+        },
         {
             "name": "myclabs/deep-copy",
             "version": "1.4.0",
