@@ -42,9 +42,11 @@ Orderware\AppBundle\Entity\Feed:
         manifest:
             column: manifest
             type: text
+            nullable: true
         feedBody:
             column: feed_body
             type: text
+            nullable: true
         errorMessage:
             column: error_message
             type: text
