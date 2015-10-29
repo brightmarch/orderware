@@ -41,8 +41,8 @@ services:
 
     # Feeds
     orderware.feed_importer:
-        class: Orderware\AppBundle\Library\Feeds\Importer
-        arguments: [@doctrine.orm.orderware_entity_manager]
+        class: Orderware\AppBundle\Library\Feeds\FeedImporter
+        arguments: [@doctrine.orm.orderware_entity_manager, @orderware.json_validator]
 
     orderware.feed_processor_factory:
         class: Orderware\AppBundle\Library\Feeds\ProcessorFactory
