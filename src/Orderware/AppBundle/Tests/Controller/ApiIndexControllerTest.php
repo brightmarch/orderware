@@ -10,7 +10,7 @@ class ApiIndexControllerTest extends TestCase
 
     public function testApiIndexRequiresAuthorization()
     {
-        $client = $this->makeClient();
+        $client = static::makeClient();
         $client->request('GET', $this->getUrl('orderware_api_index'));
 
         $this->assertEquals(401, $client->getResponse()->getStatusCode());
@@ -18,7 +18,7 @@ class ApiIndexControllerTest extends TestCase
 
     public function testApiIndexReturnsHeartbeat()
     {
-        $client = $this->makeStatelessClient($this->fixtures['api_user']);
+        $client = static::makeStatelessClient($this->fixtures['api_user']);
         $client->request('GET', $this->getUrl('orderware_api_index'));
 
         $json = json_decode($client->getResponse()->getContent());
@@ -29,50 +29,42 @@ class ApiIndexControllerTest extends TestCase
 
     public function testAuthorizedApiRequestsAreLogged()
     {
-        $user = $this->getFixture('api_user', 'orderware');
-
-        $client = $this->authenticateStateless($user);
+        $client = static::makeStatelessClient($this->fixtures['api_user']);
         $client->request('GET', $this->getUrl('orderware_api_index'));
 
-        $requestId = json_decode(
-            $client->getResponse()->getContent()
-        )->request_id;
+        $json = json_decode($client->getResponse()->getContent());
 
-        $request = $this->get('doctrine')
+        $request = $this->getContainer()
+            ->get('doctrine')
             ->getManager('orderware')
             ->getRepository('Orderware:Request')
-            ->findOneByRequestId($requestId);
+            ->findOneByRequestId($json->request_id);
 
-        $this->assertNotNull($requestId);
+        $this->assertNotNull($json->request_id);
         $this->assertInstanceOf(Request::class, $request);
         $this->assertGreaterThan(0, $request->getLogId());
     }
 
     public function testAuthorizedApiRequestsAlwaysRespondWithJson()
     {
-        $user = $this->getFixture('api_user', 'orderware');
-
-        $client = $this->authenticateStateless($user);
+        $client = static::makeStatelessClient($this->fixtures['api_user']);
         $client->request('GET', '/api/v1/invalid-uri');
 
         $json = json_decode($client->getResponse()->getContent());
 
-        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+        $this->assertStatusCode(404, $client);
         $this->assertInternalType('object', $json);
-        $this->assertInstanceOf(\StdClass::class, $json);
         $this->assertEquals('No route found for "GET /api/v1/invalid-uri"', $json->data->message);
     }
 
     public function testApiExceptionMessagesAreHidden()
     {
-        $user = $this->getFixture('api_user', 'orderware');
-
-        $client = $this->authenticateStateless($user);
+        $client = static::makeStatelessClient($this->fixtures['api_user']);
         $client->request('GET', '/api/error');
 
         $json = json_decode($client->getResponse()->getContent());
 
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+        $this->assertStatusCode(500, $client);
         $this->assertNotEquals("Error Request", $json->data->message);
         $this->assertEquals("An unrecoverable error occurred during this request and has been logged.", $json->data->message);
     }
