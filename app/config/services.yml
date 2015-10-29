@@ -44,18 +44,14 @@ services:
         class: Orderware\AppBundle\Library\Feeds\Importer
         arguments: [@doctrine.orm.orderware_entity_manager]
 
-    #orderware.feed_consumer:
-    #    class: Orderware\AppBundle\Library\Consumers\FeedConsumer
-    #    arguments: [@doctrine.orm.orderware_entity_manager]
-
-    #orderware.feed_processor_factory:
-    #    class: Orderware\AppBundle\Library\Feeds\ProcessorFactory
-    #    arguments: [@service_container]
+    orderware.feed_processor_factory:
+        class: Orderware\AppBundle\Library\Feeds\ProcessorFactory
+        arguments: [@service_container]
 
     #orderware.feed_processor_inventory:
     #    class: Orderware\AppBundle\Library\Feeds\InventoryProcessor
     #    arguments: [@doctrine.orm.orderware_entity_manager, @validator]
 
-    #orderware.feed_processor_product:
-    #    class: Orderware\AppBundle\Library\Feeds\ProductProcessor
-    #    arguments: [@doctrine.orm.orderware_entity_manager, @validator, @orderware.payload_validator]
+    orderware.feed_processor_product:
+        class: Orderware\AppBundle\Library\Feeds\ProductProcessor
+        arguments: [@doctrine.orm.orderware_entity_manager, @validator, @orderware.json_validator]
