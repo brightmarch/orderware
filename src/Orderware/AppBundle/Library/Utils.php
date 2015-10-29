@@ -2,7 +2,7 @@
 
 namespace Orderware\AppBundle\Library;
 
-class Functions
+class Utils
 {
 
     /**
