@@ -12,8 +12,6 @@ orderware_api_error:
     path: /api/error
     defaults: { _controller: OrderwareAppBundle:ApiIndex:error }
 
-# API / Orders
-
 # API / Feeds
 orderware_api_get_feed:
     path: /api/v1/feeds/{feedId}
