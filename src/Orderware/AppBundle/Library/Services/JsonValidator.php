@@ -4,27 +4,24 @@ namespace Orderware\AppBundle\Library\Services;
 
 use Orderware\AppBundle\Library\Utils;
 
-use JsonSchema\Uri\UriRetriever as SchemaRetriever;
-use JsonSchema\Validator as SchemaValidator;
+use JsonSchema\Uri\UriRetriever as JsonSchemaRetriever;
+use JsonSchema\Validator as JsonSchemaValidator;
 
 use \RuntimeException;
 
-class PayloadValidator
+class JsonValidator
 {
-
-    /** @var array */
-    private $errors = [];
 
     public function __construct()
     {
     }
 
-    public function validate($type, $payloadJson)
+    public function validate($type, $jsonPayload)
     {
         $this->errors = [];
 
         // Decode the string to an object.
-        $payload = json_decode($payloadJson);
+        $payload = json_decode($jsonPayload);
 
         // Construct a full path to the schema JSON.
         $schemaPath = realpath(
@@ -37,37 +34,18 @@ class PayloadValidator
         }
 
         // The validator requires a file URI.
-        $schema = (new SchemaRetriever)
+        $schema = (new JsonSchemaRetriever)
             ->retrieve(sprintf('file://%s', $schemaPath));
 
         // Perform the actual validation.
-        $validator = new SchemaValidator;
+        $validator = new JsonSchemaValidator;
         $validator->check($payload, $schema);
 
         if (!$validator->isValid()) {
-            $this->errors = $validator->getErrors();
-        }
-
-        return !$this->hasErrors();
-    }
-
-    public function validateWithError($type, $payloadJson)
-    {
-        if (!$this->validate($type, $payloadJson)) {
-            throw new RuntimeException(sprintf("The JSON provided is invalid (%s).", $this->errors[0]['message']));
+            throw new RuntimeException(sprintf("The JSON provided is invalid (%s).", $validator->getErrors()[0]['message']));
         }
 
         return true;
-    }
-
-    public function getErrors()
-    {
-        return $this->errors;
-    }
-
-    public function hasErrors()
-    {
-        return (count($this->errors) > 0);
     }
 
 }

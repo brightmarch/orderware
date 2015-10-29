@@ -12,7 +12,7 @@ class ResponderTest extends TestCase
     public function testStandardResponse()
     {
         $response = $this->getContainer()
-            ->get('responder')
+            ->get('orderware.responder')
             ->send('test', ['orderware' => 'test']);
 
         $json = json_decode($response->getContent());
@@ -26,7 +26,7 @@ class ResponderTest extends TestCase
     public function testChangingHttpStatusCode()
     {
         $response = $this->getContainer()
-            ->get('responder')
+            ->get('orderware.responder')
             ->send('test', ['orderware' => 'test'], 404);
 
         $this->assertEquals(404, $response->getStatusCode());

@@ -12,35 +12,35 @@ services:
             - [connect, ["%redis_host%", "%redis_port%"]]
 
     # Core
-    request_listener:
+    orderware.request_listener:
         class: Orderware\AppBundle\Listeners\RequestListener
         arguments: [@doctrine.orm.orderware_entity_manager]
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onRequest }
             - { name: kernel.event_listener, event: kernel.response, method: onResponse }
 
-    exception_listener:
+    orderware.exception_listener:
         class: Orderware\AppBundle\Listeners\ExceptionListener
-        arguments: [@logger, @templating, @responder]
+        arguments: [@logger, @templating, @orderware.responder]
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onException }
 
     # Internal
-    payload_validator:
-        class: Orderware\AppBundle\Library\Services\PayloadValidator
+    orderware.json_validator:
+        class: Orderware\AppBundle\Library\Services\JsonValidator
 
     # API
-    responder:
+    orderware.responder:
         class: Orderware\AppBundle\Library\Services\Responder
         arguments: [@jms_serializer, @request_stack]
 
     # Orders
-    order_importer:
+    orderware.order_importer:
         class: Orderware\AppBundle\Library\Orders\Importer
         arguments: [@doctrine.orm.orderware_entity_manager, @validator]
 
     # Feeds
-    feed_importer:
+    orderware.feed_importer:
         class: Orderware\AppBundle\Library\Feeds\Importer
         arguments: [@doctrine.orm.orderware_entity_manager]
 
