@@ -5,7 +5,6 @@ namespace Orderware\AppBundle\Library\Feeds;
 use Orderware\AppBundle\Entity\Feed;
 use Orderware\AppBundle\Library\Services\JsonValidator;
 use Orderware\AppBundle\Library\Status;
-use Orderware\AppBundle\Library\Utils;
 
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -67,13 +66,10 @@ abstract class AbstractProcessor
      * @param string $division
      * @return boolean
      */
-    public function run($feedId)
+    public function run(Feed $feed)
     {
         $this->recordCount = 0;
 
-        $_em = $this->entityManager;
-
-        /*
         $this->division = $feed->getDivision()
             ->getDivision();
 
@@ -81,9 +77,9 @@ abstract class AbstractProcessor
             ->setStatusId(Status::FEED_PROCESSING)
             ->setStartedAt(date_create());
 
+        $_em = $this->entityManager;
         $_em->persist($feed);
         $_em->flush();
-        */
 
         try {
             $_conn = $_em->getConnection();
@@ -92,7 +88,7 @@ abstract class AbstractProcessor
             // @todo Validate the JSON feed itself.
 
             // Parse the feed body into a JSON object.
-            $this->feedBody = []; //json_decode($feed->getFeedBody());
+            $this->feedBody = json_decode($feed->getFeedBody());
 
             $this->init();
             $this->process();
@@ -104,17 +100,15 @@ abstract class AbstractProcessor
             $this->errorMessage = $e->getMessage();
         }
 
-        /*
         $feed->setStatusId(Status::FEED_PROCESSED)
             ->setFinishedAt(date_create())
             ->setMemoryUsage(memory_get_peak_usage())
             ->setRecordCount($this->recordCount)
-            ->addErrors($this->errors)
+            ->setErrorMessage($this->errorMessage)
             ->calculate();
     
         $_em->persist($feed);
         $_em->flush();
-        */
 
         return $feed;
     }
@@ -189,7 +183,6 @@ abstract class AbstractProcessor
             $record[$config['primary_key']] = $identifier;
 
             $_conn->insert($config['table_name'], $record + [
-                'created_at' => Utils::isoTs(),
                 'created_by' => $config['author']
             ]);
         } else {
