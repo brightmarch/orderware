@@ -4,8 +4,6 @@ namespace Orderware\AppBundle\Tests\Library;
 
 use Orderware\AppBundle\Library\Functions;
 
-use \DateTime;
-
 class FunctionsTest extends \PHPUnit_Framework_TestCase
 {
 
