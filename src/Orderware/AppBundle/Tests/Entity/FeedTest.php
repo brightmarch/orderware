@@ -64,6 +64,19 @@ class FeedTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($feed->isProcessed());
     }
 
+    public function testCalculatingIfFeedHasError()
+    {
+        $feed = new Feed;
+        $feed->calculate();
+
+        $this->assertFalse($feed->hasError());
+
+        $feed->setErrorMessage('Invalid feed');
+        $feed->calculate();
+
+        $this->assertTrue($feed->hasError());
+    }
+
     public function testCalculatingRunTime()
     {
         $feed = new Feed;

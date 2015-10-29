@@ -653,6 +653,8 @@ class Feed
      */
     public function calculate()
     {
+        $this->setHasError(!empty($this->getErrorMessage()));
+
         if (
             $this->getStartedAt() instanceof DateTime &&
             $this->getFinishedAt() instanceof DateTime
