@@ -21,4 +21,13 @@ class ProcessFeedCommandTest extends TestCase
         $this->assertContains("The feed (0) could not be found.", $output);
     }
 
+    public function testProcessingFeed()
+    {
+        $output = $this->runCommand('orderware:process-feed', [
+            'feed-id' => $this->fixtures['product_feed']->getFeedId()
+        ]);
+
+        $this->assertContains('Successfully processed feed "[product] feed.product.json"', $output);
+    }
+
 }
