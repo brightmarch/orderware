@@ -10,6 +10,15 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
 
+    public function testGettingTotalTimeFormatted()
+    {
+        $request = new Request;
+        $this->assertEquals('0ms', $request->getTotalTimeFormatted());
+
+        $request->setTotalTime(10);
+        $this->assertEquals('10ms', $request->getTotalTimeFormatted());
+    }
+
     public function testHasOrderNumber()
     {
         $request = new Request;
