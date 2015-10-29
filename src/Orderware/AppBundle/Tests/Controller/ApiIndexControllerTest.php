@@ -13,7 +13,7 @@ class ApiIndexControllerTest extends TestCase
         $client = static::makeClient();
         $client->request('GET', $this->getUrl('orderware_api_index'));
 
-        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+        $this->assertStatusCode(401, $client);
     }
 
     public function testApiIndexReturnsHeartbeat()
