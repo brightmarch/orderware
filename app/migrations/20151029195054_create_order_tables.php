@@ -1,0 +1,314 @@
+<?php
+
+use Phinx\Migration\AbstractMigration;
+
+class CreateOrderTables extends AbstractMigration
+{
+
+    public function up()
+    {
+        $this->execute("
+            CREATE TABLE ord_header (
+                ord_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                status_id integer NOT NULL REFERENCES status (status_id),
+                ordered_at timestamp without time zone NOT NULL,
+                order_date date NOT NULL,
+                source_code text NOT NULL,
+                order_type text NOT NULL,
+                order_num text NOT NULL,
+                currency text NOT NULL,
+                time_zone text NOT NULL,
+                line_amount integer NOT NULL DEFAULT 0,
+                line_tax_amount integer NOT NULL DEFAULT 0,
+                line_local_tax_amount integer NOT NULL DEFAULT 0,
+                line_county_tax_amount integer NOT NULL DEFAULT 0,
+                line_state_tax_amount integer NOT NULL DEFAULT 0,
+                shipping_amount integer NOT NULL DEFAULT 0,
+                shipping_tax_amount integer NOT NULL DEFAULT 0,
+                shipping_local_tax_amount integer NOT NULL DEFAULT 0,
+                shipping_county_tax_amount integer NOT NULL DEFAULT 0,
+                shipping_state_tax_amount integer NOT NULL DEFAULT 0,
+                discount_amount integer NOT NULL DEFAULT 0,
+                order_amount integer NOT NULL DEFAULT 0,
+                is_virtual boolean NOT NULL DEFAULT false,
+                salesperson text,
+                ip_address text,
+                customer_notes text,
+                store_notes text,
+                CONSTRAINT ord_header_pkey PRIMARY KEY (ord_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX ord_header_division_idx ON ord_header (division)");
+        $this->execute("CREATE INDEX ord_header_status_id_idx ON ord_header (status_id)");
+        $this->execute("CREATE INDEX ord_header_order_date_idx ON ord_header (order_date)");
+        $this->execute("CREATE INDEX ord_header_source_code_idx ON ord_header (source_code)");
+        $this->execute("CREATE INDEX ord_header_order_type_idx ON ord_header (order_type)");
+        $this->execute("CREATE INDEX ord_header_is_virtual_idx ON ord_header (is_virtual)");
+        $this->execute("CREATE UNIQUE INDEX ord_header_division_order_num_idx ON ord_header (division, order_num)");
+
+        $this->execute("
+            CREATE TABLE ord_ship (
+                ord_ship_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
+                ship_method text NOT NULL,
+                first_name text,
+                middle_name text,
+                last_name text,
+                full_name text,
+                address1 text,
+                address2 text,
+                city_name text,
+                state_name text,
+                state_code text,
+                postal_code text,
+                country_name text,
+                country_code text,
+                company_name text,
+                email_address text,
+                phone_number text,
+                notify_by text NOT NULL,
+                notification_enabled boolean NOT NULL DEFAULT true,
+                facility_code text,
+                CONSTRAINT ord_ship_pkey PRIMARY KEY (ord_ship_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX ord_ship_division_idx ON ord_ship (division)");
+        $this->execute("CREATE INDEX ord_ship_ord_id_idx ON ord_ship (ord_id)");
+        $this->execute("CREATE INDEX ord_ship_ship_method_idx ON ord_ship (ship_method)");
+
+        $this->execute("
+            CREATE TABLE ord_line (
+                ord_line_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
+                ord_ship_id integer NOT NULL REFERENCES ord_ship (ord_ship_id) ON DELETE CASCADE,
+                item_id integer NOT NULL REFERENCES item (item_id) ON DELETE CASCADE,
+                sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
+                facility_id integer REFERENCES facility (facility_id) ON DELETE SET NULL,
+                status_id integer NOT NULL REFERENCES status (status_id),
+                line_num text NOT NULL,
+                item_num text NOT NULL,
+                item_name text NOT NULL,
+                skucode text NOT NULL,
+                pick_description text NOT NULL,
+                retail_amount integer NOT NULL DEFAULT 0,
+                discount_amount integer NOT NULL DEFAULT 0,
+                tax_amount integer NOT NULL DEFAULT 0,
+                local_tax_amount integer NOT NULL DEFAULT 0,
+                county_tax_amount integer NOT NULL DEFAULT 0,
+                state_tax_amount integer NOT NULL DEFAULT 0,
+                qty_ordered integer NOT NULL DEFAULT 0,
+                qty_canceled integer NOT NULL DEFAULT 0,
+                qty_backordered integer NOT NULL DEFAULT 0,
+                qty_allocated integer NOT NULL DEFAULT 0,
+                qty_reserved integer NOT NULL DEFAULT 0,
+                qty_picked integer NOT NULL DEFAULT 0,
+                qty_shipped integer NOT NULL DEFAULT 0,
+                qty_returned integer NOT NULL DEFAULT 0,
+                CONSTRAINT ord_line_pkey PRIMARY KEY (ord_line_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX ord_line_division_idx ON ord_line (division)");
+        $this->execute("CREATE INDEX ord_line_ord_id_idx ON ord_line (ord_id)");
+        $this->execute("CREATE INDEX ord_line_ord_ship_id_idx ON ord_line (ord_ship_id)");
+        $this->execute("CREATE INDEX ord_line_item_id_idx ON ord_line (item_id)");
+        $this->execute("CREATE INDEX ord_line_sku_id_idx ON ord_line (sku_id)");
+        $this->execute("CREATE INDEX ord_line_status_id_idx ON ord_line (status_id)");
+        $this->execute("CREATE INDEX ord_line_item_num_idx ON ord_line (item_num)");
+        $this->execute("CREATE INDEX ord_line_skucode_idx ON ord_line (skucode)");
+        $this->execute("CREATE INDEX ord_line_qty_ordered_idx ON ord_line (qty_ordered)");
+        $this->execute("CREATE INDEX ord_line_qty_shipped_idx ON ord_line (qty_shipped)");
+        $this->execute("CREATE UNIQUE INDEX ord_line_ord_id_line_num_idx ON ord_line (ord_id, line_num)");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION calculate_ord_line_buckets() RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.qty_backordered = NEW.qty_ordered - NEW.qty_canceled
+                    - NEW.qty_allocated - NEW.qty_reserved
+                    - NEW.qty_picked - NEW.qty_shipped;
+
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
+
+        $this->execute("
+            CREATE TRIGGER calculate_ord_line_buckets_on_insert_on_update
+            BEFORE INSERT OR UPDATE ON ord_line
+            FOR EACH ROW EXECUTE PROCEDURE calculate_ord_line_buckets()
+        ");
+
+        $this->execute("
+            CREATE TABLE ord_pay (
+                ord_pay_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
+                pay_method text NOT NULL,
+                pay_amount integer NOT NULL DEFAULT 0,
+                settled_amount integer NOT NULL DEFAULT 0,
+                transaction_code text NOT NULL,
+                currency text NOT NULL,
+                CONSTRAINT ord_pay_pkey PRIMARY KEY (ord_pay_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX ord_pay_division_idx ON ord_pay (division)");
+        $this->execute("CREATE INDEX ord_pay_ord_id_idx ON ord_pay (ord_id)");
+        $this->execute("CREATE INDEX ord_pay_pay_method_idx ON ord_pay (pay_method)");
+
+        $this->execute("
+            CREATE TABLE ord_lock (
+                ord_lock_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
+                status_id integer NOT NULL REFERENCES status (status_id),
+                lock_reason text,
+                removed_at timestamp without time zone,
+                CONSTRAINT ord_lock_pkey PRIMARY KEY (ord_lock_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX ord_lock_division_idx ON ord_lock (division)");
+        $this->execute("CREATE INDEX ord_lock_ord_id_idx ON ord_lock (ord_id)");
+        $this->execute("CREATE INDEX ord_lock_status_id_idx ON ord_lock (status_id)");
+        $this->execute("CREATE UNIQUE INDEX ord_lock_ord_id_status_id_idx ON ord_lock (ord_id, status_id) WHERE removed_at IS NULL");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION lock_order(_ord_id integer, _status_id integer, _reason text) RETURNS boolean AS $$
+            DECLARE
+                order RECORD;
+                status RECORD;
+                lock RECORD;
+            BEGIN
+                SELECT INTO order FROM ord_header oh
+                WHERE oh.ord_id = _ord_id;
+
+                IF NOT FOUND THEN
+                    RAISE EXCEPTION 'order (%) does not exist', _ord_id;
+                END IF;
+
+                SELECT INTO status FROM status s
+                WHERE s.status_id = _status_id;
+
+                IF NOT FOUND THEN
+                    RAISE EXCEPTION 'lock status (%) does not exist', _status_id;
+                END IF;
+
+                SELECT INTO lock FROM ord_lock ol
+                WHERE ol.ord_id = _ord_id
+                    AND ol.status_id = _status_id
+                    AND ol.removed_at IS NULL;
+
+                IF FOUND THEN
+                    RAISE EXCEPTION 'order (%) is already locked by status (%)', _ord_id, _status_id;
+                END IF;
+
+                INSERT INTO ord_lock (
+                    created_by, updated_by, division,
+                    ord_id, status_id, lock_reason
+                ) SELECT 'lock_order', 'lock_order',
+                    oh.division, oh.ord_id, _status_id, _reason
+                FROM ord_header oh
+                WHERE oh.ord_id = _ord_id;
+
+                RETURN TRUE;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION unlock_order(_ord_id integer, _status_id integer) RETURNS boolean AS $$
+            BEGIN
+                UPDATE ord_lock SET updated_at = LOCALTIMESTAMP(0),
+                    updated_by = 'unlock_order',
+                    removed_at = LOCALTIMESTAMP(0)
+                WHERE ord_id = _ord_id
+                    AND status_id = _status_id
+                    AND removed_at IS NULL;
+
+                RETURN TRUE;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
+
+        $this->execute("
+            INSERT INTO status VALUES
+                (180, 'Order Import Enqueued'),
+                (181, 'Order Import Processing'),
+                (182, 'Order Import Processed')
+        ");
+
+        $this->execute("
+            CREATE TABLE ord_import (
+                import_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                status_id integer NOT NULL REFERENCES status (status_id),
+                ord_id integer REFERENCES ord_header (ord_id) ON DELETE CASCADE,
+                order_num text NOT NULL,
+                request_body text NOT NULL,
+                started_at timestamp without time zone,
+                finished_at timestamp without time zone,
+                run_time integer NOT NULL DEFAULT 0,
+                memory_usage integer NOT NULL DEFAULT 0,
+                error_message text,
+                has_error boolean NOT NULL DEFAULT false,
+                CONSTRAINT ord_import_pkey PRIMARY KEY (import_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX ord_import_division_idx ON ord_import (division)");
+        $this->execute("CREATE INDEX ord_import_status_id_idx ON ord_import (status_id)");
+        $this->execute("CREATE INDEX ord_import_ord_id_idx ON ord_import (ord_id) WHERE ord_id IS NOT NULL");
+        $this->execute("CREATE INDEX ord_import_order_num_idx ON ord_import (order_num)");
+        $this->execute("CREATE INDEX ord_import_started_at_idx ON ord_import (started_at)");
+        $this->execute("CREATE INDEX ord_import_finished_at_idx ON ord_import (finished_at)");
+        $this->execute("CREATE INDEX ord_import_has_error_idx ON ord_import (has_error)");
+    }
+
+    public function down()
+    {
+        $this->execute("DROP TABLE IF EXISTS ord_import CASCADE");
+        $this->execute("DELETE FROM status WHERE status_id IN(180, 181, 182)");
+
+        $this->execute("DROP FUNCTION IF EXISTS lock_order(_ord_id integer, _status_id integer, _reason text)");
+        $this->execute("DROP FUNCTION IF EXISTS unlock_order(_ord_id integer, _status_id integer)");
+
+        $this->execute("DROP TABLE IF EXISTS ord_lock CASCADE");
+        $this->execute("DROP TABLE IF EXISTS ord_pay CASCADE");
+        $this->execute("DROP TABLE IF EXISTS ord_line CASCADE");
+        $this->execute("DROP TABLE IF EXISTS ord_ship CASCADE");
+        $this->execute("DROP TABLE IF EXISTS ord_header CASCADE");
+
+        $this->execute("DROP FUNCTION IF EXISTS calculate_ord_line_buckets()");
+    }
+
+}
