@@ -41,7 +41,7 @@ class Request
     /**
      * @var string
      */
-    private $orderNumber;
+    private $orderNum;
 
     /**
      * @var string
@@ -269,27 +269,27 @@ class Request
     }
 
     /**
-     * Set orderNumber
+     * Set orderNum
      *
-     * @param string $orderNumber
+     * @param string $orderNum
      *
      * @return Request
      */
-    public function setOrderNumber($orderNumber)
+    public function setOrderNum($orderNum)
     {
-        $this->orderNumber = strtoupper($orderNumber);
+        $this->orderNum = strtoupper($orderNum);
 
         return $this;
     }
 
     /**
-     * Get orderNumber
+     * Get orderNum
      *
      * @return string
      */
-    public function getOrderNumber()
+    public function getOrderNum()
     {
-        return $this->orderNumber;
+        return $this->orderNum;
     }
 
     /**
@@ -776,13 +776,13 @@ class Request
     }
 
     /**
-     * Has orderNumber
+     * Has orderNum
      *
      * @return boolean
      */
-    public function hasOrderNumber()
+    public function hasOrderNum()
     {
-        return !empty($this->getOrderNumber());
+        return !empty($this->getOrderNum());
     }
 
     /**
@@ -818,7 +818,7 @@ class Request
 
         $payload = $request->getContent();
 
-        $this->setOrderNumber($attributes->get('orderNumber'))
+        $this->setOrderNum($attributes->get('orderNum'))
             ->setIpAddress($request->getClientIp())
             ->setRequestMethod($request->getMethod())
             ->setAccept($headers->get('accept'))

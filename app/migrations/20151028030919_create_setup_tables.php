@@ -287,7 +287,7 @@ class CreateSetupTables extends AbstractMigration
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
                 login_id integer NOT NULL REFERENCES login (login_id) ON DELETE CASCADE,
                 request_id text NOT NULL,
-                order_number text,
+                order_num text,
                 ip_address text NOT NULL,
                 request_method text,
                 accept text,
@@ -311,7 +311,7 @@ class CreateSetupTables extends AbstractMigration
 
         $this->execute("CREATE INDEX request_division_idx ON request (division)");
         $this->execute("CREATE INDEX request_login_id_idx ON request (login_id)");
-        $this->execute("CREATE INDEX request_order_number_idx ON request (order_number) WHERE order_number IS NOT NULL");
+        $this->execute("CREATE INDEX request_order_num_idx ON request (order_num) WHERE order_num IS NOT NULL");
         $this->execute("CREATE INDEX request_ip_address_idx ON request (ip_address)");
         $this->execute("CREATE INDEX request_route_name_idx ON request (route_name)");
         $this->execute("CREATE INDEX request_status_code_idx ON request (status_code)");

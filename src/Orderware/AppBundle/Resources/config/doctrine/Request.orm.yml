@@ -27,8 +27,8 @@ Orderware\AppBundle\Entity\Request:
         requestId:
             column: request_id
             type: text
-        orderNumber:
-            column: order_number
+        orderNum:
+            column: order_num
             type: text
             nullable: true
         ipAddress:

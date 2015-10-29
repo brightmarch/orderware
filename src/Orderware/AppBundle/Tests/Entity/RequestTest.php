@@ -19,13 +19,13 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('10ms', $request->getTotalTimeFormatted());
     }
 
-    public function testHasOrderNumber()
+    public function testHasOrderNum()
     {
         $request = new Request;
-        $this->assertFalse($request->hasOrderNumber());
+        $this->assertFalse($request->hasOrderNum());
 
-        $request->setOrderNumber('01111112');
-        $this->assertTrue($request->hasOrderNumber());
+        $request->setOrderNum('01111112');
+        $this->assertTrue($request->hasOrderNum());
     }
 
     public function testHasPayload()
