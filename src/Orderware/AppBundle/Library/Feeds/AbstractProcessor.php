@@ -158,6 +158,9 @@ abstract class AbstractProcessor
     {
         $config = $this->config[$recordName];
 
+        // All records are counted, not just successful ones.
+        $this->recordCount += 1;
+
         // Begin by performing the validation.
         $errors = $this->validator
             ->validate($record, $config['constraints']);
@@ -197,9 +200,6 @@ abstract class AbstractProcessor
         // Cache the newly inserted record so that if it is sent twice in a
         // feed, it can be looked up in the same transaction.
         $this->records[$recordName][$record[$config['unique_key']]] = $identifier;
-
-        // All records are counted, not just successful ones.
-        $this->recordCount += 1;
 
         return $identifier;
     }
