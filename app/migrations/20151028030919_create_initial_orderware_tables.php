@@ -84,33 +84,23 @@ class CreateInitialOrderwareTables extends AbstractMigration
                 file_hash text NOT NULL,
                 manifest text NOT NULL,
                 feed_body text NOT NULL,
+                error_message text,
+                has_error boolean NOT NULL DEFAULT false,
                 started_at timestamp without time zone,
                 finished_at timestamp without time zone,
                 run_time integer NOT NULL DEFAULT 0,
                 memory_usage integer NOT NULL DEFAULT 0,
                 record_count integer NOT NULL DEFAULT 0,
-                error_count integer NOT NULL DEFAULT 0,
                 CONSTRAINT feed_pkey PRIMARY KEY (feed_id)
             ) WITH (OIDS=FALSE)
         ");
 
         $this->execute("CREATE INDEX feed_division_idx ON feed (division)");
         $this->execute("CREATE INDEX feed_status_id_idx ON feed (status_id)");
-        $this->execute("CREATE INDEX feed_file_name_id_idx ON feed (file_name)");
+        $this->execute("CREATE INDEX feed_file_name_idx ON feed (file_name)");
+        $this->execute("CREATE INDEX feed_has_error_idx ON feed (has_error)");
         $this->execute("CREATE INDEX feed_started_at_idx ON feed (started_at)");
         $this->execute("CREATE INDEX feed_finished_at_idx ON feed (finished_at)");
-
-        $this->execute("
-            CREATE TABLE feed_error (
-                error_id serial NOT NULL,
-                feed_id integer NOT NULL REFERENCES feed (feed_id) ON DELETE CASCADE,
-                record_num integer NOT NULL DEFAULT 0,
-                error_message text NOT NULL,
-                CONSTRAINT feed_error_pkey PRIMARY KEY (error_id)
-            ) WITH (OIDS=FALSE)
-        ");
-
-        $this->execute("CREATE INDEX feed_error_feed_id_idx ON feed_error (feed_id)");
 
         $this->execute("
             CREATE TABLE vendor (
@@ -340,7 +330,6 @@ class CreateInitialOrderwareTables extends AbstractMigration
         $this->execute("DROP TABLE IF EXISTS facility CASCADE");
         $this->execute("DROP TABLE IF EXISTS vendor CASCADE");
 
-        $this->execute("DROP TABLE IF EXISTS feed_error CASCADE");
         $this->execute("DROP TABLE IF EXISTS feed CASCADE");
 
         $this->execute("DROP TABLE IF EXISTS division CASCADE");
