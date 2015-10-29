@@ -1,0 +1,20 @@
+{% extends 'OrderwareAppBundle::layout.html.twig' %}
+
+{% block body %}
+    <main id="page">
+        <header>
+            <a href="{{ path('orderware_index') }}">
+                <img src="{{ asset('bundles/orderwareapp/images/orderware-logo.png') }}" width="24">
+            </a>
+        </header>
+
+        <section id="stage">
+            <h1>Orderware</h1>
+            <p>
+                Orderware is an order management system built from the ground up for the enterprise. It emphasizes fast client onboardings, excellent documentation, extreme robustness, and the worlds most efficient order processing.
+            </p>
+        </section>
+
+        {{ include('OrderwareAppBundle:Partials:footer.html.twig') }}
+    </main>
+{% endblock %}

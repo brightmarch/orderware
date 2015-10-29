@@ -1,0 +1,43 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    color: #3f3f44;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+main header {
+    background: #efefef;
+    border-bottom: 1px solid #d5d5d5;
+    padding: 8px 0;
+    text-align: center;
+}
+
+main#page section#stage {
+    margin: 0 auto 48px auto;
+    width: 600px;
+}
+
+main#page section#stage h1 {
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+main#page section#stage p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+footer {
+    color: #a3a3a3;
+    font-size: 12px;
+    padding-bottom: 16px;
+    text-align: center
+}
+
+footer a {
+    color: #4eaaff
+}
