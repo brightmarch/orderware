@@ -1,7 +1,7 @@
 {
     "division": "GROWERS",
     "ordered_at": "2015-08-03T20:55:00Z",
-    "order_number": "GROW0000001",
+    "order_num": "GROW0000001",
     "salesperson": "gbush",
     "source_code": "WEB",
     "order_type": "WEB",
@@ -34,22 +34,22 @@
             "lines": [
                 {
                     "line_number": "1",
-                    "skucode": "100002",
-                    "retail_amount": 1299,
+                    "skucode": "G000001D",
+                    "retail_amount": 1699,
                     "discount_amount": 0,
-                    "local_tax_amount": 81,
-                    "county_tax_amount": 13,
-                    "state_tax_amount": 13,
+                    "local_tax_amount": 106,
+                    "county_tax_amount": 17,
+                    "state_tax_amount": 17,
                     "quantity": 2
                 },
                 {
                     "line_number": "2",
-                    "skucode": "100001",
-                    "retail_amount": 1299,
+                    "skucode": "G000001L",
+                    "retail_amount": 1699,
                     "discount_amount": 100,
-                    "local_tax_amount": 75,
-                    "county_tax_amount": 12,
-                    "state_tax_amount": 12,
+                    "local_tax_amount": 100,
+                    "county_tax_amount": 16,
+                    "state_tax_amount": 16,
                     "quantity": 1
                 }
             ]
@@ -58,7 +58,7 @@
     "payments": [
         {
             "payment_method": "stripe",
-            "amount": 4975,
+            "amount": 6274,
             "transaction_code": "ch_6kWpby7JOucf1O",
             "currency": "USD"
         }

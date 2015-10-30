@@ -292,10 +292,31 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("CREATE INDEX ord_import_started_at_idx ON ord_import (started_at)");
         $this->execute("CREATE INDEX ord_import_finished_at_idx ON ord_import (finished_at)");
         $this->execute("CREATE INDEX ord_import_has_error_idx ON ord_import (has_error)");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION lookup_order(_division text, _order_num text) RETURNS integer AS $$
+            DECLARE
+                _ord_id integer;
+            BEGIN
+                SELECT INTO _ord_id oh.ord_id
+                FROM ord_header oh
+                WHERE oh.division = _division
+                    AND oh.order_num = _order_num;
+
+                IF FOUND THEN
+                    RETURN _ord_id;
+                END IF;
+
+                RETURN 0;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
     }
 
     public function down()
     {
+        $this->execute("DROP FUNCTION IF EXISTS lookup_order()");
+
         $this->execute("DROP TABLE IF EXISTS ord_import CASCADE");
         $this->execute("DELETE FROM status WHERE status_id IN(180, 181, 182)");
 

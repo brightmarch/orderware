@@ -10,7 +10,7 @@
             "type": "string",
             "format": "date-time"
         },
-        "order_number": {
+        "order_num": {
             "type": "string"
         },
         "salesperson": {
@@ -212,7 +212,7 @@
     "required": [
         "division",
         "ordered_at",
-        "order_number",
+        "order_num",
         "salesperson",
         "source_code",
         "order_type",
