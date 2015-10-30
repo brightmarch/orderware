@@ -219,9 +219,8 @@ class Importer
                 ]);
             }
 
-            // Calculate the order amounts.
-            #$sql = "SELECT calculate_order(?)";
-            #$_conn->executeQuery($sql, [$ordId]);
+            // Calculate the line and header order amounts so the order can be ledgered.
+            #$_conn->executeQuery("SELECT calculate_order(?)", [$ordId]);
 
             $_conn->commit();
         } catch (Exception $e) {
@@ -244,46 +243,6 @@ class Importer
         $_em->flush();
 
         return $import;
-    }
-
-    private function calculate($ordId)
-    {
-        $sql = "
-            WITH lines AS (
-                SELECT ol.ord_id,
-                    SUM(ol.qty_available * ol.discount_amount) AS discount_amount,
-                    SUM(ol.qty_available * ol.retail_amount) AS line_amount,
-                    SUM(ol.qty_available * ol.local_tax_amount) AS line_local_tax_amount,
-                    SUM(ol.qty_available * ol.county_tax_amount) AS line_county_tax_amount,
-                    SUM(ol.qty_available * ol.state_tax_amount) AS line_state_tax_amount,
-                    SUM(ol.qty_available * ol.tax_amount) AS line_tax_amount
-                FROM ord_line ol
-                WHERE ol.ord_id = ?
-                GROUP BY ol.ord_id
-            )
-            UPDATE ord_header oh SET
-                line_amount = l.line_amount,
-                line_tax_amount = l.line_tax_amount,
-                line_local_tax_amount = l.line_local_tax_amount,
-                line_county_tax_amount = l.line_county_tax_amount,
-                line_state_tax_amount = l.line_state_tax_amount,
-                discount_amount = l.discount_amount,
-                order_amount = (
-                    oh.shipping_amount +
-                    oh.shipping_tax_amount +
-                    l.line_amount +
-                    l.line_tax_amount -
-                    l.discount_amount
-                )
-            FROM lines l
-            WHERE oh.ord_id = l.ord_id
-        ";
-
-        $this->entityManager
-            ->getConnection()
-            ->executeUpdate($sql, [$ordId]);
-
-        return $this;
     }
 
 }
