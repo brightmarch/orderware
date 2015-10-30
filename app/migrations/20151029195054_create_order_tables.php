@@ -274,9 +274,7 @@ class CreateOrderTables extends AbstractMigration
                 status_id integer NOT NULL REFERENCES status (status_id),
                 ord_id integer REFERENCES ord_header (ord_id) ON DELETE CASCADE,
                 order_num text NOT NULL,
-                request_body text NOT NULL,
-                started_at timestamp without time zone,
-                finished_at timestamp without time zone,
+                order_body text,
                 run_time integer NOT NULL DEFAULT 0,
                 memory_usage integer NOT NULL DEFAULT 0,
                 error_message text,
@@ -289,8 +287,6 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("CREATE INDEX ord_import_status_id_idx ON ord_import (status_id)");
         $this->execute("CREATE INDEX ord_import_ord_id_idx ON ord_import (ord_id) WHERE ord_id IS NOT NULL");
         $this->execute("CREATE INDEX ord_import_order_num_idx ON ord_import (order_num)");
-        $this->execute("CREATE INDEX ord_import_started_at_idx ON ord_import (started_at)");
-        $this->execute("CREATE INDEX ord_import_finished_at_idx ON ord_import (finished_at)");
         $this->execute("CREATE INDEX ord_import_has_error_idx ON ord_import (has_error)");
 
         $this->execute("
