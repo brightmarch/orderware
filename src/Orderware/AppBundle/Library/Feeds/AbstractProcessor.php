@@ -37,9 +37,6 @@ abstract class AbstractProcessor
     /** @var string */
     protected $division;
 
-    /** @var string */
-    private $errorMessage;
-
     /** @var integer */
     protected $recordCount = 0;
 
@@ -97,14 +94,13 @@ abstract class AbstractProcessor
         } catch (Exception $e) {
             $_conn->rollback();
 
-            $this->errorMessage = $e->getMessage();
+            $feed->setErrorMessage($e->getMessage());
         }
 
         $feed->setStatusId(Status::FEED_PROCESSED)
             ->setFinishedAt(date_create())
             ->setMemoryUsage(memory_get_peak_usage())
             ->setRecordCount($this->recordCount)
-            ->setErrorMessage($this->errorMessage)
             ->calculate();
     
         $_em->persist($feed);

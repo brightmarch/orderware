@@ -24,13 +24,13 @@ Orderware\AppBundle\Entity\OrdImport:
         updatedBy:
             column: updated_by
             type: text
-        statusId:
-            column: status_id
-            type: integer
         ordId:
             column: ord_id
             type: integer
             nullable: true
+        statusId:
+            column: status_id
+            type: integer
         orderNum:
             column: order_num
             type: text

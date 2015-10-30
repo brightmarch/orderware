@@ -2,6 +2,8 @@
 
 namespace Orderware\AppBundle\Library;
 
+use \DateTime;
+
 class Utils
 {
 
@@ -34,11 +36,18 @@ class Utils
     /**
      * Creates an ISO timestamp in YYYY-MM-DD HH:MM:SS format.
      *
+     * @param DateTime $date
      * @return string
      */
-    public static function dbDate()
+    public static function dbDate(DateTime $date = null)
     {
-        return date('Y-m-d H:i:s');
+        $formatStr = 'Y-m-d H:i:s';
+
+        if ($date instanceof DateTime) {
+            return $date->format($formatStr);
+        }
+
+        return date($formatStr);
     }
 
     /**

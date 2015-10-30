@@ -30,6 +30,9 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
 
     public function testGettingDatabaseDate()
     {
+        $dateStr = '2015-10-10 15:16:13';
+        $this->assertEquals($dateStr, Utils::dbDate(date_create($dateStr)));
+
         $this->assertEquals(date('Y-m-d H:i:s'), Utils::dbDate());
     }
 

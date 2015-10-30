@@ -40,7 +40,8 @@ class CreateOrderTables extends AbstractMigration
                 ip_address text,
                 customer_notes text,
                 store_notes text,
-                CONSTRAINT ord_header_pkey PRIMARY KEY (ord_id)
+                CONSTRAINT ord_header_pkey PRIMARY KEY (ord_id),
+                CONSTRAINT order_num_requires_alphanum CHECK (order_num ~ '^[A-Z0-9]+$')
             ) WITH (OIDS=FALSE)
         ");
 
@@ -51,6 +52,24 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("CREATE INDEX ord_header_order_type_idx ON ord_header (order_type)");
         $this->execute("CREATE INDEX ord_header_is_virtual_idx ON ord_header (is_virtual)");
         $this->execute("CREATE UNIQUE INDEX ord_header_division_order_num_idx ON ord_header (division, order_num)");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION calculate_ord_header_shipping_tax_amount() RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.shipping_tax_amount = NEW.shipping_local_tax_amount +
+                    NEW.shipping_county_tax_amount + NEW.shipping_state_tax_amount;
+
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
+
+        $this->execute("
+            CREATE TRIGGER calculate_ord_header_shipping_tax_amount_on_insert_on_update
+            BEFORE INSERT OR UPDATE ON ord_header
+            FOR EACH ROW EXECUTE PROCEDURE calculate_ord_header_shipping_tax_amount()
+        ");
+
 
         $this->execute("
             CREATE TABLE ord_ship (
@@ -114,6 +133,7 @@ class CreateOrderTables extends AbstractMigration
                 county_tax_amount integer NOT NULL DEFAULT 0,
                 state_tax_amount integer NOT NULL DEFAULT 0,
                 qty_ordered integer NOT NULL DEFAULT 0,
+                qty_available integer NOT NULL DEFAULT 0,
                 qty_canceled integer NOT NULL DEFAULT 0,
                 qty_backordered integer NOT NULL DEFAULT 0,
                 qty_allocated integer NOT NULL DEFAULT 0,
@@ -134,6 +154,7 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("CREATE INDEX ord_line_item_num_idx ON ord_line (item_num)");
         $this->execute("CREATE INDEX ord_line_skucode_idx ON ord_line (skucode)");
         $this->execute("CREATE INDEX ord_line_qty_ordered_idx ON ord_line (qty_ordered)");
+        $this->execute("CREATE INDEX ord_line_qty_available_idx ON ord_line (qty_available)");
         $this->execute("CREATE INDEX ord_line_qty_shipped_idx ON ord_line (qty_shipped)");
         $this->execute("CREATE UNIQUE INDEX ord_line_ord_id_line_num_idx ON ord_line (ord_id, line_num)");
 
@@ -144,6 +165,8 @@ class CreateOrderTables extends AbstractMigration
                     - NEW.qty_allocated - NEW.qty_reserved
                     - NEW.qty_picked - NEW.qty_shipped;
 
+                NEW.qty_available = NEW.qty_ordered - NEW.qty_canceled;
+
                 RETURN NEW;
             END;
             $$ LANGUAGE plpgsql
@@ -153,6 +176,23 @@ class CreateOrderTables extends AbstractMigration
             CREATE TRIGGER calculate_ord_line_buckets_on_insert_on_update
             BEFORE INSERT OR UPDATE ON ord_line
             FOR EACH ROW EXECUTE PROCEDURE calculate_ord_line_buckets()
+        ");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION calculate_ord_line_tax_amount() RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.tax_amount = NEW.local_tax_amount +
+                    NEW.county_tax_amount + NEW.state_tax_amount;
+
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
+
+        $this->execute("
+            CREATE TRIGGER calculate_ord_line_tax_amount_on_insert_on_update
+            BEFORE INSERT OR UPDATE ON ord_line
+            FOR EACH ROW EXECUTE PROCEDURE calculate_ord_line_tax_amount()
         ");
 
         $this->execute("
@@ -271,8 +311,8 @@ class CreateOrderTables extends AbstractMigration
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
-                status_id integer NOT NULL REFERENCES status (status_id),
                 ord_id integer REFERENCES ord_header (ord_id) ON DELETE CASCADE,
+                status_id integer NOT NULL REFERENCES status (status_id),
                 order_num text NOT NULL,
                 order_body text,
                 run_time integer NOT NULL DEFAULT 0,
@@ -307,11 +347,49 @@ class CreateOrderTables extends AbstractMigration
             END;
             $$ LANGUAGE plpgsql
         ");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION calculate_order(_ord_id integer) RETURNS boolean AS $$
+            BEGIN
+                WITH lines AS (
+                    SELECT ol.ord_id,
+                        SUM(ol.qty_available * ol.discount_amount) AS discount_amount,
+                        SUM(ol.qty_available * ol.retail_amount) AS line_amount,
+                        SUM(ol.qty_available * ol.local_tax_amount) AS line_local_tax_amount,
+                        SUM(ol.qty_available * ol.county_tax_amount) AS line_county_tax_amount,
+                        SUM(ol.qty_available * ol.state_tax_amount) AS line_state_tax_amount,
+                        SUM(ol.qty_available * ol.tax_amount) AS line_tax_amount
+                    FROM ord_line ol
+                    WHERE ol.ord_id = _ord_id
+                    GROUP BY ol.ord_id
+                )
+                UPDATE ord_header oh SET
+                    line_amount = l.line_amount,
+                    line_tax_amount = l.line_tax_amount,
+                    line_local_tax_amount = l.line_local_tax_amount,
+                    line_county_tax_amount = l.line_county_tax_amount,
+                    line_state_tax_amount = l.line_state_tax_amount,
+                    discount_amount = l.discount_amount,
+                    order_amount = (
+                        oh.shipping_amount +
+                        oh.shipping_tax_amount +
+                        l.line_amount +
+                        l.line_tax_amount -
+                        l.discount_amount
+                    )
+                FROM lines l
+                WHERE oh.ord_id = l.ord_id;
+
+                RETURN TRUE;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
     }
 
     public function down()
     {
-        $this->execute("DROP FUNCTION IF EXISTS lookup_order()");
+        $this->execute("DROP FUNCTION IF EXISTS calculate_order(_ord_id integer)");
+        $this->execute("DROP FUNCTION IF EXISTS lookup_order(_division text, _order_num text)");
 
         $this->execute("DROP TABLE IF EXISTS ord_import CASCADE");
         $this->execute("DELETE FROM status WHERE status_id IN(180, 181, 182)");
@@ -326,6 +404,8 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("DROP TABLE IF EXISTS ord_header CASCADE");
 
         $this->execute("DROP FUNCTION IF EXISTS calculate_ord_line_buckets()");
+        $this->execute("DROP FUNCTION IF EXISTS calculate_ord_line_tax_amount()");
+        $this->execute("DROP FUNCTION IF EXISTS calculate_ord_header_shipping_tax_amount()");
     }
 
 }

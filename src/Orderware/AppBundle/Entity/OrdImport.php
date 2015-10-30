@@ -38,12 +38,12 @@ class OrdImport
     /**
      * @var integer
      */
-    private $statusId;
+    private $ordId;
 
     /**
      * @var integer
      */
-    private $ordId;
+    private $statusId;
 
     /**
      * @var string
@@ -187,30 +187,6 @@ class OrdImport
     }
 
     /**
-     * Set statusId
-     *
-     * @param integer $statusId
-     *
-     * @return OrdImport
-     */
-    public function setStatusId($statusId)
-    {
-        $this->statusId = $statusId;
-
-        return $this;
-    }
-
-    /**
-     * Get statusId
-     *
-     * @return integer
-     */
-    public function getStatusId()
-    {
-        return $this->statusId;
-    }
-
-    /**
      * Set ordId
      *
      * @param integer $ordId
@@ -232,6 +208,30 @@ class OrdImport
     public function getOrdId()
     {
         return $this->ordId;
+    }
+
+    /**
+     * Set statusId
+     *
+     * @param integer $statusId
+     *
+     * @return OrdImport
+     */
+    public function setStatusId($statusId)
+    {
+        $this->statusId = $statusId;
+
+        return $this;
+    }
+
+    /**
+     * Get statusId
+     *
+     * @return integer
+     */
+    public function getStatusId()
+    {
+        return $this->statusId;
     }
 
     /**
