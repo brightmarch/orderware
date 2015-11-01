@@ -35,6 +35,10 @@ services:
         arguments: [@jms_serializer, @request_stack]
 
     # Orders
+    orderware.order_loader:
+        class: Orderware\AppBundle\Library\Orders\Loader
+        arguments: [@doctrine.orm.orderware_entity_manager]
+
     orderware.order_importer:
         class: Orderware\AppBundle\Library\Orders\Importer
         arguments: [@doctrine.orm.orderware_entity_manager, @validator]
