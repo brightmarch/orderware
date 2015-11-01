@@ -4,20 +4,16 @@ namespace Orderware\AppBundle\Library\Orders;
 
 use Doctrine\ORM\EntityManager;
 
+use \InvalidArgumentException;
+
 class Journaler
 {
 
     /** @var Doctrine\ORM\EntityManager */
     private $entityManager;
 
-    /** @var array */
-    private $ledgers = [];
-
-    /** @var array */
-    private $order = [];
-
-    /** @var array */
-    private $lines = [];
+    /** @var integer */
+    private $ordId = 0;
 
     /** @var string */
     const AUTHOR = 'order_journaler';
@@ -33,7 +29,11 @@ class Journaler
         $_conn = $this->entityManager
             ->getConnection();
 
-        // Calculate the order. Txn 1.
+        $this->ordId = (int)$ordId;
+
+        // Calculate the order. This serves two purposes:
+        // 1) It ensures the order actually exists.
+        // 2) It ensures all amounts are up to date.
         $sql = "SELECT calculate_order(?)";
 
         $calculated = $_conn->fetchColumn($sql, [
@@ -41,33 +41,10 @@ class Journaler
         ]);
 
         if (!$calculated) {
-            // Order doesn't exist, bail.
+            throw new InvalidArgumentException(sprintf("The order ID (%d) could not be found.", $this->ordId));
         }
 
-        $sql = "
-            SELECT l.ledger_id, l.ord_id,
-                l.ord_line_id, l.ledger_code,
-                l.amount
-            FROM ledger l
-            WHERE l.ord_id = ?
-            ORDER BY l.ledger_id ASC
-        ";
-
-        $sql = "
-            SELECT oh.shipping_amount,
-                oh.shipping_tax_amount
-            FROM ord_header oh
-            WHERE oh.ord_id = ?
-        ";
-
-        $sql = "
-            SELECT ol.qty_ordered, ol.qty_canceled,
-                ol.retail_amount, ol.discount_amount,
-                ol.tax_amount
-            FROM ord_line ol
-            WHERE ol.ord_id = ?
-            ORDER BY ol.ord_line_id ASC
-        ";
+        // Use the Order Loader service to get all order details.
 
         // Get all ledger records, ord header and each line.
         // Determine if ord header amounts differ than from in ledger.
