@@ -165,7 +165,7 @@ class Importer
                 ]);
 
                 foreach ($_ship->lines as $_line) {
-                    $lineNum = $_line->line_number;
+                    $lineNum = $_line->line_num;
 
                     // Ensure the line number is unique.
                     if (isset($this->lineNumbers[$lineNum])) {
