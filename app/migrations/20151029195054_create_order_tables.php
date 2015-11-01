@@ -241,25 +241,25 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("
             CREATE OR REPLACE FUNCTION lock_order(_ord_id integer, _status_id integer, _reason text) RETURNS boolean AS $$
             DECLARE
-                order RECORD;
-                status RECORD;
-                lock RECORD;
+                _order RECORD;
+                _status RECORD;
+                _lock RECORD;
             BEGIN
-                SELECT INTO order FROM ord_header oh
+                SELECT INTO _order FROM ord_header oh
                 WHERE oh.ord_id = _ord_id;
 
                 IF NOT FOUND THEN
                     RAISE EXCEPTION 'order (%) does not exist', _ord_id;
                 END IF;
 
-                SELECT INTO status FROM status s
+                SELECT INTO _status FROM status s
                 WHERE s.status_id = _status_id;
 
                 IF NOT FOUND THEN
                     RAISE EXCEPTION 'lock status (%) does not exist', _status_id;
                 END IF;
 
-                SELECT INTO lock FROM ord_lock ol
+                SELECT INTO _lock FROM ord_lock ol
                 WHERE ol.ord_id = _ord_id
                     AND ol.status_id = _status_id
                     AND ol.removed_at IS NULL;
@@ -350,7 +350,17 @@ class CreateOrderTables extends AbstractMigration
 
         $this->execute("
             CREATE OR REPLACE FUNCTION calculate_order(_ord_id integer) RETURNS boolean AS $$
+            DECLARE
+                _order RECORD;
             BEGIN
+                SELECT INTO _order oh.ord_id
+                FROM ord_header oh
+                WHERE oh.ord_id = _ord_id;
+
+                IF NOT FOUND THEN
+                    RETURN FALSE;
+                END IF;
+
                 WITH lines AS (
                     SELECT ol.ord_id,
                         SUM(ol.qty_available * ol.discount_amount) AS discount_amount,
