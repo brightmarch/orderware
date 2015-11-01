@@ -33,7 +33,7 @@
             "facility_code": null,
             "lines": [
                 {
-                    "line_number": "1",
+                    "line_num": "1",
                     "skucode": "G000001D",
                     "retail_amount": 1699,
                     "discount_amount": 0,
@@ -43,7 +43,7 @@
                     "quantity": 2
                 },
                 {
-                    "line_number": "2",
+                    "line_num": "2",
                     "skucode": "G000001L",
                     "retail_amount": 1699,
                     "discount_amount": 100,

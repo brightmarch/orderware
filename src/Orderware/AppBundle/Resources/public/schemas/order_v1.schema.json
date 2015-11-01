@@ -111,7 +111,7 @@
                         "minItems": 0,
                         "items": {
                             "properties": {
-                                "line_number": {
+                                "line_num": {
                                     "type": "string"
                                 },
                                 "skucode": {
@@ -144,7 +144,7 @@
                             },
                             "additionalProperties": false,
                             "required": [
-                                "line_number",
+                                "line_num",
                                 "skucode",
                                 "retail_amount",
                                 "discount_amount",
