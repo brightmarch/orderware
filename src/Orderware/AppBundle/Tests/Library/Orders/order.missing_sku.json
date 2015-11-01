@@ -1,0 +1,56 @@
+{
+    "division": "GROWERS",
+    "ordered_at": "2015-08-03T20:55:00Z",
+    "order_num": "GROW0000001",
+    "salesperson": "gbush",
+    "source_code": "WEB",
+    "order_type": "WEB",
+    "customer_notes": null,
+    "store_notes": null,
+    "ip_address": "168.33.11.134",
+    "shipping_amount": 799,
+    "shipping_local_tax_amount": 50,
+    "shipping_county_tax_amount": 8,
+    "shipping_state_tax_amount": 8,
+    "shipments": [
+        {
+            "shipment_method": "1DA",
+            "first_name": "Bill",
+            "middle_name": null,
+            "last_name": "Clinton",
+            "address1": "1600 Pennsylvania Ave NW",
+            "address2": null,
+            "city_name": "Washington",
+            "state_name": "District of Columbia",
+            "state_code": "DC",
+            "postal_code": "20500",
+            "country_name": "United States of America",
+            "country_code": "US",
+            "email_address": "bill.clinton@gmail.com",
+            "phone_number": "202-456-1111",
+            "notify_by": "email",
+            "notification_enabled": true,
+            "facility_code": null,
+            "lines": [
+                {
+                    "line_num": "1",
+                    "skucode": "~",
+                    "retail_amount": 1699,
+                    "discount_amount": 0,
+                    "local_tax_amount": 106,
+                    "county_tax_amount": 17,
+                    "state_tax_amount": 17,
+                    "quantity": 2
+                }
+            ]
+        }
+    ],
+    "payments": [
+        {
+            "payment_method": "stripe",
+            "amount": 4543,
+            "transaction_code": "ch_6kWpby7JOucf1O",
+            "currency": "USD"
+        }
+    ]
+}
