@@ -4,4 +4,4 @@ Orderware\AppBundle\Entity\OrdImport:
         updatedBy: test_runner
         division: @division
         statusId: 180
-        orderNum: GROW00000001
+        orderNum: GROW0000001
