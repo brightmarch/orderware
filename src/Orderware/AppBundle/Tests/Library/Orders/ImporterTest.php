@@ -24,6 +24,7 @@ class ImporterTest extends TestCase
     public function testOrderDatesAreCalculatedCorrectly()
     {
         $orderBody = file_get_contents(__DIR__ . '/order.no_lines.json');
+        $orderJson = json_decode($orderBody);
 
         // These come from the sample JSON.
         $orderedAt = '2015-08-03 02:55:00';
@@ -36,26 +37,12 @@ class ImporterTest extends TestCase
             ->get('orderware.order_importer')
             ->import($import);
 
-        $order = $this->loadOrder($import->getOrdId());
+        $order = $this->getContainer()
+            ->get('orderware.order_loader')
+            ->load($orderJson->division, $orderJson->order_num);
 
         $this->assertEquals($orderedAt, $order['ordered_at']);
         $this->assertEquals($orderDate, $order['order_date']);
-    }
-
-    private function loadOrder($ordId)
-    {
-        $sql = "
-            SELECT oh.* FROM ord_header oh
-            WHERE oh.ord_id = ?
-        ";
-
-        $order = $this->getContainer()
-            ->get('doctrine')
-            ->getManager('orderware')
-            ->getConnection()
-            ->fetchAssoc($sql, [$ordId]);
-
-        return $order;
     }
 
 }
