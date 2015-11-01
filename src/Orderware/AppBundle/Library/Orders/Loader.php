@@ -33,7 +33,15 @@ class Loader
 
         // Header
         $sql = "
-            SELECT oh.* FROM ord_header oh
+            SELECT oh.ord_id AS order_id, oh.order_num, oh.division, oh.created_at,
+                oh.updated_at, oh.created_by, oh.updated_by, oh.status_id,
+                s.status_code, oh.ordered_at, oh.order_date, oh.source_code,
+                oh.order_type, oh.currency, oh.time_zone, oh.line_amount,
+                oh.line_tax_amount, oh.shipping_amount, oh.shipping_tax_amount,
+                oh.discount_amount, oh.order_amount, oh.salesperson, oh.ip_address,
+                oh.customer_notes, oh.store_notes
+            FROM ord_header oh
+            JOIN status s ON oh.status_id = s.status_id
             WHERE oh.ord_id = ?
         ";
 
@@ -43,12 +51,19 @@ class Loader
 
         // Shipments
         $sql = "
-            SELECT os.* FROM ord_ship os
+            SELECT os.ord_ship_id AS shipment_id, os.created_at, os.updated_at,
+                os.created_by, os.updated_by, os.ship_method, os.first_name,
+                os.middle_name, os.last_name, os.full_name, os.address1,
+                os.address2, os.city_name, os.state_name, os.state_code,
+                os.postal_code, os.country_name, os.country_code, os.company_name,
+                os.email_address, os.phone_number, os.notify_by, os.notification_enabled,
+                os.facility_code
+            FROM ord_ship os
             WHERE os.ord_id = ?
             ORDER BY os.ord_ship_id ASC
         ";
 
-        $this->order['shipments'] = $_conn->fetchArray($sql, [
+        $this->order['shipments'] = $_conn->fetchAll($sql, [
             $this->ordId
         ]);
 
@@ -59,7 +74,7 @@ class Loader
             ORDER BY ol.ord_line_id ASC
         ";
 
-        $this->order['lines'] = $_conn->fetchArray($sql, [
+        $this->order['lines'] = $_conn->fetchAll($sql, [
             $this->ordId
         ]);
 
