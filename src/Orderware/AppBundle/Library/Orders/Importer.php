@@ -219,9 +219,6 @@ class Importer
                 ]);
             }
 
-            // Calculate the line and header order amounts so the order can be ledgered.
-            #$_conn->executeQuery("SELECT calculate_order(?)", [$ordId]);
-
             $_conn->commit();
         } catch (Exception $e) {
             $_conn->rollback();
