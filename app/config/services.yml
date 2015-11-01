@@ -43,6 +43,10 @@ services:
         class: Orderware\AppBundle\Library\Orders\Importer
         arguments: [@doctrine.orm.orderware_entity_manager, @validator]
 
+    orderware.order_recorder:
+        class: Orderware\AppBundle\Library\Orders\Recorder
+        arguments: [@doctrine.orm.orderware_entity_manager, @orderware.order_loader]
+
     # Feeds
     orderware.feed_importer:
         class: Orderware\AppBundle\Library\Feeds\FeedImporter

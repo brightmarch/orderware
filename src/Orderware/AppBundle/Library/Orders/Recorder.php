@@ -2,6 +2,8 @@
 
 namespace Orderware\AppBundle\Library\Orders;
 
+use Orderware\AppBundle\Library\Orders\Loader;
+
 use Doctrine\ORM\EntityManager;
 
 use \InvalidArgumentException;
@@ -12,15 +14,19 @@ class Recorder
     /** @var Doctrine\ORM\EntityManager */
     private $entityManager;
 
+    /** @var Orderware\AppBundle\Library\Orders\Loader */
+    private $loader;
+
     /** @var integer */
     private $ordId = 0;
 
     /** @var string */
     const AUTHOR = 'order_recorder';
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, Loader $loader)
     {
         $this->entityManager = $entityManager;
+        $this->loader = $loader;
     }
 
     public function ledger($ordId)
