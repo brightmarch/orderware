@@ -6,8 +6,6 @@ use Orderware\AppBundle\Entity\OrdImport;
 use Orderware\AppBundle\Library\Status;
 use Orderware\AppBundle\Library\Utils;
 
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use Doctrine\ORM\EntityManager;
 
 use \InvalidArgumentException,
@@ -20,19 +18,15 @@ class Importer
     /** @var Doctrine\ORM\EntityManager */
     private $entityManager;
 
-    /** @var Symfony\Component\Validator\Validator\ValidatorInterface */
-    private $validator;
-
     /** @var array */
     private $lineNumbers = [];
 
     /** @var string */
     const AUTHOR = 'order_importer';
 
-    public function __construct(EntityManager $entityManager, ValidatorInterface $validator)
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->validator = $validator;
     }
 
     public function import(OrdImport $import)
