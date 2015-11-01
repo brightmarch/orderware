@@ -33,14 +33,41 @@ class Journaler
         $_conn = $this->entityManager
             ->getConnection();
 
-        // Ensure the order actually exists.
-
         // Calculate the order. Txn 1.
-        #$_conn->beginTransaction();
-        $sql = "SELECT calculate_order(?, ?)";
+        $sql = "SELECT calculate_order(?)";
 
-        $calculated = $_conn->fetchColumn($sql, [$ordId]);
-        #$_conn->commit();
+        $calculated = $_conn->fetchColumn($sql, [
+            $ordId
+        ]);
+
+        if (!$calculated) {
+            // Order doesn't exist, bail.
+        }
+
+        $sql = "
+            SELECT l.ledger_id, l.ord_id,
+                l.ord_line_id, l.ledger_code,
+                l.amount
+            FROM ledger l
+            WHERE l.ord_id = ?
+            ORDER BY l.ledger_id ASC
+        ";
+
+        $sql = "
+            SELECT oh.shipping_amount,
+                oh.shipping_tax_amount
+            FROM ord_header oh
+            WHERE oh.ord_id = ?
+        ";
+
+        $sql = "
+            SELECT ol.qty_ordered, ol.qty_canceled,
+                ol.retail_amount, ol.discount_amount,
+                ol.tax_amount
+            FROM ord_line ol
+            WHERE ol.ord_id = ?
+            ORDER BY ol.ord_line_id ASC
+        ";
 
         // Get all ledger records, ord header and each line.
         // Determine if ord header amounts differ than from in ledger.
