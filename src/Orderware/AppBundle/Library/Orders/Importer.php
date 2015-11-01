@@ -19,10 +19,13 @@ class Importer
 {
 
     /** @var Doctrine\ORM\EntityManager */
-    protected $entityManager;
+    private $entityManager;
 
     /** @var Symfony\Component\Validator\Validator\ValidatorInterface */
-    protected $validator;
+    private $validator;
+
+    /** @var array */
+    private $lineNumbers = [];
 
     /** @var string */
     const AUTHOR = 'order_importer';
@@ -161,7 +164,14 @@ class Importer
                 foreach ($_ship->lines as $_line) {
                     $lineNum = $_line->line_number;
 
-                    // @todo Ensure the line number is unique.
+                    // Ensure the line number is unique.
+                    if (isset($this->lineNumbers[$lineNum])) {
+                        throw new RuntimeException(sprintf("The line number (%s) is already used in this order.", $lineNum));
+                    }
+
+                    // Memoize the line numbers to avoid a
+                    // a query for each line being inserted.
+                    $this->lineNumbers[$lineNum] = true;
 
                     // Attempt to find the matching SKU.
                     $sql = "
@@ -220,6 +230,10 @@ class Importer
             }
 
             $_conn->commit();
+
+            // Only set the ord_header.ord_id value if we
+            // know for certain the order was persisted.
+            $import->setOrdId($ordId);
         } catch (Exception $e) {
             $_conn->rollback();
 
@@ -231,8 +245,7 @@ class Importer
 
         // And finally, wrap everything up so the main
         // details about this import can be referenced.
-        $import->setOrdId($ordId)
-            ->setStatusId(Status::ORDER_IMPORT_PROCESSED)
+        $import->setStatusId(Status::ORDER_IMPORT_PROCESSED)
             ->setRunTime((int)$runTime)
             ->setMemoryUsage(memory_get_peak_usage());
 
