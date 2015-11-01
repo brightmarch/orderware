@@ -10,7 +10,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use Doctrine\ORM\EntityManager;
 
-use \RuntimeException,
+use \InvalidArgumentException,
+    \RuntimeException,
     \Exception;
 
 class Importer
@@ -50,14 +51,18 @@ class Importer
         $start = microtime(true);
 
         try {
-            $json = json_decode($import->getOrderBody());
-
             // We're going to handle our own transaction here because
             // we want explicit control over locks and when entities
             // are flushed to the database. See the Feeds\AbstractProcessor
             // class for more details on this.
             $_conn = $_em->getConnection();
             $_conn->beginTransaction();
+
+            $json = json_decode($import->getOrderBody());
+
+            if (!$json) {
+                throw new InvalidArgumentException("The order JSON failed to parse correctly.");
+            }
 
             // The order number is always uppercased.
             $orderNum = strtoupper($json->order_num);
