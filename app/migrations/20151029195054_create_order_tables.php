@@ -336,8 +336,8 @@ class CreateOrderTables extends AbstractMigration
             BEGIN
                 SELECT INTO _ord_id oh.ord_id
                 FROM ord_header oh
-                WHERE oh.division = _division
-                    AND oh.order_num = _order_num;
+                WHERE oh.division = UPPER(_division)
+                    AND oh.order_num = UPPER(_order_num);
 
                 IF FOUND THEN
                     RETURN _ord_id;
