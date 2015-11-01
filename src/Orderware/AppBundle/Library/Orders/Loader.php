@@ -34,7 +34,7 @@ class Loader
         ]);
 
         if (0 === $this->ordId) {
-            throw new InvalidArgumentException(sprintf("The order number (%s) does not exist.", strtoupper($orderNum)));
+            throw new InvalidArgumentException(sprintf("The order number (%s) could not be found.", strtoupper($orderNum)));
         }
 
         $sql = "
