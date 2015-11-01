@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 
 use \InvalidArgumentException;
 
-class Journaler
+class Recorder
 {
 
     /** @var Doctrine\ORM\EntityManager */
@@ -16,7 +16,7 @@ class Journaler
     private $ordId = 0;
 
     /** @var string */
-    const AUTHOR = 'order_journaler';
+    const AUTHOR = 'order_recorder';
 
     public function __construct(EntityManager $entityManager)
     {
