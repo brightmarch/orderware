@@ -36,18 +36,25 @@ class Utils
     /**
      * Creates an ISO timestamp in YYYY-MM-DD HH:MM:SS format.
      *
-     * @param DateTime $date
+     * @param mixed $date
      * @return string
      */
-    public static function dbDate(DateTime $date = null)
+    public static function dbDate($date = null)
     {
+        $time = false;
         $formatStr = 'Y-m-d H:i:s';
 
         if ($date instanceof DateTime) {
             return $date->format($formatStr);
+        } elseif (!empty($date)) {
+            $time = strtotime($date);
         }
 
-        return date($formatStr);
+        if (!$time) {
+            $time = time();
+        }
+
+        return date($formatStr, $time);
     }
 
     /**
