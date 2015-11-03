@@ -1,0 +1,100 @@
+Orderware\AppBundle\Entity\Item:
+    standard_item:
+        createdBy: test_runner
+        updatedBy: test_runner
+        division: @division
+        statusId: 600
+        itemNum: S00001
+        displayName: Coffee Roast
+        weight: 16.00
+        length: 12.00
+        width: 4.00
+        depth: 4.00
+        isShipAlone: false
+        isTaxable: true
+        isVirtual: false
+        trackInventory: true
+
+    ship_alone_item:
+        createdBy: test_runner
+        updatedBy: test_runner
+        division: @division
+        statusId: 600
+        itemNum: SA00001
+        displayName: Chemex
+        weight: 30.00
+        length: 8.5
+        width: 5.125
+        depth: 5.125
+        isShipAlone: true
+        isTaxable: true
+        isVirtual: false
+        trackInventory: true
+
+    egift_card_item:
+        createdBy: test_runner
+        updatedBy: test_runner
+        division: @division
+        statusId: 600
+        itemNum: EGC50
+        displayName: Electronic Gift Card
+        weight: 0
+        length: 0
+        width: 0
+        depth: 0
+        isShipAlone: false
+        isTaxable: true
+        isVirtual: true
+        trackInventory: true
+
+    
+Orderware\AppBundle\Entity\ItemSku:
+    standard_sku1:
+        createdBy: test_runner
+        updatedBy: test_runner
+        division: @division
+        item: @standard_item
+        statusId: 600
+        skucode: S00001A
+        barcode: S00001A
+        costPrice: 587
+        retailPrice: 1299
+        pickDescription: LIGHT COFFEE ROAST
+
+    standard_sku2:
+        createdBy: test_runner
+        updatedBy: test_runner
+        division: @division
+        item: @standard_item
+        statusId: 600
+        skucode: S00001B
+        barcode: S00001B
+        costPrice: 587
+        retailPrice: 1299
+        pickDescription: DARK COFFEE ROAST
+
+    ship_alone_sku:
+        createdBy: test_runner
+        updatedBy: test_runner
+        division: @division
+        statusId: 600
+        item: @ship_alone_item
+        statusId: 600
+        skucode: SA00001
+        barcode: SA00001
+        costPrice: 1393
+        retailPrice: 4350
+        pickDescription: SIX CUP CLASSIC CHEMEX
+
+    egift_card_sku:
+        createdBy: test_runner
+        updatedBy: test_runner
+        division: @division
+        statusId: 600
+        item: @egift_card_item
+        statusId: 600
+        skucode: EGC50
+        barcode: EGC50
+        costPrice: 0
+        retailPrice: 5000
+        pickDescription: ELECTRONIC GIFT CARD $50
