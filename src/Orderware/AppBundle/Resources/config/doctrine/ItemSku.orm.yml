@@ -50,6 +50,7 @@ Orderware\AppBundle\Entity\ItemSku:
                 referencedColumnName: division
         item:
             targetEntity: Item
+            inversedBy: skus
             joinColumn:
                 name: item_id
                 referencedColumnName: item_id
