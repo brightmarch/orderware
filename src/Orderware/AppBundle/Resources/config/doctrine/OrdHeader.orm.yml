@@ -1,0 +1,140 @@
+Orderware\AppBundle\Entity\OrdHeader:
+    type: entity
+    table: ord_header
+    id:
+        ordId:
+            column: ord_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: ord_header_ord_id_seq
+                allocationSize: 1
+                initialValue: 1 
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: text
+        updatedBy:
+            column: updated_by
+            type: text
+        statusId:
+            column: status_id
+            type: integer
+        orderedAt:
+            column: ordered_at
+            type: datetime
+        orderDate:
+            column: order_date
+            type: date
+        sourceCode:
+            column: source_code
+            type: text
+        orderType:
+            column: order_type
+            type: text
+        orderNum:
+            column: order_num
+            type: text
+        currency:
+            column: currency
+            type: text
+        timeZone:
+            column: timeZone
+            type: text
+        lineAmount:
+            column: line_amount
+            type: integer
+        lineTaxAmount:
+            column: line_tax_amount
+            type: integer
+        lineLocalTaxAmount:
+            column: line_local_tax_amount
+            type: integer
+        lineCountyTaxAmount:
+            column: line_county_tax_amount
+            type: integer
+        lineStateTaxAmount:
+            column: line_state_tax_amount
+            type: integer
+        shippingAmount:
+            column: shipping_amount
+            type: integer
+        shippingTaxAmount:
+            column: shipping_tax_amount
+            type: integer
+        shippingLocalTaxAmount:
+            column: shipping_local_tax_amount
+            type: integer
+        shippingCountyTaxAmount:
+            column: shipping_county_tax_amount
+            type: integer
+        shippingStateTaxAmount:
+            column: shipping_state_tax_amount
+            type: integer
+        discountAmount:
+            column: discount_amount
+            type: integer
+        orderAmount:
+            column: order_amount
+            type: integer
+        isVirtual:
+            column: is_virtual
+            type: boolean
+        salesperson:
+            column: salesperson
+            type: text
+            nullable: true
+        ipAddress:
+            column: ip_address
+            type: text
+            nullable: true
+        customerNotes:
+            column: customer_notes
+            type: text
+            nullable: true
+        storeNotes:
+            column: store_notes
+            type: text
+            nullable: true
+    manyToOne:
+        division:
+            targetEntity: Division
+            joinColumn:
+                name: division
+                referencedColumnName: division
+    oneToMany:
+        ledgers:
+            targetEntity: Ledger
+            mappedBy: order
+            orderBy:
+                ledgerId: ASC
+        lines:
+            targetEntity: OrdLine
+            mappedBy: order
+            orderBy:
+                lineNum: ASC
+        locks:
+            targetEntity: OrdLock
+            mappedBy: order
+            orderBy:
+                ordLockId: ASC
+        payments:
+            targetEntity: OrdPay
+            mappedBy: order
+            orderBy:
+                ordPayId: ASC
+        shipments:
+            targetEntity: OrdShipment
+            mappedBy: order
+            orderBy:
+                groupNumber: ASC
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]

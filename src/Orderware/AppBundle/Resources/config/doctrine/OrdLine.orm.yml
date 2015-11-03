@@ -1,0 +1,125 @@
+Orderware\AppBundle\Entity\OrdLine:
+    type: entity
+    table: ord_line
+    id:
+        ordLineId:
+            column: ord_line_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: ord_line_ord_line_id_seq
+                allocationSize: 1
+                initialValue: 1
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: text
+        updatedBy:
+            column: updated_by
+            type: text
+        statusId:
+            column: status_id
+            type: integer
+        lineNum:
+            column: line_num
+            type: text
+        itemNum:
+            column: item_num
+            type: text
+        itemName:
+            column: item_name
+            type: text
+        skucode:
+            column: skucode
+            type: text
+        pickDescription:
+            column: pick_description
+            type: text
+        retailAmount:
+            column: retail_amount
+            type: integer
+        discountAmount:
+            column: discount_amount
+            type: integer
+        taxAmount:
+            column: tax_amount
+            type: integer
+        localTaxAmount:
+            column: local_tax_amount
+            type: integer
+        countyTaxAmount:
+            column: county_tax_amount
+            type: integer
+        stateTaxAmount:
+            column: state_tax_amount
+            type: integer
+        qtyOrdered:
+            column: qty_ordered
+            type: integer
+        qtyAvailable:
+            column: qty_available
+            type: integer
+        qtyCanceled:
+            column: qty_canceled
+            type: integer
+        qtyBackordered:
+            column: qty_backordered
+            type: integer
+        qtyAllocated:
+            column: qty_allocated
+            type: integer
+        qtyReserved:
+            column: qty_reserved
+            type: integer
+        qtyPicked:
+            column: qty_picked
+            type: integer
+        qtyShipped:
+            column: qty_shipped
+            type: integer
+        qtyReturned:
+            column: qty_returned
+            type: integer
+    manyToOne:
+        division:
+            targetEntity: Division
+            joinColumn:
+                name: division
+                referencedColumnName: division
+        order:
+            targetEntity: OrdHeader
+            inversedBy: lines
+            joinColumn:
+                name: ord_id
+                referencedColumnName: ord_id
+        shipment:
+            targetEntity: OrdShip
+            inversedBy: lines
+            joinColumn:
+                name: ord_ship_id
+                referencedColumnName: ord_ship_id
+        item:
+            targetEntity: Item
+            joinColumn:
+                name: item_id
+                referencedColumnName: item_id
+        sku:
+            targetEntity: ItemSku
+            joinColumn:
+                name: sku_id
+                referencedColumnName: sku_id
+        facility:
+            targetEntity: Facility
+            joinColumn:
+                name: facility_id
+                referencedColumnName: facility_id
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]

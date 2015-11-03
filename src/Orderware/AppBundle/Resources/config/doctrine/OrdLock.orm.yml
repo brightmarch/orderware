@@ -1,0 +1,47 @@
+Orderware\AppBundle\Entity\OrdLock:
+    type: entity
+    table: ord_lock
+    id:
+        ordLockId:
+            column: ord_lock_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: ord_lock_ord_lock_id_seq
+                allocationSize: 1
+                initialValue: 1
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: text
+        updatedBy:
+            column: updated_by
+            type: text
+        statusId:
+            column: status_id
+            type: integer
+        lockReason:
+            column: lock_reason
+            type: text
+            nullable: true
+        removedAt:
+            column: removed_at
+            type: datetime
+            nullable: true
+    manyToOne:
+        order:
+            targetEntity: OrdHeader
+            inversedBy: locks
+            joinColumn:
+                name: ord_id
+                referencedColumnName: ord_id
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]
