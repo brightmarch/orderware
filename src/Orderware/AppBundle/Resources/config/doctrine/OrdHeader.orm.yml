@@ -46,7 +46,7 @@ Orderware\AppBundle\Entity\OrdHeader:
             column: currency
             type: text
         timeZone:
-            column: timeZone
+            column: time_zone
             type: text
         lineAmount:
             column: line_amount
