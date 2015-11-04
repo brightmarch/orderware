@@ -7,6 +7,7 @@ namespace Orderware\AppBundle\Entity;
  */
 class OrdLock
 {
+
     /**
      * @var integer
      */
@@ -51,7 +52,6 @@ class OrdLock
      * @var \Orderware\AppBundle\Entity\OrdHeader
      */
     private $order;
-
 
     /**
      * Get ordLockId
@@ -254,12 +254,14 @@ class OrdLock
     {
         return $this->order;
     }
+
     /**
      * @ORM\PrePersist
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -267,7 +269,7 @@ class OrdLock
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
     }
-}
 
+}
