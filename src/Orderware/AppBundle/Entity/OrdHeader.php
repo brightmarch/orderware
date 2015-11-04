@@ -78,67 +78,67 @@ class OrdHeader
     /**
      * @var integer
      */
-    private $lineAmount;
+    private $lineAmount = 0;
 
     /**
      * @var integer
      */
-    private $lineTaxAmount;
+    private $lineTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $lineLocalTaxAmount;
+    private $lineLocalTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $lineCountyTaxAmount;
+    private $lineCountyTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $lineStateTaxAmount;
+    private $lineStateTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $shippingAmount;
+    private $shippingAmount = 0;
 
     /**
      * @var integer
      */
-    private $shippingTaxAmount;
+    private $shippingTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $shippingLocalTaxAmount;
+    private $shippingLocalTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $shippingCountyTaxAmount;
+    private $shippingCountyTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $shippingStateTaxAmount;
+    private $shippingStateTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $discountAmount;
+    private $discountAmount = 0;
 
     /**
      * @var integer
      */
-    private $orderAmount;
+    private $orderAmount = 0;
 
     /**
      * @var boolean
      */
-    private $isVirtual;
+    private $isVirtual = false;
 
     /**
      * @var string
@@ -437,7 +437,7 @@ class OrdHeader
      */
     public function setOrderNum($orderNum)
     {
-        $this->orderNum = $orderNum;
+        $this->orderNum = strtoupper($orderNum);
 
         return $this;
     }
@@ -461,7 +461,7 @@ class OrdHeader
      */
     public function setCurrency($currency)
     {
-        $this->currency = $currency;
+        $this->currency = strtoupper($currency);
 
         return $this;
     }
