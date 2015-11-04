@@ -2,6 +2,8 @@
 
 namespace Orderware\AppBundle\Entity;
 
+use Orderware\AppBundle\Library\Status;
+
 /**
  * Ledger
  */
@@ -218,7 +220,7 @@ class Ledger
      */
     public function setLedgerCode($ledgerCode)
     {
-        $this->ledgerCode = $ledgerCode;
+        $this->ledgerCode = strtoupper($ledgerCode);
 
         return $this;
     }
@@ -314,7 +316,7 @@ class Ledger
      */
     public function setAmount($amount)
     {
-        $this->amount = $amount;
+        $this->amount = (int)$amount;
 
         return $this;
     }
@@ -400,12 +402,14 @@ class Ledger
     {
         return $this->line;
     }
+
     /**
      * @ORM\PrePersist
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -413,7 +417,7 @@ class Ledger
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
     }
-}
 
+}
