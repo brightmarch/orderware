@@ -7,6 +7,7 @@ namespace Orderware\AppBundle\Entity;
  */
 class OrdLine
 {
+
     /**
      * @var integer
      */
@@ -65,77 +66,77 @@ class OrdLine
     /**
      * @var integer
      */
-    private $retailAmount;
+    private $retailAmount = 0;
 
     /**
      * @var integer
      */
-    private $discountAmount;
+    private $discountAmount = 0;
 
     /**
      * @var integer
      */
-    private $taxAmount;
+    private $taxAmount = 0;
 
     /**
      * @var integer
      */
-    private $localTaxAmount;
+    private $localTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $countyTaxAmount;
+    private $countyTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $stateTaxAmount;
+    private $stateTaxAmount = 0;
 
     /**
      * @var integer
      */
-    private $qtyOrdered;
+    private $qtyOrdered = 0;
 
     /**
      * @var integer
      */
-    private $qtyAvailable;
+    private $qtyAvailable = 0;
 
     /**
      * @var integer
      */
-    private $qtyCanceled;
+    private $qtyCanceled = 0;
 
     /**
      * @var integer
      */
-    private $qtyBackordered;
+    private $qtyBackordered = 0;
 
     /**
      * @var integer
      */
-    private $qtyAllocated;
+    private $qtyAllocated = 0;
 
     /**
      * @var integer
      */
-    private $qtyReserved;
+    private $qtyReserved = 0;
 
     /**
      * @var integer
      */
-    private $qtyPicked;
+    private $qtyPicked = 0;
 
     /**
      * @var integer
      */
-    private $qtyShipped;
+    private $qtyShipped = 0;
 
     /**
      * @var integer
      */
-    private $qtyReturned;
+    private $qtyReturned = 0;
 
     /**
      * @var \Orderware\AppBundle\Entity\Division
@@ -166,7 +167,6 @@ class OrdLine
      * @var \Orderware\AppBundle\Entity\Facility
      */
     private $facility;
-
 
     /**
      * Get ordLineId
@@ -403,7 +403,7 @@ class OrdLine
      */
     public function setPickDescription($pickDescription)
     {
-        $this->pickDescription = $pickDescription;
+        $this->pickDescription = strtoupper($pickDescription);
 
         return $this;
     }
@@ -427,7 +427,7 @@ class OrdLine
      */
     public function setRetailAmount($retailAmount)
     {
-        $this->retailAmount = $retailAmount;
+        $this->retailAmount = (int)$retailAmount;
 
         return $this;
     }
@@ -451,7 +451,7 @@ class OrdLine
      */
     public function setDiscountAmount($discountAmount)
     {
-        $this->discountAmount = $discountAmount;
+        $this->discountAmount = (int)$discountAmount;
 
         return $this;
     }
@@ -475,7 +475,7 @@ class OrdLine
      */
     public function setTaxAmount($taxAmount)
     {
-        $this->taxAmount = $taxAmount;
+        $this->taxAmount = (int)$taxAmount;
 
         return $this;
     }
@@ -499,7 +499,7 @@ class OrdLine
      */
     public function setLocalTaxAmount($localTaxAmount)
     {
-        $this->localTaxAmount = $localTaxAmount;
+        $this->localTaxAmount = (int)$localTaxAmount;
 
         return $this;
     }
@@ -523,7 +523,7 @@ class OrdLine
      */
     public function setCountyTaxAmount($countyTaxAmount)
     {
-        $this->countyTaxAmount = $countyTaxAmount;
+        $this->countyTaxAmount = (int)$countyTaxAmount;
 
         return $this;
     }
@@ -547,7 +547,7 @@ class OrdLine
      */
     public function setStateTaxAmount($stateTaxAmount)
     {
-        $this->stateTaxAmount = $stateTaxAmount;
+        $this->stateTaxAmount = (int)$stateTaxAmount;
 
         return $this;
     }
@@ -571,7 +571,7 @@ class OrdLine
      */
     public function setQtyOrdered($qtyOrdered)
     {
-        $this->qtyOrdered = $qtyOrdered;
+        $this->qtyOrdered = (int)$qtyOrdered;
 
         return $this;
     }
@@ -595,7 +595,7 @@ class OrdLine
      */
     public function setQtyAvailable($qtyAvailable)
     {
-        $this->qtyAvailable = $qtyAvailable;
+        $this->qtyAvailable = (int)$qtyAvailable;
 
         return $this;
     }
@@ -619,7 +619,7 @@ class OrdLine
      */
     public function setQtyCanceled($qtyCanceled)
     {
-        $this->qtyCanceled = $qtyCanceled;
+        $this->qtyCanceled = (int)$qtyCanceled;
 
         return $this;
     }
@@ -643,7 +643,7 @@ class OrdLine
      */
     public function setQtyBackordered($qtyBackordered)
     {
-        $this->qtyBackordered = $qtyBackordered;
+        $this->qtyBackordered = (int)$qtyBackordered;
 
         return $this;
     }
@@ -667,7 +667,7 @@ class OrdLine
      */
     public function setQtyAllocated($qtyAllocated)
     {
-        $this->qtyAllocated = $qtyAllocated;
+        $this->qtyAllocated = (int)$qtyAllocated;
 
         return $this;
     }
@@ -691,7 +691,7 @@ class OrdLine
      */
     public function setQtyReserved($qtyReserved)
     {
-        $this->qtyReserved = $qtyReserved;
+        $this->qtyReserved = (int)$qtyReserved;
 
         return $this;
     }
@@ -715,7 +715,7 @@ class OrdLine
      */
     public function setQtyPicked($qtyPicked)
     {
-        $this->qtyPicked = $qtyPicked;
+        $this->qtyPicked = (int)$qtyPicked;
 
         return $this;
     }
@@ -739,7 +739,7 @@ class OrdLine
      */
     public function setQtyShipped($qtyShipped)
     {
-        $this->qtyShipped = $qtyShipped;
+        $this->qtyShipped = (int)$qtyShipped;
 
         return $this;
     }
@@ -763,7 +763,7 @@ class OrdLine
      */
     public function setQtyReturned($qtyReturned)
     {
-        $this->qtyReturned = $qtyReturned;
+        $this->qtyReturned = (int)$qtyReturned;
 
         return $this;
     }
@@ -921,12 +921,14 @@ class OrdLine
     {
         return $this->facility;
     }
+
     /**
      * @ORM\PrePersist
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -934,7 +936,7 @@ class OrdLine
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
     }
-}
 
+}
