@@ -7,6 +7,7 @@ namespace Orderware\AppBundle\Entity;
  */
 class OrdPay
 {
+
     /**
      * @var integer
      */
@@ -66,7 +67,6 @@ class OrdPay
      * @var \Orderware\AppBundle\Entity\OrdHeader
      */
     private $order;
-
 
     /**
      * Get ordPayId
@@ -183,7 +183,7 @@ class OrdPay
      */
     public function setPayMethod($payMethod)
     {
-        $this->payMethod = $payMethod;
+        $this->payMethod = strtoupper($payMethod);
 
         return $this;
     }
@@ -207,7 +207,7 @@ class OrdPay
      */
     public function setPayAmount($payAmount)
     {
-        $this->payAmount = $payAmount;
+        $this->payAmount = (int)$payAmount;
 
         return $this;
     }
@@ -231,7 +231,7 @@ class OrdPay
      */
     public function setSettledAmount($settledAmount)
     {
-        $this->settledAmount = $settledAmount;
+        $this->settledAmount = (int)$settledAmount;
 
         return $this;
     }
@@ -279,7 +279,7 @@ class OrdPay
      */
     public function setCurrency($currency)
     {
-        $this->currency = $currency;
+        $this->currency = strtoupper($currency);
 
         return $this;
     }
@@ -341,12 +341,14 @@ class OrdPay
     {
         return $this->order;
     }
+
     /**
      * @ORM\PrePersist
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -354,7 +356,7 @@ class OrdPay
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
     }
-}
 
+}
