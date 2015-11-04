@@ -131,7 +131,7 @@ Orderware\AppBundle\Entity\OrdHeader:
             orderBy:
                 ordPayId: ASC
         shipments:
-            targetEntity: OrdShipment
+            targetEntity: OrdShip
             mappedBy: order
             orderBy:
                 groupNumber: ASC

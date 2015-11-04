@@ -2,11 +2,14 @@
 
 namespace Orderware\AppBundle\Entity;
 
+use Orderware\AppBundle\Library\Status;
+
 /**
  * OrdHeader
  */
 class OrdHeader
 {
+
     /**
      * @var integer
      */
@@ -35,7 +38,7 @@ class OrdHeader
     /**
      * @var integer
      */
-    private $statusId;
+    private $statusId = Status::ORDER_OPEN;
 
     /**
      * @var \DateTime
@@ -1044,11 +1047,11 @@ class OrdHeader
     /**
      * Add shipment
      *
-     * @param \Orderware\AppBundle\Entity\OrdShipment $shipment
+     * @param \Orderware\AppBundle\Entity\OrdShip $shipment
      *
      * @return OrdHeader
      */
-    public function addShipment(\Orderware\AppBundle\Entity\OrdShipment $shipment)
+    public function addShipment(\Orderware\AppBundle\Entity\OrdShip $shipment)
     {
         $this->shipments[] = $shipment;
 
@@ -1058,9 +1061,9 @@ class OrdHeader
     /**
      * Remove shipment
      *
-     * @param \Orderware\AppBundle\Entity\OrdShipment $shipment
+     * @param \Orderware\AppBundle\Entity\OrdShip $shipment
      */
-    public function removeShipment(\Orderware\AppBundle\Entity\OrdShipment $shipment)
+    public function removeShipment(\Orderware\AppBundle\Entity\OrdShip $shipment)
     {
         $this->shipments->removeElement($shipment);
     }
@@ -1098,12 +1101,14 @@ class OrdHeader
     {
         return $this->division;
     }
+
     /**
      * @ORM\PrePersist
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -1111,7 +1116,7 @@ class OrdHeader
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
     }
-}
 
+}
