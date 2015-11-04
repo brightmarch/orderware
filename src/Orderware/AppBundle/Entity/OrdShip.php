@@ -7,6 +7,7 @@ namespace Orderware\AppBundle\Entity;
  */
 class OrdShip
 {
+
     /**
      * @var integer
      */
@@ -120,7 +121,7 @@ class OrdShip
     /**
      * @var boolean
      */
-    private $notificationEnabled;
+    private $notificationEnabled = true;
 
     /**
      * @var string
@@ -265,7 +266,7 @@ class OrdShip
      */
     public function setShipMethod($shipMethod)
     {
-        $this->shipMethod = $shipMethod;
+        $this->shipMethod = strtoupper($shipMethod);
 
         return $this;
     }
@@ -481,7 +482,7 @@ class OrdShip
      */
     public function setStateCode($stateCode)
     {
-        $this->stateCode = $stateCode;
+        $this->stateCode = strtoupper($stateCode);
 
         return $this;
     }
@@ -553,7 +554,7 @@ class OrdShip
      */
     public function setCountryCode($countryCode)
     {
-        $this->countryCode = $countryCode;
+        $this->countryCode = strtoupper($countryCode);
 
         return $this;
     }
@@ -601,7 +602,7 @@ class OrdShip
      */
     public function setEmailAddress($emailAddress)
     {
-        $this->emailAddress = $emailAddress;
+        $this->emailAddress = strtolower($emailAddress);
 
         return $this;
     }
@@ -649,7 +650,7 @@ class OrdShip
      */
     public function setNotifyBy($notifyBy)
     {
-        $this->notifyBy = $notifyBy;
+        $this->notifyBy = strtolower($notifyBy);
 
         return $this;
     }
@@ -673,7 +674,7 @@ class OrdShip
      */
     public function setNotificationEnabled($notificationEnabled)
     {
-        $this->notificationEnabled = $notificationEnabled;
+        $this->notificationEnabled = (bool)$notificationEnabled;
 
         return $this;
     }
@@ -697,7 +698,7 @@ class OrdShip
      */
     public function setFacilityCode($facilityCode)
     {
-        $this->facilityCode = $facilityCode;
+        $this->facilityCode = strtoupper($facilityCode);
 
         return $this;
     }
@@ -793,12 +794,14 @@ class OrdShip
     {
         return $this->order;
     }
+
     /**
      * @ORM\PrePersist
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -806,7 +809,17 @@ class OrdShip
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
     }
-}
 
+    /**
+     * Has facilityCode
+     *
+     * @return boolean
+     */
+    public function hasFacilityCode()
+    {
+        return !empty($this->getFacilityCode());
+    }
+
+}
