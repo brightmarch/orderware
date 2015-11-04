@@ -76,6 +76,27 @@ class CreateLedgerTables extends AbstractMigration
             BEFORE INSERT OR UPDATE ON ledger
             FOR EACH ROW EXECUTE PROCEDURE calculate_ledger_amount()
         ");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION get_ledger_amount(_ord_id integer, _ord_line_id integer, _ledger_code text) RETURNS integer AS $$
+            DECLARE
+                _amount integer;
+            BEGIN
+
+                SELECT INTO _amount COALESCE(SUM(l.amount), 0)
+                FROM ledger l
+                WHERE l.ord_id = _ord_id
+                    AND (
+                        CASE WHEN _ord_line_id IS NULL
+                        THEN l.ord_line_id IS NULL
+                        ELSE l.ord_line_id = _ord_line_id END
+                    )
+                    AND l.ledger_code = _ledger_code;
+
+                RETURN _amount;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
     }
 
     public function down()
@@ -84,6 +105,7 @@ class CreateLedgerTables extends AbstractMigration
         $this->execute("DROP TABLE IF EXISTS ledger CASCADE");
 
         $this->execute("DROP FUNCTION IF EXISTS calculate_ledger_amount()");
+        $this->execute("DROP FUNCTION IF EXISTS get_ledger_amount(_ord_id integer, _ord_line_id integer, _ledger_code text)");
     }
 
 }
