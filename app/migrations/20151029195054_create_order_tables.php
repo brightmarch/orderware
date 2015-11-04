@@ -54,24 +54,6 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("CREATE UNIQUE INDEX ord_header_division_order_num_idx ON ord_header (division, order_num)");
 
         $this->execute("
-            CREATE OR REPLACE FUNCTION calculate_ord_header_shipping_tax_amount() RETURNS TRIGGER AS $$
-            BEGIN
-                NEW.shipping_tax_amount = NEW.shipping_local_tax_amount +
-                    NEW.shipping_county_tax_amount + NEW.shipping_state_tax_amount;
-
-                RETURN NEW;
-            END;
-            $$ LANGUAGE plpgsql
-        ");
-
-        $this->execute("
-            CREATE TRIGGER calculate_ord_header_shipping_tax_amount_on_insert_on_update
-            BEFORE INSERT OR UPDATE ON ord_header
-            FOR EACH ROW EXECUTE PROCEDURE calculate_ord_header_shipping_tax_amount()
-        ");
-
-
-        $this->execute("
             CREATE TABLE ord_ship (
                 ord_ship_id serial NOT NULL,
                 created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
@@ -176,23 +158,6 @@ class CreateOrderTables extends AbstractMigration
             CREATE TRIGGER calculate_ord_line_buckets_on_insert_on_update
             BEFORE INSERT OR UPDATE ON ord_line
             FOR EACH ROW EXECUTE PROCEDURE calculate_ord_line_buckets()
-        ");
-
-        $this->execute("
-            CREATE OR REPLACE FUNCTION calculate_ord_line_tax_amount() RETURNS TRIGGER AS $$
-            BEGIN
-                NEW.tax_amount = NEW.local_tax_amount +
-                    NEW.county_tax_amount + NEW.state_tax_amount;
-
-                RETURN NEW;
-            END;
-            $$ LANGUAGE plpgsql
-        ");
-
-        $this->execute("
-            CREATE TRIGGER calculate_ord_line_tax_amount_on_insert_on_update
-            BEFORE INSERT OR UPDATE ON ord_line
-            FOR EACH ROW EXECUTE PROCEDURE calculate_ord_line_tax_amount()
         ");
 
         $this->execute("
@@ -361,6 +326,10 @@ class CreateOrderTables extends AbstractMigration
                     RETURN FALSE;
                 END IF;
 
+                UPDATE ord_line SET tax_amount = local_tax_amount +
+                    county_tax_amount + state_tax_amount
+                WHERE ord_id = _ord_id;
+
                 WITH lines AS (
                     SELECT ol.ord_id,
                         SUM(ol.qty_available * ol.discount_amount) AS discount_amount,
@@ -414,8 +383,6 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("DROP TABLE IF EXISTS ord_header CASCADE");
 
         $this->execute("DROP FUNCTION IF EXISTS calculate_ord_line_buckets()");
-        $this->execute("DROP FUNCTION IF EXISTS calculate_ord_line_tax_amount()");
-        $this->execute("DROP FUNCTION IF EXISTS calculate_ord_header_shipping_tax_amount()");
     }
 
 }
