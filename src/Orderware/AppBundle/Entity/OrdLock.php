@@ -272,4 +272,14 @@ class OrdLock
         $this->setUpdatedAt(date_create());
     }
 
+    /**
+     * Is active
+     *
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return is_null($this->getRemovedAt());
+    }
+
 }
