@@ -24,7 +24,6 @@ class ImporterTest extends TestCase
     public function testOrderDatesAreCalculatedCorrectly()
     {
         $orderBody = file_get_contents(__DIR__ . '/order.no_lines.json');
-        $orderJson = json_decode($orderBody);
 
         // These come from the sample JSON.
         $orderedAt = '2015-08-03 02:55:00';
@@ -38,11 +37,13 @@ class ImporterTest extends TestCase
             ->import($import);
 
         $order = $this->getContainer()
-            ->get('orderware.order_loader')
-            ->load($orderJson->division, $orderJson->order_num);
+            ->get('doctrine')
+            ->getManager('orderware')
+            ->getRepository('Orderware:OrdHeader')
+            ->findOneByOrdId($import->getOrdId());
 
-        $this->assertEquals($orderedAt, $order['ordered_at']);
-        $this->assertEquals($orderDate, $order['order_date']);
+        $this->assertEquals($orderedAt, Utils::dbDate($order->getOrderedAt()));
+        $this->assertEquals($orderDate, $order->getOrderDate()->format('Y-m-d'));
     }
 
     public function testOrderNumMustBeUnique()
