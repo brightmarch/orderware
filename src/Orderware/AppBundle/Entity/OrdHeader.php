@@ -509,7 +509,7 @@ class OrdHeader
      */
     public function setLineAmount($lineAmount)
     {
-        $this->lineAmount = $lineAmount;
+        $this->lineAmount = (int)$lineAmount;
 
         return $this;
     }
@@ -533,7 +533,7 @@ class OrdHeader
      */
     public function setLineTaxAmount($lineTaxAmount)
     {
-        $this->lineTaxAmount = $lineTaxAmount;
+        $this->lineTaxAmount = (int)$lineTaxAmount;
 
         return $this;
     }
@@ -557,7 +557,7 @@ class OrdHeader
      */
     public function setLineLocalTaxAmount($lineLocalTaxAmount)
     {
-        $this->lineLocalTaxAmount = $lineLocalTaxAmount;
+        $this->lineLocalTaxAmount = (int)$lineLocalTaxAmount;
 
         return $this;
     }
@@ -581,7 +581,7 @@ class OrdHeader
      */
     public function setLineCountyTaxAmount($lineCountyTaxAmount)
     {
-        $this->lineCountyTaxAmount = $lineCountyTaxAmount;
+        $this->lineCountyTaxAmount = (int)$lineCountyTaxAmount;
 
         return $this;
     }
@@ -605,7 +605,7 @@ class OrdHeader
      */
     public function setLineStateTaxAmount($lineStateTaxAmount)
     {
-        $this->lineStateTaxAmount = $lineStateTaxAmount;
+        $this->lineStateTaxAmount = (int)$lineStateTaxAmount;
 
         return $this;
     }
@@ -629,7 +629,7 @@ class OrdHeader
      */
     public function setShippingAmount($shippingAmount)
     {
-        $this->shippingAmount = $shippingAmount;
+        $this->shippingAmount = (int)$shippingAmount;
 
         return $this;
     }
@@ -653,7 +653,7 @@ class OrdHeader
      */
     public function setShippingTaxAmount($shippingTaxAmount)
     {
-        $this->shippingTaxAmount = $shippingTaxAmount;
+        $this->shippingTaxAmount = (int)$shippingTaxAmount;
 
         return $this;
     }
@@ -677,7 +677,7 @@ class OrdHeader
      */
     public function setShippingLocalTaxAmount($shippingLocalTaxAmount)
     {
-        $this->shippingLocalTaxAmount = $shippingLocalTaxAmount;
+        $this->shippingLocalTaxAmount = (int)$shippingLocalTaxAmount;
 
         return $this;
     }
@@ -701,7 +701,7 @@ class OrdHeader
      */
     public function setShippingCountyTaxAmount($shippingCountyTaxAmount)
     {
-        $this->shippingCountyTaxAmount = $shippingCountyTaxAmount;
+        $this->shippingCountyTaxAmount = (int)$shippingCountyTaxAmount;
 
         return $this;
     }
@@ -725,7 +725,7 @@ class OrdHeader
      */
     public function setShippingStateTaxAmount($shippingStateTaxAmount)
     {
-        $this->shippingStateTaxAmount = $shippingStateTaxAmount;
+        $this->shippingStateTaxAmount = (int)$shippingStateTaxAmount;
 
         return $this;
     }
@@ -749,7 +749,7 @@ class OrdHeader
      */
     public function setDiscountAmount($discountAmount)
     {
-        $this->discountAmount = $discountAmount;
+        $this->discountAmount = (int)$discountAmount;
 
         return $this;
     }
@@ -773,7 +773,7 @@ class OrdHeader
      */
     public function setOrderAmount($orderAmount)
     {
-        $this->orderAmount = $orderAmount;
+        $this->orderAmount = (int)$orderAmount;
 
         return $this;
     }
@@ -797,7 +797,7 @@ class OrdHeader
      */
     public function setIsVirtual($isVirtual)
     {
-        $this->isVirtual = $isVirtual;
+        $this->isVirtual = (float)$isVirtual;
 
         return $this;
     }
