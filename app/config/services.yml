@@ -45,7 +45,7 @@ services:
 
     orderware.order_recorder:
         class: Orderware\AppBundle\Library\Orders\Recorder
-        arguments: [@doctrine.orm.orderware_entity_manager, @orderware.order_loader]
+        arguments: [@doctrine.orm.orderware_entity_manager]
 
     # Feeds
     orderware.feed_importer:
