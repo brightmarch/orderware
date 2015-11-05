@@ -330,6 +330,10 @@ class CreateOrderTables extends AbstractMigration
                     county_tax_amount + state_tax_amount
                 WHERE ord_id = _ord_id;
 
+                UPDATE ord_header SET shipping_tax_amount = shipping_local_tax_amount +
+                    shipping_county_tax_amount + shipping_state_tax_amount
+                WHERE ord_id = _ord_id;
+
                 WITH lines AS (
                     SELECT ol.ord_id,
                         SUM(ol.qty_available * ol.discount_amount) AS discount_amount,
