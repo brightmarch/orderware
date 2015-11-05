@@ -22,6 +22,10 @@ class CreateLedgerTables extends AbstractMigration
                 ('LTA', 'Line Tax Amount', 1),
                 ('LDA', 'Line Discount Amount', -1),
 
+                ('LCA', 'Line Canceled Amount', -1),
+                ('LCTA', 'Line Canceled Tax Amount', -1),
+                ('LCDA', 'Line Canceled Discount Amount', 1),
+
                 ('OSA', 'Order Shipping Amount', 1),
                 ('OSTA', 'Order Shipping Tax Amount', 1)
         ");
@@ -40,7 +44,6 @@ class CreateLedgerTables extends AbstractMigration
                 ledger_code text NOT NULL REFERENCES ledger_code (ledger_code),
                 invoiced_at timestamp without time zone,
                 settled_at timestamp without time zone,
-                is_void boolean NOT NULL DEFAULT false,
                 amount integer NOT NULL DEFAULT 0,
                 CONSTRAINT ledger_pkey PRIMARY KEY (ledger_id)
             ) WITH (OIDS=FALSE)
@@ -54,7 +57,6 @@ class CreateLedgerTables extends AbstractMigration
         $this->execute("CREATE INDEX ledger_invoiced_at_idx ON ledger (invoiced_at)");
         $this->execute("CREATE INDEX ledger_settled_at_idx ON ledger (settled_at)");
         $this->execute("CREATE INDEX ledger_settle_date_idx ON ledger (DATE(settled_at))");
-        $this->execute("CREATE INDEX ledger_is_void_idx ON ledger (is_void)");
 
         $this->execute("
             CREATE OR REPLACE FUNCTION calculate_ledger_amount() RETURNS TRIGGER AS $$
