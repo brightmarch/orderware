@@ -110,11 +110,6 @@ Orderware\AppBundle\Entity\OrdHeader:
                 name: division
                 referencedColumnName: division
     oneToMany:
-        ledgers:
-            targetEntity: Ledger
-            mappedBy: order
-            orderBy:
-                ledgerId: ASC
         lines:
             targetEntity: OrdLine
             mappedBy: order

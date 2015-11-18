@@ -41,7 +41,7 @@ services:
 
     orderware.order_importer:
         class: Orderware\AppBundle\Library\Orders\Importer
-        arguments: [@doctrine.orm.orderware_entity_manager]
+        arguments: [@doctrine.orm.orderware_entity_manager, @validator]
 
     orderware.order_recorder:
         class: Orderware\AppBundle\Library\Orders\Recorder

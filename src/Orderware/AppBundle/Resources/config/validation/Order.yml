@@ -1,0 +1,39 @@
+Orderware\AppBundle\Entity\OrdHeader:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [division, orderNum]
+            errorPath: orderNum
+    properties:
+        createdBy:
+            - NotBlank: ~
+        updatedBy:
+            - NotBlank: ~
+        statusId:
+            - NotBlank: ~
+        orderedAt:
+            - NotBlank: ~
+            - DateTime: ~
+        orderDate:
+            - NotBlank: ~
+            - Date: ~
+        sourceCode:
+            - NotBlank: ~
+        orderType:
+            - NotBlank: ~
+        orderNum:
+            - NotBlank: ~
+            - Length:
+                max: 48
+            - Regex:
+                pattern: '/^[A-Z0-9]+$/'
+                message: "The order number must be alpha-numeric."
+        currency:
+            - NotBlank: ~
+            - Length:
+                max: 3
+        timeZone:
+            - NotBlank: ~
+        ipAddress:
+            - NotBlank: ~
+            - Length:
+                max: 42

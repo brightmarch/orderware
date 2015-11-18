@@ -165,11 +165,6 @@ class OrdHeader
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $ledgers;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
     private $lines;
 
     /**
@@ -197,7 +192,6 @@ class OrdHeader
      */
     public function __construct()
     {
-        $this->ledgers = new \Doctrine\Common\Collections\ArrayCollection();
         $this->lines = new \Doctrine\Common\Collections\ArrayCollection();
         $this->locks = new \Doctrine\Common\Collections\ArrayCollection();
         $this->payments = new \Doctrine\Common\Collections\ArrayCollection();
@@ -908,40 +902,6 @@ class OrdHeader
     public function getStoreNotes()
     {
         return $this->storeNotes;
-    }
-
-    /**
-     * Add ledger
-     *
-     * @param \Orderware\AppBundle\Entity\Ledger $ledger
-     *
-     * @return OrdHeader
-     */
-    public function addLedger(\Orderware\AppBundle\Entity\Ledger $ledger)
-    {
-        $this->ledgers[] = $ledger;
-
-        return $this;
-    }
-
-    /**
-     * Remove ledger
-     *
-     * @param \Orderware\AppBundle\Entity\Ledger $ledger
-     */
-    public function removeLedger(\Orderware\AppBundle\Entity\Ledger $ledger)
-    {
-        $this->ledgers->removeElement($ledger);
-    }
-
-    /**
-     * Get ledgers
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getLedgers()
-    {
-        return $this->ledgers;
     }
 
     /**

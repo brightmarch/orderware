@@ -3,8 +3,14 @@
 namespace Orderware\AppBundle\Library\Orders;
 
 use Orderware\AppBundle\Entity\OrdImport;
+use Orderware\AppBundle\Entity\OrdHeader;
+use Orderware\AppBundle\Entity\OrdLine;
+use Orderware\AppBundle\Entity\OrdShip;
+use Orderware\AppBundle\Entity\OrdPay;
 use Orderware\AppBundle\Library\Status;
 use Orderware\AppBundle\Library\Utils;
+
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use Doctrine\ORM\EntityManager;
 
@@ -18,20 +24,21 @@ class Importer
     /** @var Doctrine\ORM\EntityManager */
     private $entityManager;
 
-    /** @var array */
-    private $lineNumbers = [];
+    /** @var Symfony\Component\Validator\Validator\ValidatorInterface */
+    protected $validator;
 
     /** @var string */
     const AUTHOR = 'order_importer';
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, ValidatorInterface $validator)
     {
         $this->entityManager = $entityManager;
+        $this->validator = $validator;
     }
 
     public function import(OrdImport $import)
     {
-        // Alias these because they're going to be used. A lot.
+        // Alias this because it's going to be used. A lot.
         $_em = $this->entityManager;
 
         // Update the import details to begin with.
@@ -54,81 +61,41 @@ class Importer
 
             $json = json_decode($import->getOrderBody());
 
-            if (!$json) {
-                throw new InvalidArgumentException("The order JSON failed to parse correctly.");
-            }
-
-            // The order number is always uppercased.
-            $orderNum = strtoupper($json->order_num);
-
-            // The order_header.ordered_at value should always be in UTC.
-            $orderedAt = date_create($json->ordered_at);
-
-            // However, the order_header.order_date should
-            // be in the divisions's timezone so no timezone
-            // adjustments need to be made when querying for it.
+            // Adjust the order_date to be in the timezone the
+            // division is configured under. This makes querying
+            // by order date much easier.
             $division = $import->getDivision();
-
             $timeZone = timezone_open($division->getTimeZone());
+
+            $orderedAt = date_create($json->ordered_at);
             $orderDate = clone $orderedAt;
             $orderDate->setTimezone($timeZone);
-
-            $orderedAt = Utils::dbDate($orderedAt);
-            $orderDate = Utils::dbDate($orderDate);
-
-            // Alias the actual division name.
-            $currency = $division->getCurrency();
-            $division = $division->getDivision();
-
-            // Ensure the order number is unique.
-            $sql = "SELECT lookup_order(?, ?)";
-
-            $ordId = $_conn->fetchColumn($sql, [
-                $division, $orderNum
-            ]);
-
-            if ($ordId > 0) {
-                throw new RuntimeException(sprintf("The order number (%s) already exists.", $orderNum));
-            }
-
-            // Generate a new ord_id to use throughout the transaction.
-            $ordId = $_conn->fetchColumn("
-                SELECT nextval('ord_header_ord_id_seq')
-            ");
-
-            // Ensure the order number is alpha-numeric.
-            $match = preg_match('/^[A-Z0-9]+$/', $orderNum);
-
-            if (0 === $match) {
-                throw new InvalidArgumentException(sprintf("The order number (%s) must be alpha-numeric.", $orderNum));
-            }
 
             // The salesperson is the author of the entire order.
             $author = $json->salesperson;
 
-            $_conn->insert('ord_header', [
-                'ord_id' => $ordId,
-                'created_by' => $author,
-                'updated_by' => $author,
-                'division' => $division,
-                'status_id' => Status::ORDER_OPEN,
-                'ordered_at' => $orderedAt,
-                'order_date' => $orderDate,
-                'source_code' => $json->source_code,
-                'order_type' => $json->order_type,
-                'order_num' => $orderNum,
-                'currency' => $currency,
-                'time_zone' => $timeZone->getName(),
-                'salesperson' => $author,
-                'customer_notes' => $json->customer_notes,
-                'store_notes' => $json->store_notes,
-                'ip_address' => $json->ip_address,
-                'shipping_amount' => $json->shipping_amount,
-                'shipping_local_tax_amount' => $json->shipping_local_tax_amount,
-                'shipping_county_tax_amount' => $json->shipping_county_tax_amount,
-                'shipping_state_tax_amount' => $json->shipping_state_tax_amount
-            ]);
+            $order = new OrdHeader;
+            $order->setDivision($import->getDivision())
+                ->setCreatedBy($author)
+                ->setUpdatedBy($author)
+                ->setStatusId(Status::ORDER_OPEN)
+                ->setOrderedAt($orderedAt)
+                ->setOrderDate($orderDate)
+                ->setSourceCode($json->source_code)
+                ->setOrderType($json->order_type)
+                ->setOrderNum($json->order_num)
+                ->setCurrency($division->getCurrency())
+                ->setTimeZone($division->getTimeZone())
+                ->setSalesperson($author)
+                ->setCustomerNotes($json->customer_notes)
+                ->setStoreNotes($json->store_notes)
+                ->setIpAddress($json->ip_address)
+                ->setShippingAmount($json->shipping_amount)
+                ->setShippingLocalTaxAmount($json->shipping_local_tax_amount)
+                ->setShippingCountyTaxAmount($json->shipping_county_tax_amount)
+                ->setShippingStateTaxAmount($json->shipping_state_tax_amount);
 
+            /*
             foreach ($json->shipments as $_ship) {
                 $ordShipId = $_conn->fetchColumn("
                     SELECT nextval('ord_ship_ord_ship_id_seq')
@@ -225,16 +192,29 @@ class Importer
                     'currency' => $_pmt->currency
                 ]);
             }
+            */
 
-            $_conn->commit();
+            $errors = $this->validator
+                ->validate($order);
+
+dump($errors);
+
+            $order->calculate();
+
+            $_em->persist($order);
+            $_em->flush();
+
+            $_conn->rollback();
 
             // Only set the ord_header.ord_id value if we
             // know for certain the order was persisted.
-            $import->setOrdId($ordId);
+            #$import->setOrdId($order->getOrdId());
         } catch (Exception $e) {
             $_conn->rollback();
 
-            $import->setErrorMessage($e->getMessage());
+            $import->setErrorMessage(
+                $e->getMessage()
+            );
         }
 
         // Determine the runtime in milliseconds.
