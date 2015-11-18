@@ -1,0 +1,36 @@
+Orderware\AppBundle\Entity\ItemSku:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [division, skucode]
+            errorPath: skucode
+    properties:
+        item:
+            - NotNull: ~
+        createdBy:
+            - NotBlank: ~
+        updatedBy:
+            - NotBlank: ~
+        statusId:
+            - NotBlank: ~
+        skucode:
+            - NotBlank: ~
+            - Length:
+                max: 24
+        barcode:
+            - NotBlank: ~
+            - Length:
+                max: 48
+        costPrice:
+            - Type:
+                type: integer
+            - Range:
+                min: 0
+        retailPrice:
+            - Type:
+                type: integer
+            - Range:
+                min: 0
+        pickDescription:
+            - NotBlank: ~
+            - Length:
+                max: 100

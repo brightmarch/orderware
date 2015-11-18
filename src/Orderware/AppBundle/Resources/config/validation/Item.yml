@@ -1,0 +1,30 @@
+Orderware\AppBundle\Entity\Item:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [division, itemNum]
+            errorPath: itemNum
+    properties:
+        createdBy:
+            - NotBlank: ~
+        updatedBy:
+            - NotBlank: ~
+        statusId:
+            - NotBlank: ~
+        itemNum:
+            - NotBlank: ~
+            - Length:
+                max: 24
+        displayName:
+            - NotBlank: ~
+        weight:
+            - Range:
+                min: 0.0
+        length:
+            - Range:
+                min: 0.0
+        width:
+            - Range:
+                min: 0.0
+        depth:
+            - Range:
+                min: 0.0

@@ -4,6 +4,10 @@ Orderware\AppBundle\Entity\Vendor:
             fields: [division, vendorNum]
             errorPath: vendorNum
     properties:
+        createdBy:
+            - NotBlank: ~
+        updatedBy:
+            - NotBlank: ~
         vendorNum:
             - NotBlank: ~
             - Length:
