@@ -31,8 +31,8 @@ class ProductProcessorTest extends TestCase
     {
         $provider = [
             ['feed.product.json', 4, false],
-            ['feed.product_duplicates.json', 2, false],
-            ['feed.product_invalid.json', 1, true]
+            ['feed.product_invalid_schema.json', 0, true],
+            ['feed.product_invalid_vendor.json', 1, true]
         ];
 
         return $provider;
