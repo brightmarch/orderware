@@ -1,0 +1,22 @@
+Orderware\AppBundle\Entity\Vendor:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [division, vendorNum]
+            errorPath: vendorNum
+    properties:
+        vendorNum:
+            - NotBlank: ~
+            - Length:
+                max: 24
+        displayName:
+            - NotBlank: ~
+        primaryContact:
+            - NotBlank: ~
+        countryCode:
+            - Length:
+                max: 3
+        stateCode:
+            - Length:
+                max: 3
+        emailAddress:
+            - Email: ~
