@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManager;
 
 use \Exception,
+    \ReflectionClass,
     \RuntimeException;
 
 abstract class AbstractProcessor
@@ -25,17 +26,14 @@ abstract class AbstractProcessor
     /** @var Symfony\Component\Validator\Validator\ValidatorInterface */
     protected $validator;
 
+    /** @var Orderware\AppBundle\Entity\Feed */
+    protected $feed;
+
+    /** @var Orderware\AppBundle\Entity\Division */
+    protected $division;
+
     /** @var object */
     protected $feedBody;
-
-    /** @var array */
-    protected $config = [];
-
-    /** @var array */
-    protected $records = [];
-
-    /** @var string */
-    protected $division;
 
     /** @var integer */
     protected $recordCount = 0;
@@ -60,19 +58,18 @@ abstract class AbstractProcessor
      * is updated before and after processing for reporting purposes.
      *
      * @param Orderware\AppBundle\Entity\Feed $feed
-     * @param string $division
      * @return boolean
      */
     public function run(Feed $feed)
     {
+        $this->feed = $feed;
+        $this->division = $feed->getDivision();
         $this->recordCount = 0;
-
-        $this->division = $feed->getDivision()
-            ->getDivision();
 
         $feed->setUpdatedBy(self::AUTHOR)
             ->setStatusId(Status::FEED_PROCESSING)
-            ->setStartedAt(date_create());
+            ->setStartedAt(date_create())
+            ->setRecordCount($this->recordCount);
 
         $_em = $this->entityManager;
         $_em->persist($feed);
@@ -82,19 +79,22 @@ abstract class AbstractProcessor
             $_conn = $_em->getConnection();
             $_conn->beginTransaction();
 
-            // @todo Validate the JSON feed itself.
+            // Validate the JSON feed itself.
+            $this->jsonValidator->validate(
+                $feed->getFeedType(), $feed->getFeedBody()
+            );
 
             // Parse the feed body into a JSON object.
             $this->feedBody = json_decode($feed->getFeedBody());
-
-            $this->init();
             $this->process();
 
             $_conn->commit();
         } catch (Exception $e) {
             $_conn->rollback();
 
-            $feed->setErrorMessage($e->getMessage());
+            $feed->setErrorMessage(
+                $e->getMessage()
+            );
         }
 
         $feed->setStatusId(Status::FEED_PROCESSED)
@@ -117,87 +117,31 @@ abstract class AbstractProcessor
     abstract protected function process();
 
     /**
-     * Loads all records from a table for a division and converts
-     * them into an easy to look-up hash map.
-     *
-     * @param string $recordName
-     * @return AbstractProcessor
-     */
-    protected function loadRecords($recordName)
-    {
-        $config = $this->config[$recordName];
-
-        // Load all the records first.
-        $sql = sprintf("SELECT %s, %s FROM %s WHERE division = ?",
-            $config['primary_key'], $config['unique_key'], $config['table_name']);
-
-        $records = $this->entityManager
-            ->getConnection()
-            ->fetchAll($sql, [$this->division]);
-
-        // Convert them into unique_key => primary_key format.
-        $this->records[$recordName] = array_column(
-            $records, $config['primary_key'], $config['unique_key']
-        );
-
-        return $this;
-    }
-
-    /**
      * Validates an entity and persists it to the database.
      *
-     * @param string $recordName
-     * @param array $record
+     * @param object $record
      * @return mixed
      */
-    protected function saveRecord($recordName, $record)
+    protected function saveRecord($record)
     {
-        $config = $this->config[$recordName];
-
         // All records are counted, not just successful ones.
         $this->recordCount += 1;
 
         // Begin by performing the validation.
         $errors = $this->validator
-            ->validate($record, $config['constraints']);
+            ->validate($record);
 
         if ($errors->count() > 0) {
-            throw new RuntimeException(
-                sprintf("Invalid %s%s at (%s): %s", $config['record_name'], $errors[0]->getPropertyPath(), $record[$config['unique_key']], $errors[0]->getMessage())
-            );
+            $object = (new ReflectionClass($record))
+                ->getShortName();
+
+            throw new RuntimeException(sprintf("Invalid %s.%s: %s", $object, $errors[0]->getPropertyPath(), $errors[0]->getMessage()));
         }
 
-        // There are no errors, persist the record.
-        $_conn = $this->entityManager
-            ->getConnection();
+        $this->entityManager
+            ->persist($record);
 
-        if (!$record[$config['primary_key']]) {
-            // Generate a new primary key value from the sequence
-            // so we can return it so further queries can use it.
-            $identifier = $_conn->fetchColumn(
-                sprintf("SELECT nextval('%s')", $config['sequence'])
-            );
-
-            // Store the identifier with the record.
-            $record[$config['primary_key']] = $identifier;
-
-            $_conn->insert($config['table_name'], $record + [
-                'created_by' => $config['author']
-            ]);
-        } else {
-            // Cache the identifier so it can be returned.
-            $identifier = $record[$config['primary_key']];
-
-            $_conn->update($config['table_name'], $record, [
-                $config['primary_key'] => $identifier
-            ]);
-        }
-
-        // Cache the newly inserted record so that if it is sent twice in a
-        // feed, it can be looked up in the same transaction.
-        $this->records[$recordName][$record[$config['unique_key']]] = $identifier;
-
-        return $identifier;
+        return true;
     }
 
 }
