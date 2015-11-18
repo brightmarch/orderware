@@ -90,6 +90,7 @@ abstract class AbstractProcessor
 
             $_conn->commit();
         } catch (Exception $e) {
+var_dump($e->getMessage());
             $_conn->rollback();
 
             $feed->setErrorMessage(
