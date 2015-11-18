@@ -12,22 +12,27 @@ class CreateLedgerTables extends AbstractMigration
                 ledger_code text NOT NULL,
                 description text NOT NULL,
                 invert integer NOT NULL DEFAULT 1,
+                settles boolean NOT NULL DEFAULT true,
                 CONSTRAINT ledger_code_pkey PRIMARY KEY (ledger_code)
             ) WITH (OIDS=FALSE)
         ");
 
         $this->execute("
             INSERT INTO ledger_code VALUES
-                ('LA', 'Line Amount', 1),
-                ('LTA', 'Line Tax Amount', 1),
-                ('LDA', 'Line Discount Amount', -1),
+                ('LA', 'Line Amount', 1, true),
+                ('LTA', 'Line Tax Amount', 1, true),
+                ('LDA', 'Line Discount Amount', -1, true),
 
-                ('LCA', 'Line Canceled Amount', -1),
-                ('LCTA', 'Line Canceled Tax Amount', -1),
-                ('LCDA', 'Line Canceled Discount Amount', 1),
+                ('LCA', 'Line Canceled Amount', -1, false),
+                ('LCTA', 'Line Canceled Tax Amount', -1, false),
+                ('LCDA', 'Line Canceled Discount Amount', 1, false),
 
-                ('OSA', 'Order Shipping Amount', 1),
-                ('OSTA', 'Order Shipping Tax Amount', 1)
+                ('LRA', 'Line Returned Amount', -1, true),
+                ('LRTA', 'Line Returned Tax Amount', -1, true),
+                ('LRDA', 'Line Returned Discount Amount', 1, true),
+
+                ('OSA', 'Order Shipping Amount', 1, true),
+                ('OSTA', 'Order Shipping Tax Amount', 1, true)
         ");
 
         $this->execute("
@@ -59,14 +64,23 @@ class CreateLedgerTables extends AbstractMigration
         $this->execute("CREATE INDEX ledger_settle_date_idx ON ledger (DATE(settled_at))");
 
         $this->execute("
-            CREATE OR REPLACE FUNCTION calculate_ledger_amount() RETURNS TRIGGER AS $$
+            CREATE OR REPLACE FUNCTION calculate_ledger_values() RETURNS TRIGGER AS $$
             DECLARE
                 _invert integer;
+                _settles boolean;
             BEGIN
-                SELECT INTO _invert lc.invert FROM ledger_code lc
+                SELECT INTO _invert, _settles
+                    lc.invert, lc.settles
+                FROM ledger_code lc
                 WHERE lc.ledger_code = NEW.ledger_code;
 
                 NEW.amount = NEW.amount * _invert;
+
+                IF NOT _settles THEN
+                    NEW.status_id = 320;
+                    NEW.invoiced_at = LOCALTIMESTAMP(0);
+                    NEW.settled_at = LOCALTIMESTAMP(0);
+                END IF;
 
                 RETURN NEW;
             END;
@@ -74,9 +88,9 @@ class CreateLedgerTables extends AbstractMigration
         ");
 
         $this->execute("
-            CREATE TRIGGER calculate_ledger_amount_on_insert_on_update
+            CREATE TRIGGER calculate_ledger_values_on_insert_on_update
             BEFORE INSERT OR UPDATE ON ledger
-            FOR EACH ROW EXECUTE PROCEDURE calculate_ledger_amount()
+            FOR EACH ROW EXECUTE PROCEDURE calculate_ledger_values()
         ");
 
         $this->execute("
