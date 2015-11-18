@@ -21,7 +21,7 @@ class ImporterTest extends TestCase
         $this->assertEquals("The order JSON failed to parse correctly.", $import->getErrorMessage());
     }
 
-    public function testOrderDatesAreCalculatedCorrectly()
+    public function _testOrderDatesAreCalculatedCorrectly()
     {
         $orderBody = file_get_contents(__DIR__ . '/order.no_lines.json');
 
@@ -46,7 +46,7 @@ class ImporterTest extends TestCase
         $this->assertEquals($orderDate, $order->getOrderDate()->format('Y-m-d'));
     }
 
-    public function testOrderNumMustBeUnique()
+    public function _testOrderNumMustBeUnique()
     {
         $orderBody = file_get_contents(__DIR__ . '/order.no_lines.json');
         
@@ -67,7 +67,7 @@ class ImporterTest extends TestCase
         $this->assertEquals("The order number (GROW0000001) already exists.", $import->getErrorMessage());
     }
 
-    public function testOrderNumMustBeAlphaNumeric()
+    public function _testOrderNumMustBeAlphaNumeric()
     {
         $orderBody = file_get_contents(__DIR__ . '/order.utf8_order_num.json');
 
@@ -85,10 +85,9 @@ class ImporterTest extends TestCase
     public function _testLineNumbersMustBeUnique()
     {
         $orderBody = file_get_contents(__DIR__ . '/order.duplicate_line_num.json');
-
     }
 
-    public function testSkuMustExist()
+    public function _testSkuMustExist()
     {
         $orderBody = file_get_contents(__DIR__ . '/order.missing_sku.json');
 
