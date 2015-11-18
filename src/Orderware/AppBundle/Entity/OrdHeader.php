@@ -2,6 +2,8 @@
 
 namespace Orderware\AppBundle\Entity;
 
+use Orderware\AppBundle\Entity\OrdLine;
+use Orderware\AppBundle\Entity\OrdLock;
 use Orderware\AppBundle\Library\Status;
 
 /**
@@ -1117,6 +1119,108 @@ class OrdHeader
     public function onUpdate()
     {
         $this->setUpdatedAt(date_create());
+    }
+
+    /**
+     * Get activeLocks
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getActiveLocks()
+    {
+        $filter = function(OrdLock $lock) {
+            return $lock->isActive();
+        };
+
+        return $this->getLocks()
+            ->filter($filter);
+    }
+
+    /**
+     * Has uniqueLineNumbers
+     *
+     * @return boolean
+     */
+    public function hasUniqueLineNumbers()
+    {
+        $lineNumbers = array_map(function(OrdLine $line) {
+            return $line->getLineNum();
+        }, $this->getLines()->toArray());
+
+        return (
+            count($lineNumbers) === count(array_unique($lineNumbers))
+        );
+    }
+
+    /**
+     * Is locked
+     *
+     * @return boolean
+     */
+    public function isLocked()
+    {
+        return ($this->getActiveLocks()->count() > 0);
+    }
+
+    /**
+     * Calculate
+     *
+     * @return OrdHeader
+     */
+    public function calculate()
+    {
+        // Line tax, total, and discount amounts.
+        $lineAmount = 0;
+        $discountAmount = 0;
+        $orderAmount = 0;
+        $lineTaxAmount = 0;
+        $lineLocalTaxAmount = 0;
+        $lineCountyTaxAmount = 0;
+        $lineStateTaxAmount = 0;
+
+        foreach ($this->getLines() as $line) {
+            // Perform the latest calculations on the line to
+            // ensure all values are current.
+            $line->calculate();
+
+            $avail = $line->getQtyAvailable();
+
+            // Line amounts.
+            $lineAmount += ($line->getRetailAmount() * $avail);
+            $discountAmount += ($line->getDiscountAmount() * $avail);
+
+            // Line tax amounts.
+            $lineTaxAmount += ($line->getTaxAmount() * $avail);
+            $lineLocalTaxAmount += ($line->getLocalTaxAmount() * $avail);
+            $lineCountyTaxAmount += ($line->getCountyTaxAmount() * $avail);
+            $lineStateTaxAmount += ($line->getStateTaxAmount() * $avail);
+        }
+
+        // Set calculated amounts.
+        $this->setLineAmount($lineAmount)
+            ->setLineTaxAmount($lineTaxAmount)
+            ->setLineLocalTaxAmount($lineLocalTaxAmount)
+            ->setLineCountyTaxAmount($lineCountyTaxAmount)
+            ->setLineStateTaxAmount($lineStateTaxAmount)
+            ->setDiscountAmount($discountAmount);
+
+        // Shipping tax amount.
+        $this->setShippingTaxAmount(
+            $this->getShippingLocalTaxAmount() +
+            $this->getShippingCountyTaxAmount() +
+            $this->getShippingStateTaxAmount()
+        );
+
+        // Order total amount.
+        $this->setOrderAmount(
+            $lineAmount -
+            $discountAmount +
+            $lineTaxAmount +
+            $this->getShippingAmount() +
+            $this->getShippingTaxAmount()
+        );
+
+        return $this;
     }
 
 }

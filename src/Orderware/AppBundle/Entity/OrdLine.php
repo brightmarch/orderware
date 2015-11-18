@@ -939,4 +939,51 @@ class OrdLine
         $this->setUpdatedAt(date_create());
     }
 
+    /**
+     * Get lineAmount
+     *
+     * @return integer
+     */
+    public function getLineAmount()
+    {
+        return (
+            $this->getQtyAvailable() * (
+                $this->getRetailAmount() -
+                $this->getDiscountAmount() +
+                $this->getTaxAmount()
+            )
+        );
+    }
+
+    /**
+     * Calculate
+     *
+     * @return OrderLine
+     */
+    public function calculate()
+    {
+        // Sum up taxes.
+        $this->setTaxAmount(
+            $this->getLocalTaxAmount() +
+            $this->getCountyTaxAmount() +
+            $this->getStateTaxAmount()
+        );
+
+        // Balance the quantities.
+        $this->setQtyAvailable(
+            $this->getQtyOrdered() -
+            $this->getQtyCanceled()
+        );
+
+        $this->setQtyBackordered(
+            $this->getQtyOrdered() -
+            $this->getQtyCanceled() -
+            $this->getQtyAllocated() -
+            $this->getQtyPicked() -
+            $this->getQtyShipped()
+        );
+
+        return $this;
+    }
+
 }
