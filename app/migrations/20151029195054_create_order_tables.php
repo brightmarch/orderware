@@ -10,8 +10,8 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("
             CREATE TABLE ord_header (
                 ord_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -56,8 +56,8 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("
             CREATE TABLE ord_ship (
                 ord_ship_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -92,8 +92,8 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("
             CREATE TABLE ord_line (
                 ord_line_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -163,8 +163,8 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("
             CREATE TABLE ord_pay (
                 ord_pay_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -185,8 +185,8 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("
             CREATE TABLE ord_lock (
                 ord_lock_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -271,8 +271,8 @@ class CreateOrderTables extends AbstractMigration
         $this->execute("
             CREATE TABLE ord_import (
                 import_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,

@@ -29,9 +29,8 @@ class CreateSetupTables extends AbstractMigration
                 (220, 'Order Line Returned'),
                 (230, 'Order Line Closed'),
 
-                (300, 'Ledger Open'),
-                (310, 'Ledger Invoiced'),
-                (320, 'Ledger Settled'),
+                (300, 'Line Unsettled'),
+                (310, 'Line Settled'),
 
                 (400, 'Invoice Open'),
                 (410, 'Invoice Settled'),
@@ -51,8 +50,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE division (
                 division text NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 status_id integer NOT NULL REFERENCES status (status_id),
@@ -72,8 +71,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE feed (
                 feed_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -105,8 +104,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE vendor (
                 vendor_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -135,8 +134,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE facility (
                 facility_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -165,8 +164,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE item (
                 item_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -192,8 +191,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE item_sku (
                 sku_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -216,8 +215,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE inventory (
                 inventory_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
@@ -257,8 +256,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE login (
                 login_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text REFERENCES division (division) ON DELETE CASCADE,
@@ -280,8 +279,8 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("
             CREATE TABLE request (
                 log_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
-                updated_at timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
