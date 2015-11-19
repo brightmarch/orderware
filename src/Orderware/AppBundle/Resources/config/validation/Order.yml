@@ -4,6 +4,8 @@ Orderware\AppBundle\Entity\OrdHeader:
             fields: [division, orderNum]
             errorPath: orderNum
     properties:
+        division:
+            - NotNull: ~
         createdBy:
             - NotBlank: ~
         updatedBy:
@@ -37,3 +39,134 @@ Orderware\AppBundle\Entity\OrdHeader:
             - NotBlank: ~
             - Length:
                 max: 42
+        shipments:
+            - Count:
+                min: 1
+            - Valid: ~
+        lines:
+            - Count:
+                min: 1
+            - Valid: ~
+        shipments:
+            - Valid: ~
+
+Orderware\AppBundle\Entity\OrdShip:
+    properties:
+        division:
+            - NotNull: ~
+        order:
+            - NotNull: ~
+        createdBy:
+            - NotBlank: ~
+        updatedBy:
+            - NotBlank: ~
+        shipMethod:
+            - NotBlank: ~
+            - Length:
+                max: 12
+        firstName:
+            - Length:
+                max: 96
+        middleName:
+            - Length:
+                max: 96
+        lastName:
+            - Length:
+                max: 96
+        address1:
+            - Length:
+                max: 256
+        address2:
+            - Length:
+                max: 256
+        cityName:
+            - Length:
+                max: 96
+        stateName:
+            - Length:
+                max: 96
+        stateCode:
+            - Length:
+                max: 3
+        postalCode:
+            - Length:
+                max: 12
+        countryName:
+            - Length:
+                max: 96
+        countryCode:
+            - Length:
+                max: 3
+        companyName:
+            - Length:
+                max: 96
+        emailAddress:
+            - Email: ~
+        notifyBy:
+            - NotBlank: ~
+            - Length:
+                max: 96
+        facilityCode:
+            - Length:
+                max: 24
+
+Orderware\AppBundle\Entity\OrdLine:
+    properties:
+        division:
+            - NotNull: ~
+        order:
+            - NotNull: ~
+        shipment:
+            - NotNull: ~
+        item:
+            - NotNull: ~
+        sku:
+            - NotNull: ~
+        statusId:
+            - NotBlank: ~
+        createdBy:
+            - NotBlank: ~
+        updatedBy:
+            - NotBlank: ~
+        lineNum:
+            - NotBlank: ~
+        itemNum:
+            - NotBlank: ~
+        itemName:
+            - NotBlank: ~
+        skucode:
+            - NotBlank: ~
+        pickDescription:
+            - NotBlank: ~
+        retailAmount:
+            - GreaterThanOrEqual:
+                value: 0
+        discountAmount:
+            - GreaterThanOrEqual:
+                value: 0
+        localTaxAmount:
+            - GreaterThanOrEqual:
+                value: 0
+        countyTaxAmount:
+            - GreaterThanOrEqual:
+                value: 0
+        stateTaxAmount:
+            - GreaterThanOrEqual:
+                value: 0
+        qtyOrdered:
+            - GreaterThan:
+                value: 0
+
+Orderware\AppBundle\Entity\OrdPay:
+    properties:
+        division:
+            - NotNull: ~
+        order:
+            - NotNull: ~
+        payMethod:
+            - NotBlank: ~
+        paymentAmount:
+            - GreaterThanOrEqual:
+                value: 0
+        currency:
+            - NotBlank: ~

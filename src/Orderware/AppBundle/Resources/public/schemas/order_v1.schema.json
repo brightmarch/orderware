@@ -90,6 +90,9 @@
                     "country_code": {
                         "type": ["string", "null"]
                     },
+                    "company_name": {
+                        "type": ["string", "null"]
+                    },
                     "email_address": {
                         "type": ["string", "null"],
                         "format": "email"
@@ -170,6 +173,7 @@
                     "postal_code",
                     "country_name",
                     "country_code",
+                    "company_name",
                     "email_address",
                     "phone_number",
                     "notify_by",

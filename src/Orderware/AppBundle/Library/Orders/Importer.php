@@ -56,8 +56,8 @@ class Importer
             // we want explicit control over locks and when entities
             // are flushed to the database. See the Feeds\AbstractProcessor
             // class for more details on this.
-            $_conn = $_em->getConnection();
-            $_conn->beginTransaction();
+            $_em->getConnection()
+                ->beginTransaction();
 
             $json = json_decode($import->getOrderBody());
 
@@ -95,122 +95,102 @@ class Importer
                 ->setShippingCountyTaxAmount($json->shipping_county_tax_amount)
                 ->setShippingStateTaxAmount($json->shipping_state_tax_amount);
 
-            /*
             foreach ($json->shipments as $_ship) {
-                $ordShipId = $_conn->fetchColumn("
-                    SELECT nextval('ord_ship_ord_ship_id_seq')
-                ");
+                $shipment = new OrdShip;
+                $shipment->setDivision($division)
+                    ->setOrder($order)
+                    ->setCreatedBy($author)
+                    ->setUpdatedBy($author)
+                    ->setShipMethod($_ship->shipment_method)
+                    ->setFirstName($_ship->first_name)
+                    ->setMiddleName($_ship->middle_name)
+                    ->setLastName($_ship->last_name)
+                    ->setAddress1($_ship->address1)
+                    ->setAddress2($_ship->address2)
+                    ->setCityName($_ship->city_name)
+                    ->setStateName($_ship->state_name)
+                    ->setStateCode($_ship->state_code)
+                    ->setPostalCode($_ship->postal_code)
+                    ->setCountryName($_ship->country_name)
+                    ->setCountryCode($_ship->country_code)
+                    ->setCompanyName($_ship->company_name)
+                    ->setEmailAddress($_ship->email_address)
+                    ->setPhoneNumber($_ship->phone_number)
+                    ->setNotifyBy($_ship->notify_by)
+                    ->setFacilityCode($_ship->facility_code);
 
-                $_conn->insert('ord_ship', [
-                    'ord_ship_id' => $ordShipId,
-                    'created_by' => $author,
-                    'updated_by' => $author,
-                    'division' => $division,
-                    'ord_id' => $ordId,
-                    'ship_method' => $_ship->shipment_method,
-                    'first_name' => $_ship->first_name,
-                    'middle_name' => $_ship->middle_name,
-                    'last_name' => $_ship->last_name,
-                    'address1' => $_ship->address1,
-                    'address2' => $_ship->address2,
-                    'city_name' => $_ship->city_name,
-                    'state_name' => $_ship->state_name,
-                    'state_code' => $_ship->state_code,
-                    'postal_code' => $_ship->postal_code,
-                    'country_name' => $_ship->country_name,
-                    'country_code' => $_ship->country_code,
-                    'email_address' => $_ship->email_address,
-                    'phone_number' => $_ship->phone_number,
-                    'notify_by' => strtolower($_ship->notify_by),
-                    'facility_code' => strtoupper($_ship->facility_code)
-                ]);
+                $order->addShipment($shipment);
 
                 foreach ($_ship->lines as $_line) {
-                    $lineNum = $_line->line_num;
+                    $itemSku = $_em->getRepository('Orderware:ItemSku')
+                        ->findOneBy([
+                            'division' => $division,
+                            'skucode' => $_line->skucode
+                        ]);
 
-                    // Ensure the line number is unique.
-                    if (isset($this->lineNumbers[$lineNum])) {
-                        throw new RuntimeException(sprintf("The line number (%s) is already used in this order.", $lineNum));
+                    if ($itemSku) {
+                        $item = $itemSku->getItem();
+
+                        $line = new OrdLine;
+                        $line->setDivision($division)
+                            ->setOrder($order)
+                            ->setShipment($shipment)
+                            ->setItem($item)
+                            ->setSku($itemSku)
+                            ->setCreatedBy($author)
+                            ->setUpdatedBy($author)
+                            ->setStatusId(Status::LINE_OPEN)
+                            ->setLineNum($_line->line_num)
+                            ->setItemNum($item->getItemNum())
+                            ->setItemName($item->getDisplayName())
+                            ->setSkucode($itemSku->getSkucode())
+                            ->setPickDescription($itemSku->getPickDescription())
+                            ->setRetailAmount($_line->retail_amount)
+                            ->setDiscountAmount($_line->discount_amount)
+                            ->setLocalTaxAmount($_line->local_tax_amount)
+                            ->setCountyTaxAmount($_line->county_tax_amount)
+                            ->setStateTaxAmount($_line->state_tax_amount)
+                            ->setQtyOrdered($_line->quantity);
+
+                        $order->addLine($line);
                     }
-
-                    // Memoize the line numbers to avoid a
-                    // a query for each line being inserted.
-                    $this->lineNumbers[$lineNum] = true;
-
-                    // Attempt to find the matching SKU.
-                    $sql = "
-                        SELECT i.item_id, isk.sku_id, i.item_num,
-                            i.display_name, i.is_virtual,
-                            isk.skucode, isk.pick_description
-                        FROM item i
-                        JOIN item_sku isk ON i.item_id = isk.item_id
-                        WHERE isk.division = ?
-                            AND isk.skucode = ?
-                    ";
-
-                    $sku = $_conn->fetchAssoc($sql, [
-                        $division, $_line->skucode
-                    ]);
-
-                    if (!$sku) {
-                        throw new RuntimeException(sprintf("The SKU (%s) could not be found.", $_line->skucode));
-                    }
-
-                    $_conn->insert('ord_line', [
-                        'created_by' => $author,
-                        'updated_by' => $author,
-                        'division' => $division,
-                        'ord_id' => $ordId,
-                        'ord_ship_id' => $ordShipId,
-                        'item_id' => $sku['item_id'],
-                        'sku_id' => $sku['sku_id'],
-                        'status_id' => Status::LINE_OPEN,
-                        'line_num' => $lineNum,
-                        'item_num' => $sku['item_num'],
-                        'item_name' => $sku['display_name'],
-                        'skucode' => $_line->skucode,
-                        'pick_description' => $sku['pick_description'],
-                        'retail_amount' => $_line->retail_amount,
-                        'discount_amount' => $_line->discount_amount,
-                        'local_tax_amount' => $_line->local_tax_amount,
-                        'county_tax_amount' => $_line->county_tax_amount,
-                        'state_tax_amount' => $_line->state_tax_amount,
-                        'qty_ordered' => $_line->quantity
-                    ]);
                 }
             }
 
             foreach ($json->payments as $_pmt) {
-                $_conn->insert('ord_pay', [
-                    'created_by' => $author,
-                    'updated_by' => $author,
-                    'division' => $division,
-                    'ord_id' => $ordId,
-                    'pay_method' => $_pmt->payment_method,
-                    'pay_amount' => $_pmt->amount,
-                    'transaction_code' => $_pmt->transaction_code,
-                    'currency' => $_pmt->currency
-                ]);
+                $payment = new OrdPay;
+                $payment->setDivision($division)
+                    ->setOrder($order)
+                    ->setCreatedBy($author)
+                    ->setUpdatedBy($author)
+                    ->setPayMethod($_pmt->payment_method)
+                    ->setPayAmount($_pmt->amount)
+                    ->setTransactionCode($_pmt->transaction_code)
+                    ->setCurrency($_pmt->currency);
+
+                $order->addPayment($payment);
             }
-            */
 
             $errors = $this->validator
                 ->validate($order);
 
-dump($errors);
+            if ($errors->count() > 0) {
+                throw new InvalidArgumentException(sprintf("Validation error at (%s): %s", $errors[0]->getPropertyPath(), $errors[0]->getMessage()));
+            }
 
             $order->calculate();
 
             $_em->persist($order);
             $_em->flush();
 
-            $_conn->rollback();
+            $_em->getConnection()
+                ->commit();
 
-            // Only set the ord_header.ord_id value if we
-            // know for certain the order was persisted.
-            #$import->setOrdId($order->getOrdId());
+            $import->setOrdId($order->getOrdId())
+                ->setErrorMessage(null);
         } catch (Exception $e) {
-            $_conn->rollback();
+            $_em->getConnection()
+                ->rollback();
 
             $import->setErrorMessage(
                 $e->getMessage()
@@ -229,7 +209,7 @@ dump($errors);
         $_em->persist($import);
         $_em->flush();
 
-        return $import;
+        return true;
     }
 
 }

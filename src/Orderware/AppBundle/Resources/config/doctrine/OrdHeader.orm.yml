@@ -115,21 +115,25 @@ Orderware\AppBundle\Entity\OrdHeader:
             mappedBy: order
             orderBy:
                 lineNum: ASC
+            cascade: [persist]
         locks:
             targetEntity: OrdLock
             mappedBy: order
             orderBy:
                 ordLockId: ASC
+            cascade: [persist]
         payments:
             targetEntity: OrdPay
             mappedBy: order
             orderBy:
                 ordPayId: ASC
+            cascade: [persist]
         shipments:
             targetEntity: OrdShip
             mappedBy: order
             orderBy:
                 groupNumber: ASC
+            cascade: [persist]
     lifecycleCallbacks:
         prePersist: [onCreate]
         preUpdate: [onUpdate]

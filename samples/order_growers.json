@@ -26,6 +26,7 @@
             "postal_code": "20500",
             "country_name": "United States of America",
             "country_code": "US",
+            "company_name": "The United States Government",
             "email_address": "bill.clinton@gmail.com",
             "phone_number": "202-456-1111",
             "notify_by": "email",

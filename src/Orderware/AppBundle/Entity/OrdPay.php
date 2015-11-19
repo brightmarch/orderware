@@ -41,12 +41,12 @@ class OrdPay
     /**
      * @var integer
      */
-    private $payAmount;
+    private $payAmount = 0;
 
     /**
      * @var integer
      */
-    private $settledAmount;
+    private $settledAmount = 0;
 
     /**
      * @var string

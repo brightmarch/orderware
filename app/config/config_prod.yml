@@ -1,7 +1,7 @@
 imports:
     - { resource: config.yml }
 
-#framework:
+framework:
 #    validation:
 #        cache: validator.mapping.cache.apc
 #    serializer:
