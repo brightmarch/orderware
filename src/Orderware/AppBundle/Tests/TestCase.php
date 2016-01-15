@@ -25,8 +25,8 @@ abstract class TestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
     protected function makeStatelessClient(UserInterface $user)
     {
         return static::makeClient([
-            'PHP_AUTH_USER' => $user->getUsername(),
-            'PHP_AUTH_PW' => $user->getPassword()
+            'username' => $user->getUsername(),
+            'password' => $user->getPassword()
         ]);
     }
 

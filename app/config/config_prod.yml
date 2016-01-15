@@ -2,18 +2,8 @@ imports:
     - { resource: config.yml }
 
 framework:
-#    validation:
-#        cache: validator.mapping.cache.apc
-#    serializer:
-#        cache: serializer.mapping.cache.apc
     templating:
         assets_version: "%built_at%"
-
-#doctrine:
-#    orm:
-#        metadata_cache_driver: apc
-#        result_cache_driver: apc
-#        query_cache_driver: apc
 
 monolog:
     handlers:
@@ -26,4 +16,4 @@ monolog:
             path: "%kernel.root_dir%/../log/%kernel.environment%.log"
             level: debug
         console:
-            type:  console
+            type: console
