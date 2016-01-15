@@ -9,13 +9,4 @@ INSERT INTO division (
     'orders@growerscoffee.com', 'organic coffee'
 FROM division HAVING COUNT(division) = 0;
 
-INSERT INTO login (
-    created_at, updated_at, created_by, updated_by, division, status_id,
-    full_name, username, password_hash, time_zone, role
-) SELECT LOCALTIMESTAMP(0), LOCALTIMESTAMP(0), 'orderware', 'orderware', 'GROWERS', 1,
-    'api_growers', 'api_growers', 'password', 'America/Chicago', 'ROLE_STATELESS'
-WHERE NOT EXISTS (
-    SELECT username FROM login WHERE username = 'api_growers'
-);
-
 COMMIT;
