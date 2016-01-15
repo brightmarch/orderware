@@ -170,8 +170,7 @@ class CreateOrderTables extends AbstractMigration
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
                 ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
                 pay_method text NOT NULL,
-                pay_amount integer NOT NULL DEFAULT 0,
-                settled_amount integer NOT NULL DEFAULT 0,
+                authed_amount integer NOT NULL DEFAULT 0,
                 transaction_code text NOT NULL,
                 currency text NOT NULL,
                 CONSTRAINT ord_pay_pkey PRIMARY KEY (ord_pay_id)
@@ -262,39 +261,6 @@ class CreateOrderTables extends AbstractMigration
         ");
 
         $this->execute("
-            INSERT INTO status VALUES
-                (180, 'Order Import Enqueued'),
-                (181, 'Order Import Processing'),
-                (182, 'Order Import Processed')
-        ");
-
-        $this->execute("
-            CREATE TABLE ord_import (
-                import_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL,
-                updated_at timestamp without time zone NOT NULL,
-                created_by text NOT NULL,
-                updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
-                ord_id integer REFERENCES ord_header (ord_id) ON DELETE CASCADE,
-                status_id integer NOT NULL REFERENCES status (status_id),
-                order_num text NOT NULL,
-                order_body text,
-                run_time integer NOT NULL DEFAULT 0,
-                memory_usage integer NOT NULL DEFAULT 0,
-                error_message text,
-                has_error boolean NOT NULL DEFAULT false,
-                CONSTRAINT ord_import_pkey PRIMARY KEY (import_id)
-            ) WITH (OIDS=FALSE)
-        ");
-
-        $this->execute("CREATE INDEX ord_import_division_idx ON ord_import (division)");
-        $this->execute("CREATE INDEX ord_import_status_id_idx ON ord_import (status_id)");
-        $this->execute("CREATE INDEX ord_import_ord_id_idx ON ord_import (ord_id) WHERE ord_id IS NOT NULL");
-        $this->execute("CREATE INDEX ord_import_order_num_idx ON ord_import (order_num)");
-        $this->execute("CREATE INDEX ord_import_has_error_idx ON ord_import (has_error)");
-
-        $this->execute("
             CREATE OR REPLACE FUNCTION lookup_order(_division text, _order_num text) RETURNS integer AS $$
             DECLARE
                 _ord_id integer;
@@ -373,10 +339,6 @@ class CreateOrderTables extends AbstractMigration
     {
         $this->execute("DROP FUNCTION IF EXISTS calculate_order(_ord_id integer)");
         $this->execute("DROP FUNCTION IF EXISTS lookup_order(_division text, _order_num text)");
-
-        $this->execute("DROP TABLE IF EXISTS ord_import CASCADE");
-        $this->execute("DELETE FROM status WHERE status_id IN(180, 181, 182)");
-
         $this->execute("DROP FUNCTION IF EXISTS lock_order(_ord_id integer, _status_id integer, _reason text)");
         $this->execute("DROP FUNCTION IF EXISTS unlock_order(_ord_id integer, _status_id integer)");
 

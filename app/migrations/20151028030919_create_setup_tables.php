@@ -36,10 +36,6 @@ class CreateSetupTables extends AbstractMigration
                 (410, 'Invoice Settled'),
                 (420, 'Invoice Failed'),
 
-                (500, 'Feed Enqueued'),
-                (510, 'Feed Processing'),
-                (520, 'Feed Processed'),
-
                 (600, 'Item Available'),
                 (610, 'Item Unavailable'),
 
@@ -67,39 +63,6 @@ class CreateSetupTables extends AbstractMigration
         ");
 
         $this->execute("CREATE INDEX division_status_id_idx ON division (status_id)");
-
-        $this->execute("
-            CREATE TABLE feed (
-                feed_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL,
-                updated_at timestamp without time zone NOT NULL,
-                created_by text NOT NULL,
-                updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
-                status_id integer NOT NULL REFERENCES status (status_id),
-                feed_type text NOT NULL,
-                file_name text NOT NULL,
-                file_size integer NOT NULL DEFAULT 0,
-                file_hash text NOT NULL,
-                manifest text,
-                feed_body text,
-                error_message text,
-                has_error boolean NOT NULL DEFAULT false,
-                started_at timestamp without time zone,
-                finished_at timestamp without time zone,
-                run_time integer NOT NULL DEFAULT 0,
-                memory_usage integer NOT NULL DEFAULT 0,
-                record_count integer NOT NULL DEFAULT 0,
-                CONSTRAINT feed_pkey PRIMARY KEY (feed_id)
-            ) WITH (OIDS=FALSE)
-        ");
-
-        $this->execute("CREATE INDEX feed_division_idx ON feed (division)");
-        $this->execute("CREATE INDEX feed_status_id_idx ON feed (status_id)");
-        $this->execute("CREATE INDEX feed_file_name_idx ON feed (file_name)");
-        $this->execute("CREATE INDEX feed_has_error_idx ON feed (has_error)");
-        $this->execute("CREATE INDEX feed_started_at_idx ON feed (started_at)");
-        $this->execute("CREATE INDEX feed_finished_at_idx ON feed (finished_at)");
 
         $this->execute("
             CREATE TABLE vendor (
@@ -197,9 +160,9 @@ class CreateSetupTables extends AbstractMigration
                 updated_by text NOT NULL,
                 division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
                 item_id integer NOT NULL REFERENCES item (item_id) ON DELETE CASCADE,
+                vendor_id integer REFERENCES vendor (vendor_id) ON DELETE SET NULL,
                 status_id integer NOT NULL REFERENCES status (status_id),
                 skucode text NOT NULL,
-                barcode text NOT NULL,
                 cost_price integer NOT NULL DEFAULT 0,
                 retail_price integer NOT NULL DEFAULT 0,
                 pick_description text NOT NULL,
@@ -208,9 +171,25 @@ class CreateSetupTables extends AbstractMigration
         ");
 
         $this->execute("CREATE INDEX item_sku_division_idx ON item_sku (division)");
+        $this->execute("CREATE INDEX item_sku_vendor_id_idx ON item_sku (vendor_id)");
         $this->execute("CREATE INDEX item_sku_status_id_idx ON item_sku (status_id)");
-        $this->execute("CREATE INDEX item_sku_item_id_barcode_idx ON item_sku (item_id, barcode)");
         $this->execute("CREATE UNIQUE INDEX item_sku_item_id_skucode_idx ON item_sku (item_id, skucode)");
+
+        $this->execute("
+            CREATE TABLE item_sku_barcode (
+                barcode_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
+                barcode text NOT NULL,
+                CONSTRAINT item_sku_barcode_pkey PRIMARY KEY (barcode_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX item_sku_barcode_sku_id_idx ON item_sku_barcode (barcode)");
+        $this->execute("CREATE UNIQUE INDEX item_sku_barcode_sku_id_barcode_idx ON item_sku_barcode (sku_id, barcode)");
 
         $this->execute("
             CREATE TABLE inventory (
@@ -252,84 +231,16 @@ class CreateSetupTables extends AbstractMigration
             BEFORE INSERT OR UPDATE ON inventory
             FOR EACH ROW EXECUTE PROCEDURE calculate_inventory_buckets()
         ");
-
-        $this->execute("
-            CREATE TABLE login (
-                login_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL,
-                updated_at timestamp without time zone NOT NULL,
-                created_by text NOT NULL,
-                updated_by text NOT NULL,
-                division text REFERENCES division (division) ON DELETE CASCADE,
-                status_id integer NOT NULL REFERENCES status (status_id),
-                full_name text NOT NULL,
-                username text NOT NULL,
-                password_hash text NOT NULL,
-                time_zone text NOT NULL,
-                role text NOT NULL,
-                CONSTRAINT login_pkey PRIMARY KEY (login_id)
-            ) WITH (OIDS=FALSE)
-        ");
-
-        $this->execute("CREATE INDEX login_division_idx ON login (division)");
-        $this->execute("CREATE INDEX login_status_id_idx ON login (status_id)");
-        $this->execute("CREATE INDEX login_role_idx ON login (role)");
-        $this->execute("CREATE UNIQUE INDEX login_username_idx ON login (username)");
-
-        $this->execute("
-            CREATE TABLE request (
-                log_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL,
-                updated_at timestamp without time zone NOT NULL,
-                created_by text NOT NULL,
-                updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
-                login_id integer NOT NULL REFERENCES login (login_id) ON DELETE CASCADE,
-                request_id text NOT NULL,
-                order_num text,
-                ip_address text NOT NULL,
-                request_method text,
-                accept text,
-                content_type text,
-                user_agent text,
-                route_name text,
-                parameters json,
-                payload text,
-                payload_length integer NOT NULL DEFAULT 0,
-                payload_hash text,
-                status_code integer NOT NULL DEFAULT 0,
-                response text,
-                response_length integer NOT NULL DEFAULT 0,
-                response_hash text,
-                start_time bigint NOT NULL DEFAULT 0,
-                end_time bigint NOT NULL DEFAULT 0,
-                total_time integer NOT NULL DEFAULT 0,
-                CONSTRAINT request_pkey PRIMARY KEY (log_id)
-            ) WITH (OIDS=FALSE)
-        ");
-
-        $this->execute("CREATE INDEX request_division_idx ON request (division)");
-        $this->execute("CREATE INDEX request_login_id_idx ON request (login_id)");
-        $this->execute("CREATE INDEX request_order_num_idx ON request (order_num) WHERE order_num IS NOT NULL");
-        $this->execute("CREATE INDEX request_ip_address_idx ON request (ip_address)");
-        $this->execute("CREATE INDEX request_route_name_idx ON request (route_name)");
-        $this->execute("CREATE INDEX request_status_code_idx ON request (status_code)");
-        $this->execute("CREATE INDEX request_total_time_idx ON request (total_time)");
-        $this->execute("CREATE UNIQUE INDEX request_request_id_idx ON request (request_id)");
     }
 
     public function down()
     {
-        $this->execute("DROP TABLE IF EXISTS request CASCADE");
-        $this->execute("DROP TABLE IF EXISTS login CASCADE");
-
         $this->execute("DROP TABLE IF EXISTS inventory CASCADE");
+        $this->execute("DROP TABLE IF EXISTS item_sku_barcode CASCADE");
         $this->execute("DROP TABLE IF EXISTS item_sku CASCADE");
         $this->execute("DROP TABLE IF EXISTS item CASCADE");
         $this->execute("DROP TABLE IF EXISTS facility CASCADE");
         $this->execute("DROP TABLE IF EXISTS vendor CASCADE");
-
-        $this->execute("DROP TABLE IF EXISTS feed CASCADE");
 
         $this->execute("DROP TABLE IF EXISTS division CASCADE");
         $this->execute("DROP TABLE IF EXISTS status CASCADE");
