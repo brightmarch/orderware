@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:simpleType name="requiredString">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="status">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ACTIVE" />
+            <xsd:enumeration value="INACTIVE" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="dimension">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:totalDigits value="12" />
+            <xsd:fractionDigits value="4" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="Vendor">
+        <xsd:sequence>
+            <xsd:element name="Number" type="requiredString" />
+            <xsd:element name="DisplayName" type="requiredString" />
+            <xsd:element name="PrimaryContact" type="requiredString" />
+            <xsd:element name="Address1" type="xsd:string" />
+            <xsd:element name="Address2" type="xsd:string" />
+            <xsd:element name="CityName" type="xsd:string" />
+            <xsd:element name="PostalCode" type="xsd:string" />
+            <xsd:element name="StateCode" type="xsd:string" />
+            <xsd:element name="StateName" type="xsd:string" />
+            <xsd:element name="CountryCode" type="xsd:string" />
+            <xsd:element name="CountryName" type="xsd:string" />
+            <xsd:element name="EmailAddress" type="xsd:string" />
+            <xsd:element name="PhoneNumber" type="xsd:string" />
+            <xsd:element name="FaxNumber" type="xsd:string" />
+            <xsd:element name="Notes" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Sku">
+        <xsd:sequence>
+            <xsd:element name="Status" type="status" />
+            <xsd:element name="VendorNumber" type="xsd:string" />
+            <xsd:element name="Skucode" type="requiredString" />
+            <xsd:element name="CostPrice" type="xsd:integer" />
+            <xsd:element name="RetailPrice" type="xsd:integer" />
+            <xsd:element name="PickDescription" type="xsd:string" />
+
+            <xsd:element name="Barcodes">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Barcode" minOccurs="1" maxOccurs="unbounded" type="requiredString" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Item">
+        <xsd:sequence>
+            <xsd:element name="Status" type="status" />
+            <xsd:element name="Number" type="requiredString" />
+            <xsd:element name="DisplayName" type="requiredString" />
+            <xsd:element name="Weight" type="dimension" />
+            <xsd:element name="Length" type="dimension" />
+            <xsd:element name="Width" type="dimension" />
+            <xsd:element name="Depth" type="dimension" />
+            <xsd:element name="ShipAlone" type="xsd:boolean" />
+            <xsd:element name="Taxable" type="xsd:boolean" />
+            <xsd:element name="Virtual" type="xsd:boolean" />
+
+            <xsd:element name="Skus">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Sku" minOccurs="1" maxOccurs="unbounded" type="Sku" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="Envelope">
+        <xsd:complexType>
+            <xsd:sequence>
+
+                <xsd:element name="Header">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Version" type="xsd:string" />
+                            <xsd:element name="Division" type="xsd:string" />
+                            <xsd:element name="SubmittedAt" type="xsd:dateTime" />
+                            <xsd:element name="FeedType" type="xsd:string" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <xsd:element name="Vendors">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Vendor" minOccurs="0" maxOccurs="unbounded" type="Vendor" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <xsd:element name="Items">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Item" minOccurs="0" maxOccurs="unbounded" type="Item" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

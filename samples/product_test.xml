@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+    <Header>
+        <Version>1.0.0</Version>
+        <Division>GROWERS</Division>
+        <SubmittedAt>2016-01-14T21:47:46+00:00</SubmittedAt>
+        <FeedType>PRODUCT</FeedType>
+    </Header>
+    <Vendors>
+        <Vendor>
+            <Number>100001</Number>
+            <DisplayName>Starbucks Coffee</DisplayName>
+            <PrimaryContact>James Smarth</PrimaryContact>
+            <Address1>1010 Place Road</Address1>
+            <Address2></Address2>
+            <CityName>Seattle</CityName>
+            <PostalCode>98010</PostalCode>
+            <StateCode>WA</StateCode>
+            <StateName>Washington</StateName>
+            <CountryCode>US</CountryCode>
+            <CountryName>United States</CountryName>
+            <EmailAddress></EmailAddress>
+            <PhoneNumber>+1 399-111-3000</PhoneNumber>
+            <FaxNumber>+1 495-210-1000</FaxNumber>
+            <Notes>Net 30</Notes>
+        </Vendor>
+        <Vendor>
+            <Number>100001</Number>
+            <DisplayName>Starbucks Coffee</DisplayName>
+            <PrimaryContact>James Smarth</PrimaryContact>
+            <Address1>1010 Place Road</Address1>
+            <Address2></Address2>
+            <CityName>Seattle</CityName>
+            <PostalCode>98010</PostalCode>
+            <StateCode>WA</StateCode>
+            <StateName>Washington</StateName>
+            <CountryCode>US</CountryCode>
+            <CountryName>United States</CountryName>
+            <EmailAddress></EmailAddress>
+            <PhoneNumber>+1 399-111-3000</PhoneNumber>
+            <FaxNumber>+1 495-210-1000</FaxNumber>
+            <Notes>Net 30</Notes>
+        </Vendor>
+    </Vendors>
+
+    <Items>
+        <Item>
+            <Status>ACTIVE</Status>
+            <Number>G000001</Number>
+            <DisplayName>Sumatra Coffee</DisplayName>
+            <Weight>16.00</Weight>
+            <Length>10.38</Length>
+            <Width>4.23</Width>
+            <Depth>4.56</Depth>
+            <ShipAlone>false</ShipAlone>
+            <Taxable>true</Taxable>
+            <Virtual>false</Virtual>
+
+            <Skus>
+                <Sku>
+                    <Status>ACTIVE</Status>
+                    <VendorNumber>100001</VendorNumber>
+                    <Skucode>G000001D</Skucode>
+                    <CostPrice>599</CostPrice>
+                    <RetailPrice>1699</RetailPrice>
+                    <PickDescription>SUMATRA COFFEE (DARK ROAST)</PickDescription>
+
+                    <Barcodes>
+                        <Barcode>UPCG000001D</Barcode>
+                    </Barcodes>
+                </Sku>
+                <Sku>
+                    <Status>ACTIVE</Status>
+                    <VendorNumber>100001</VendorNumber>
+                    <Skucode>G000001L</Skucode>
+                    <CostPrice>599</CostPrice>
+                    <RetailPrice>1699</RetailPrice>
+                    <PickDescription>SUMATRA COFFEE (LIGHT ROAST)</PickDescription>
+
+                    <Barcodes>
+                        <Barcode>UPCG000001L</Barcode>
+                        <Barcode>UPCG000001F</Barcode>
+                    </Barcodes>
+                </Sku>
+            </Skus>
+        </Item>
+        <Item>
+            <Status>ACTIVE</Status>
+            <Number>G000001</Number>
+            <DisplayName>Sumatra Coffee</DisplayName>
+            <Weight>16.00</Weight>
+            <Length>10.38</Length>
+            <Width>4.23</Width>
+            <Depth>4.56</Depth>
+            <ShipAlone>false</ShipAlone>
+            <Taxable>true</Taxable>
+            <Virtual>false</Virtual>
+
+            <Skus>
+                <Sku>
+                    <Status>ACTIVE</Status>
+                    <VendorNumber>100001</VendorNumber>
+                    <Skucode>G000001D</Skucode>
+                    <CostPrice>599</CostPrice>
+                    <RetailPrice>1699</RetailPrice>
+                    <PickDescription>SUMATRA COFFEE (DARK ROAST)</PickDescription>
+
+                    <Barcodes>
+                        <Barcode>UPCG000001D</Barcode>
+                    </Barcodes>
+                </Sku>
+                <Sku>
+                    <Status>ACTIVE</Status>
+                    <VendorNumber>100001</VendorNumber>
+                    <Skucode>G000001L</Skucode>
+                    <CostPrice>599</CostPrice>
+                    <RetailPrice>1699</RetailPrice>
+                    <PickDescription>SUMATRA COFFEE (LIGHT ROAST)</PickDescription>
+
+                    <Barcodes>
+                        <Barcode>UPCG000001L</Barcode>
+                        <Barcode>UPCG000001F</Barcode>
+                    </Barcodes>
+                </Sku>
+            </Skus>
+        </Item>
+    </Items>
+</Envelope>
