@@ -8,21 +8,38 @@
     </Header>
     <Vendors>
         <Vendor>
-            <Number>100001</Number>
+            <Number>000001</Number>
             <DisplayName>Starbucks Coffee</DisplayName>
             <PrimaryContact>James Smarth</PrimaryContact>
-            <Address1>1010 Place Road</Address1>
+            <Address1>2401 Utah Avenue South</Address1>
             <Address2></Address2>
             <CityName>Seattle</CityName>
-            <PostalCode>98010</PostalCode>
+            <PostalCode>98134</PostalCode>
             <StateCode>WA</StateCode>
             <StateName>Washington</StateName>
             <CountryCode>US</CountryCode>
             <CountryName>United States</CountryName>
-            <EmailAddress>james.smarth@starbucks.com</EmailAddress>
-            <PhoneNumber>+1 399-111-3000</PhoneNumber>
-            <FaxNumber>+1 495-210-1000</FaxNumber>
-            <Notes>Net 30</Notes>
+            <EmailAddress>vendors@starbucks.com</EmailAddress>
+            <PhoneNumber>800-782-7282</PhoneNumber>
+            <FaxNumber>800-782-8888</FaxNumber>
+            <Notes>Vendor pays net-30.</Notes>
+        </Vendor>
+        <Vendor>
+            <Number>000002</Number>
+            <DisplayName>Sweet Maria's Coffee</DisplayName>
+            <PrimaryContact>Maria Cordova</PrimaryContact>
+            <Address1>1115 21st Street</Address1>
+            <Address2></Address2>
+            <CityName>West Oakland</CityName>
+            <PostalCode>94607</PostalCode>
+            <StateCode>CA</StateCode>
+            <StateName>California</StateName>
+            <CountryCode>US</CountryCode>
+            <CountryName>United States</CountryName>
+            <EmailAddress>info@sweetmarias.com</EmailAddress>
+            <PhoneNumber>(888) 876-5917</PhoneNumber>
+            <FaxNumber></FaxNumber>
+            <Notes>Watch out for recent credit card hack.</Notes>
         </Vendor>
     </Vendors>
     <Items>
@@ -40,7 +57,7 @@
             <Skus>
                 <Sku>
                     <Status>ACTIVE</Status>
-                    <VendorNumber>100001</VendorNumber>
+                    <VendorNumber>000001</VendorNumber>
                     <Skucode>G000001D</Skucode>
                     <CostPrice>599</CostPrice>
                     <RetailPrice>1699</RetailPrice>
@@ -51,13 +68,14 @@
                 </Sku>
                 <Sku>
                     <Status>ACTIVE</Status>
-                    <VendorNumber>100001</VendorNumber>
+                    <VendorNumber>000001</VendorNumber>
                     <Skucode>G000001L</Skucode>
                     <CostPrice>599</CostPrice>
                     <RetailPrice>1699</RetailPrice>
                     <PickDescription>SUMATRA COFFEE (LIGHT ROAST)</PickDescription>
                     <Barcodes>
-                        <Barcode>UPCG000001L</Barcode>
+                        <Barcode>UPCG000001L0</Barcode>
+                        <Barcode>UPCG000001L1</Barcode>
                     </Barcodes>
                 </Sku>
             </Skus>

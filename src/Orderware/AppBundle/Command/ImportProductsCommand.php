@@ -19,21 +19,23 @@ class ImportProductsCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        // Ensure the division actually exists.
         $_em = $this->getContainer()
             ->get('doctrine')
             ->getManager('orderware');
 
+        $divisionName = $input->getArgument('division');
+
+        // Ensure the division actually exists.
         $division = $_em->getRepository('Orderware:Division')
-            ->findOneByDivision($division);
+            ->findOneByDivision($divisionName);
 
         if (!$division) {
-            throw new InvalidArgumentException(sprintf("The division (%s) does not exist.", $division));
+            throw new InvalidArgumentException(sprintf("The division (%s) does not exist.", $divisionName));
         }
 
         // Ensure the division is enabled.
         if (!$division->isEnabled()) {
-            throw new RuntimeException(sprintf("The division (%s) is not enabled.", $division));
+            throw new RuntimeException(sprintf("The division (%s) is not enabled.", $divisionName));
         }
 
         // Ensure the path to the feed file is valid.
@@ -49,6 +51,10 @@ class ImportProductsCommand extends ContainerAwareCommand
         }
 
         // Get the corresponding XSD to validate the feed against.
+        $xsdPath = $this->getContainer()
+            ->getKernel()
+            ->locateResource('@OrderwareAppBundle/Resources/public/schemas/product_1.0.0.schema.xsd');
+
         // Validate the feed file against the XSD. Report any errors and stop.
 
         // Get the vendors from the feed file and search to see

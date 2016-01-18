@@ -1,28 +1,13 @@
 security:
-    encoders:
-        stateless:
-            algorithm: plaintext
-
-    role_hierarchy: ~
 
     providers:
-        users:
-            entity: { class: Orderware:User, property: username }
+        in_memory:
+            memory: ~
 
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt|error)|css|images|js)/
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        api:
-            pattern: ^/api
-            http_basic:
-                realm: "Orderware API"
-            stateless: true
-
-        orderware:
-            pattern: ^/
-            anonymous: true
-
-    access_control:
-        - { path: ^/api, roles: [ROLE_STATELESS] }
+        main:
+            anonymous: ~
