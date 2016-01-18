@@ -2,6 +2,8 @@
 
 namespace Orderware\AppBundle\Entity;
 
+use Orderware\AppBundle\Library\Status;
+
 /**
  * Item
  */
@@ -36,7 +38,7 @@ class Item
     /**
      * @var integer
      */
-    private $statusId;
+    private $statusId = Status::ITEM_AVAILABLE;
 
     /**
      * @var string
