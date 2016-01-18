@@ -44,11 +44,6 @@ class ItemSku
     private $skucode;
 
     /**
-     * @var string
-     */
-    private $barcode;
-
-    /**
      * @var integer
      */
     private $costPrice = 0;
@@ -237,30 +232,6 @@ class ItemSku
     public function getSkucode()
     {
         return $this->skucode;
-    }
-
-    /**
-     * Set barcode
-     *
-     * @param string $barcode
-     *
-     * @return ItemSku
-     */
-    public function setBarcode($barcode)
-    {
-        $this->barcode = $barcode;
-
-        return $this;
-    }
-
-    /**
-     * Get barcode
-     *
-     * @return string
-     */
-    public function getBarcode()
-    {
-        return $this->barcode;
     }
 
     /**

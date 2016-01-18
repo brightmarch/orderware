@@ -30,9 +30,6 @@ Orderware\AppBundle\Entity\ItemSku:
         skucode:
             column: skucode
             type: text
-        barcode:
-            column: barcode
-            type: text
         costPrice:
             column: cost_price
             type: integer

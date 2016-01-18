@@ -1,4 +1,4 @@
-parameters:
+parameters: ~
 
 services:
     # Global
@@ -10,56 +10,3 @@ services:
         class: Redis
         calls:
             - [connect, ["%redis_host%", "%redis_port%"]]
-
-    # Core
-    orderware.request_listener:
-        class: Orderware\AppBundle\Listeners\RequestListener
-        arguments: [@doctrine.orm.orderware_entity_manager]
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller, method: onRequest }
-            - { name: kernel.event_listener, event: kernel.response, method: onResponse }
-
-    orderware.exception_listener:
-        class: Orderware\AppBundle\Listeners\ExceptionListener
-        arguments: [@logger, @templating, @orderware.responder]
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception, method: onException }
-
-    # Internal
-    orderware.json_validator:
-        class: Orderware\AppBundle\Library\Services\JsonValidator
-
-    # API
-    orderware.responder:
-        class: Orderware\AppBundle\Library\Services\Responder
-        arguments: [@jms_serializer, @request_stack]
-
-    # Orders
-    orderware.order_loader:
-        class: Orderware\AppBundle\Library\Orders\Loader
-        arguments: [@doctrine.orm.orderware_entity_manager]
-
-    orderware.order_importer:
-        class: Orderware\AppBundle\Library\Orders\Importer
-        arguments: [@doctrine.orm.orderware_entity_manager, @validator]
-
-    orderware.order_recorder:
-        class: Orderware\AppBundle\Library\Orders\Recorder
-        arguments: [@doctrine.orm.orderware_entity_manager]
-
-    # Feeds
-    orderware.feed_importer:
-        class: Orderware\AppBundle\Library\Feeds\FeedImporter
-        arguments: [@doctrine.orm.orderware_entity_manager, @orderware.json_validator]
-
-    orderware.feed_processor_factory:
-        class: Orderware\AppBundle\Library\Feeds\ProcessorFactory
-        arguments: [@service_container]
-
-    #orderware.feed_processor_inventory:
-    #    class: Orderware\AppBundle\Library\Feeds\InventoryProcessor
-    #    arguments: [@doctrine.orm.orderware_entity_manager, @validator]
-
-    orderware.feed_processor_product:
-        class: Orderware\AppBundle\Library\Feeds\ProductProcessor
-        arguments: [@doctrine.orm.orderware_entity_manager, @validator, @orderware.json_validator]
