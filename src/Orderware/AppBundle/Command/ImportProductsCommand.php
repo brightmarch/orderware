@@ -37,6 +37,16 @@ class ImportProductsCommand extends ContainerAwareCommand
         }
 
         // Ensure the path to the feed file is valid.
+        $feedFile = $input->getArgument('feed-file');
+
+        if (!is_file($feedFile)) {
+            throw new InvalidArgumentException(sprintf("The feed file (%s) does not exist.", $feedFile));
+        }
+
+        // And can be read by Orderware.
+        if (!is_readable($feedFile)) {
+            throw new InvalidArgumentException(sprintf("The feed file (%s) is not readable.", $feedFile));
+        }
 
         // Get the corresponding XSD to validate the feed against.
         // Validate the feed file against the XSD. Report any errors and stop.
@@ -54,7 +64,7 @@ class ImportProductsCommand extends ContainerAwareCommand
     {
         $this->setName('orderware:import-products')
             ->addArgument('division', InputArgument::REQUIRED)
-            ->addArgument('feed', InputArgument::REQUIRED, "Full path to feed file")
+            ->addArgument('feed-file', InputArgument::REQUIRED, "Full path to feed file")
             ->setDescription("Imports a product feed for a specific division.");
 
         return true;
