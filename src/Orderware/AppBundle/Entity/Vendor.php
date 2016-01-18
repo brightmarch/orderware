@@ -113,7 +113,6 @@ class Vendor
      */
     private $division;
 
-
     /**
      * Get vendorId
      *
@@ -493,7 +492,7 @@ class Vendor
      */
     public function setEmailAddress($emailAddress)
     {
-        $this->emailAddress = $emailAddress;
+        $this->emailAddress = strtolower($emailAddress);
 
         return $this;
     }

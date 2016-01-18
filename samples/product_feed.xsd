@@ -20,7 +20,7 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:complexType name="Vendor">
+    <xsd:complexType name="vendor">
         <xsd:sequence>
             <xsd:element name="Number" type="requiredString" />
             <xsd:element name="DisplayName" type="requiredString" />
@@ -40,7 +40,7 @@
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="Sku">
+    <xsd:complexType name="sku">
         <xsd:sequence>
             <xsd:element name="Status" type="status" />
             <xsd:element name="VendorNumber" type="xsd:string" />
@@ -58,7 +58,7 @@
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="Item">
+    <xsd:complexType name="item">
         <xsd:sequence>
             <xsd:element name="Status" type="status" />
             <xsd:element name="Number" type="requiredString" />
@@ -73,7 +73,7 @@
             <xsd:element name="Skus">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="Sku" minOccurs="1" maxOccurs="unbounded" type="Sku" />
+                        <xsd:element name="Sku" minOccurs="1" maxOccurs="unbounded" type="sku" />
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -96,14 +96,14 @@
                 <xsd:element name="Vendors">
                     <xsd:complexType>
                         <xsd:sequence>
-                            <xsd:element name="Vendor" minOccurs="0" maxOccurs="unbounded" type="Vendor" />
+                            <xsd:element name="Vendor" minOccurs="0" maxOccurs="unbounded" type="vendor" />
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>
                 <xsd:element name="Items">
                     <xsd:complexType>
                         <xsd:sequence>
-                            <xsd:element name="Item" minOccurs="0" maxOccurs="unbounded" type="Item" />
+                            <xsd:element name="Item" minOccurs="0" maxOccurs="unbounded" type="item" />
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>

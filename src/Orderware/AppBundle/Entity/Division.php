@@ -71,16 +71,10 @@ class Division
     private $merchDescription;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $users;
-
-    /**
      * Constructor
      */
     public function __construct()
     {
-        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -382,40 +376,6 @@ class Division
     }
 
     /**
-     * Add user
-     *
-     * @param \Orderware\AppBundle\Entity\User $user
-     *
-     * @return Division
-     */
-    public function addUser(\Orderware\AppBundle\Entity\User $user)
-    {
-        $this->users[] = $user;
-
-        return $this;
-    }
-
-    /**
-     * Remove user
-     *
-     * @param \Orderware\AppBundle\Entity\User $user
-     */
-    public function removeUser(\Orderware\AppBundle\Entity\User $user)
-    {
-        $this->users->removeElement($user);
-    }
-
-    /**
-     * Get users
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getUsers()
-    {
-        return $this->users;
-    }
-
-    /**
      * @ORM\PrePersist
      */
     public function onCreate()
@@ -430,6 +390,16 @@ class Division
     public function onUpdate()
     {
         $this->setUpdatedAt(date_create());
+    }
+
+    /**
+     * Is enabled
+     *
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return ($this->getStatusId() === Status::ENABLED);
     }
 
 }

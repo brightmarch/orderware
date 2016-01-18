@@ -41,10 +41,7 @@ Orderware\AppBundle\Entity\Division:
             column: merch_description
             type: text
             nullable: true
-    oneToMany:
-        users:
-            targetEntity: User
-            mappedBy: division
+    oneToMany: ~
     lifecycleCallbacks:
         prePersist: [onCreate]
         preUpdate: [onUpdate]

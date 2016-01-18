@@ -49,4 +49,13 @@ class DivisionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('sayhi@growerscoffee.com', $division->getNotificationEmail());
     }
 
+    public function testIsEnabled()
+    {
+        $division = new Division;
+        $this->assertFalse($division->isEnabled());
+
+        $division->setStatusId(Status::ENABLED);
+        $this->assertTrue($division->isEnabled());
+    }
+
 }
