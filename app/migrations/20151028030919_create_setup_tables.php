@@ -20,27 +20,8 @@ class CreateSetupTables extends AbstractMigration
                 (0, 'Disabled'),
                 (1, 'Enabled'),
 
-                (100, 'Order Open'),
-                (110, 'Order Canceled'),
-                (120, 'Order Returned'),
-                (130, 'Order Closed'),
-                (200, 'Order Line Open'),
-                (210, 'Order Line Canceled'),
-                (220, 'Order Line Returned'),
-                (230, 'Order Line Closed'),
-
-                (300, 'Line Unsettled'),
-                (310, 'Line Settled'),
-
-                (400, 'Invoice Open'),
-                (410, 'Invoice Settled'),
-                (420, 'Invoice Failed'),
-
                 (600, 'Item Available'),
-                (610, 'Item Unavailable'),
-
-                (1000, 'Lock - Insufficient Payment Authorizations'),
-                (1010, 'Lock - Fraudulent Activity')
+                (610, 'Item Unavailable')
         ");
 
         $this->execute("
