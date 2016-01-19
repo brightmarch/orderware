@@ -74,6 +74,11 @@ class ItemSku
     private $item;
 
     /**
+     * @var \Orderware\AppBundle\Entity\Vendor
+     */
+    private $vendor;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -399,6 +404,30 @@ class ItemSku
     public function getItem()
     {
         return $this->item;
+    }
+
+    /**
+     * Set vendor
+     *
+     * @param \Orderware\AppBundle\Entity\Vendor $vendor
+     *
+     * @return ItemSku
+     */
+    public function setVendor(\Orderware\AppBundle\Entity\Vendor $vendor = null)
+    {
+        $this->vendor = $vendor;
+
+        return $this;
+    }
+
+    /**
+     * Get vendor
+     *
+     * @return \Orderware\AppBundle\Entity\Vendor
+     */
+    public function getVendor()
+    {
+        return $this->vendor;
     }
 
     /**

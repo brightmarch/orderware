@@ -2,7 +2,7 @@ Orderware\AppBundle\Entity\ItemSkuBarcode:
     type: entity
     table: item_sku_barcode
     id:
-        skuId:
+        barcodeId:
             column: barcode_id
             type: integer
             generator:
@@ -33,7 +33,7 @@ Orderware\AppBundle\Entity\ItemSkuBarcode:
             joinColumn:
                 name: division
                 referencedColumnName: division
-        itemSku:
+        sku:
             targetEntity: ItemSku
             inversedBy: barcodes
             joinColumn:

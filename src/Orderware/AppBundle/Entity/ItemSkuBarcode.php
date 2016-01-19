@@ -7,10 +7,11 @@ namespace Orderware\AppBundle\Entity;
  */
 class ItemSkuBarcode
 {
+
     /**
      * @var integer
      */
-    private $skuId;
+    private $barcodeId;
 
     /**
      * @var \DateTime
@@ -45,17 +46,16 @@ class ItemSkuBarcode
     /**
      * @var \Orderware\AppBundle\Entity\ItemSku
      */
-    private $itemSku;
-
+    private $sku;
 
     /**
-     * Get skuId
+     * Get barcodeId
      *
      * @return integer
      */
-    public function getSkuId()
+    public function getBarcodeId()
     {
-        return $this->skuId;
+        return $this->barcodeId;
     }
 
     /**
@@ -163,7 +163,7 @@ class ItemSkuBarcode
      */
     public function setBarcode($barcode)
     {
-        $this->barcode = $barcode;
+        $this->barcode = strtoupper($barcode);
 
         return $this;
     }
@@ -203,34 +203,36 @@ class ItemSkuBarcode
     }
 
     /**
-     * Set itemSku
+     * Set sku
      *
-     * @param \Orderware\AppBundle\Entity\ItemSku $itemSku
+     * @param \Orderware\AppBundle\Entity\ItemSku $sku
      *
      * @return ItemSkuBarcode
      */
-    public function setItemSku(\Orderware\AppBundle\Entity\ItemSku $itemSku = null)
+    public function setSku(\Orderware\AppBundle\Entity\ItemSku $sku = null)
     {
-        $this->itemSku = $itemSku;
+        $this->sku = $sku;
 
         return $this;
     }
 
     /**
-     * Get itemSku
+     * Get sku
      *
      * @return \Orderware\AppBundle\Entity\ItemSku
      */
-    public function getItemSku()
+    public function getSku()
     {
         return $this->itemSku;
     }
+
     /**
      * @ORM\PrePersist
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -238,7 +240,7 @@ class ItemSkuBarcode
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
     }
-}
 
+}

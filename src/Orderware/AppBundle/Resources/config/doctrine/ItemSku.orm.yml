@@ -51,6 +51,11 @@ Orderware\AppBundle\Entity\ItemSku:
             joinColumn:
                 name: item_id
                 referencedColumnName: item_id
+        vendor:
+            targetEntity: Vendor
+            joinColumn:
+                name: vendor_id
+                referencedColumnName: vendor_id
     oneToMany:
         barcodes:
             targetEntity: ItemSkuBarcode
