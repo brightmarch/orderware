@@ -38,7 +38,7 @@ class Item
     /**
      * @var integer
      */
-    private $statusId = Status::ITEM_AVAILABLE;
+    private $statusId = Status::ITEM_INACTIVE;
 
     /**
      * @var string
@@ -259,7 +259,7 @@ class Item
      */
     public function setItemNum($itemNum)
     {
-        $this->itemNum = $itemNum;
+        $this->itemNum = strtoupper($itemNum);
 
         return $this;
     }
@@ -563,6 +563,35 @@ class Item
     public function onUpdate()
     {
         $this->setUpdatedAt(date_create());
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     * @return Item
+     */
+    public function setStatus($status)
+    {
+        $status = strtoupper($status);
+
+        if ($status === Status::ITEM_ACTIVE_TEXT) {
+            $this->setStatusId(Status::ITEM_ACTIVE);
+        } else {
+            $this->setStatusId(Status::ITEM_INACTIVE);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Is active
+     *
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return ($this->getStatusId() === Status::ITEM_ACTIVE);
     }
 
     /**

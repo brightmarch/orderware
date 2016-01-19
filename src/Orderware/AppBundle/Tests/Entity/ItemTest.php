@@ -16,6 +16,42 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Item (0000001)', $item->__toString());
     }
 
+    public function testSettingItemNumIsUppercased()
+    {
+        $item = new Item;
+        $item->setItemNum('g10001d');
+
+        $this->assertEquals('G10001D', $item->getItemNum());
+    }
+
+    public function testItemIsInitiallyInactive()
+    {
+        $item = new Item;
+
+        $this->assertFalse($item->isActive());
+    }
+
+    public function testSettingStatusDeterminesStatusId()
+    {
+        $item = new Item;
+        $this->assertFalse($item->isActive());
+
+        $item->setStatus('INVALID');
+        $this->assertFalse($item->isActive());
+
+        $item->setStatus('ACTIVE');
+        $this->assertTrue($item->isActive());
+    }
+
+    public function testSettingStatusIgnoresCase()
+    {
+        $item = new Item;
+        $this->assertFalse($item->isActive());
+
+        $item->setStatus('active');
+        $this->assertTrue($item->isActive());
+    }
+
     public function testIsShipAlone()
     {
         $item = new Item;

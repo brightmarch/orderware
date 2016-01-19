@@ -28,7 +28,7 @@ class DivisionTest extends \PHPUnit_Framework_TestCase
     {
         $division = new Division;
 
-        $this->assertSame(Status::DISABLED, $division->getStatusId());
+        $this->assertFalse($division->isEnabled());
     }
 
     public function testSettingCurrencyIsUppercased()

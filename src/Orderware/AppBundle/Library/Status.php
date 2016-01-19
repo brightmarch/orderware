@@ -12,9 +12,15 @@ class Status
     const ENABLED = 1;
 
     /** @const integer */
-    const ITEM_AVAILABLE = 600;
+    const ITEM_ACTIVE = 600;
 
     /** @const integer */
-    const ITEM_UNAVAILABLE = 610;
+    const ITEM_INACTIVE = 610;
+
+    /** @const string */
+    const ITEM_ACTIVE_TEXT = 'ACTIVE';
+
+    /** @const string */
+    const ITEM_INACTIVE_TEXT = 'ACTIVE';
 
 }
