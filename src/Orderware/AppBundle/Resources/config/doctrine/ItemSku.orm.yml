@@ -59,7 +59,8 @@ Orderware\AppBundle\Entity\ItemSku:
     oneToMany:
         barcodes:
             targetEntity: ItemSkuBarcode
-            mappedBy: itemSku
+            mappedBy: sku
+            cascade: [persist]
     lifecycleCallbacks:
         prePersist: [onCreate]
         preUpdate: [onUpdate]

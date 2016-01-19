@@ -2,6 +2,8 @@
 
 namespace Orderware\AppBundle\Entity;
 
+use Orderware\AppBundle\Library\Status;
+
 /**
  * ItemSku
  */
@@ -36,7 +38,7 @@ class ItemSku
     /**
      * @var integer
      */
-    private $statusId;
+    private $statusId = Status::ITEM_INACTIVE;
 
     /**
      * @var string
@@ -445,6 +447,16 @@ class ItemSku
     public function onUpdate()
     {
         $this->setUpdatedAt(date_create());
+    }
+
+    /**
+     * Is active
+     *
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return ($this->getStatusId() === Status::ITEM_ACTIVE);
     }
 
 }

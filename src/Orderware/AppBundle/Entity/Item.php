@@ -491,27 +491,27 @@ class Item
     }
 
     /**
-     * Add skus
+     * Add sku
      *
-     * @param \Orderware\AppBundle\Entity\ItemSku $skus
+     * @param \Orderware\AppBundle\Entity\ItemSku $sku
      *
      * @return Item
      */
-    public function addSkus(\Orderware\AppBundle\Entity\ItemSku $skus)
+    public function addSku(\Orderware\AppBundle\Entity\ItemSku $sku)
     {
-        $this->skus[] = $skus;
+        $this->skus[] = $sku;
 
         return $this;
     }
 
     /**
-     * Remove skus
+     * Remove sku
      *
-     * @param \Orderware\AppBundle\Entity\ItemSku $skus
+     * @param \Orderware\AppBundle\Entity\ItemSku $sku
      */
-    public function removeSkus(\Orderware\AppBundle\Entity\ItemSku $skus)
+    public function removeSku(\Orderware\AppBundle\Entity\ItemSku $sku)
     {
-        $this->skus->removeElement($skus);
+        $this->skus->removeElement($sku);
     }
 
     /**

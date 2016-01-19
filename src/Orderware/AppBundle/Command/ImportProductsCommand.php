@@ -3,6 +3,8 @@
 namespace Orderware\AppBundle\Command;
 
 use Orderware\AppBundle\Entity\Item;
+use Orderware\AppBundle\Entity\ItemSku;
+use Orderware\AppBundle\Entity\ItemSkuBarcode;
 use Orderware\AppBundle\Entity\Vendor;
 
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,8 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use \DOMDocument,
-    \DOMXpath;
+use \DOMDocument;
 
 use \InvalidArgumentException,
     \RuntimeException;
@@ -120,8 +121,11 @@ class ImportProductsCommand extends ContainerAwareCommand
             }
 
             $_em->persist($vendor);
-            $_em->flush();
         }
+
+        // Flush vendors so the
+        // SKUs can find them.
+        $_em->flush();
 
         foreach ($xml->Items->Item as $recordType => $_item) {
             $itemNum = (string)$_item->Number;
@@ -147,11 +151,72 @@ class ImportProductsCommand extends ContainerAwareCommand
                 ->setDepth((float)$_item->Depth)
                 ->setIsShipAlone((bool)$_item->ShipAlone)
                 ->setIsTaxable((bool)$_item->Taxable)
-                ->setIsVirtual((bool)$_item->Virtual);
+                ->setIsVirtual((bool)$_item->Virtual)
+                ->setStatus((string)$_item->Status);
+
+            foreach ($_item->Skus->Sku as $_sku) {
+                $skucode = (string)$_sku->Skucode;
+                $vendorNum = (string)$_sku->VendorNumber;
+
+                $sku = $_em->getRepository('Orderware:ItemSku')
+                    ->findOneBy([
+                        'division' => $division,
+                        'skucode' => $skucode
+                    ]);
+
+                $vendor = $_em->getRepository('Orderware:Vendor')
+                    ->findOneBy([
+                        'division' => $division,
+                        'vendorNum' => $vendorNum
+                    ]);
+
+                if (!$sku) {
+                    $sku = new ItemSku;
+                    $sku->setDivision($division)
+                        ->setItem($item)
+                        ->setCreatedBy('product_importer')
+                        ->setSkucode($skucode);
+                }
+
+                $sku->setVendor($vendor)
+                    ->setUpdatedBy('product_importer')
+                    ->setCostPrice((int)$_sku->CostPrice)
+                    ->setRetailPrice((int)$_sku->RetailPrice)
+                    ->setPickDescription((string)$_sku->PickDescription);
+
+                foreach ($_sku->Barcodes->Barcode as $_barcode) {
+                    $barcode = $_em->getRepository('Orderware:ItemSkuBarcode')
+                        ->findOneBy([
+                            'division' => $sku,
+                            'barcode' => (string)$_barcode
+                        ]);
+
+                    if (!$barcode) {
+                        $barcode = new ItemSkuBarcode;
+                        $barcode->setDivision($division)
+                            ->setSku($sku)
+                            ->setCreatedBy('product_importer')
+                            ->setBarcode((string)$_barcode);
+                    }
+
+                    $barcode->setUpdatedBy('product_importer');
+                    $sku->addBarcode($barcode);
+                }
+
+                $item->addSku($sku);
+            }
+
+            $errors = $validator->validate($item);
+
+            if ($errors->count() > 0) {
+                throw new RuntimeException(sprintf("Invalid %s(%s).%s: %s", $recordType, $itemNum, $errors[0]->getPropertyPath(), $errors[0]->getMessage()));
+            }
 
             $_em->persist($item);
-            $_em->flush();
+            #$_em->flush();
         }
+
+        $_em->flush();
 
         return 0;
     }

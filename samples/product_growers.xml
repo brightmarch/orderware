@@ -68,7 +68,7 @@
                 </Sku>
                 <Sku>
                     <Status>ACTIVE</Status>
-                    <VendorNumber>000001</VendorNumber>
+                    <VendorNumber></VendorNumber>
                     <Skucode>G000001L</Skucode>
                     <CostPrice>599</CostPrice>
                     <RetailPrice>1699</RetailPrice>

@@ -31,6 +31,8 @@ Orderware\AppBundle\Entity\Item:
         depth:
             - Range:
                 min: 0.0
+        skus:
+            - Valid: ~
 
 Orderware\AppBundle\Entity\ItemSku:
     constraints:
@@ -67,3 +69,5 @@ Orderware\AppBundle\Entity\ItemSku:
             - NotBlank: ~
             - Length:
                 max: 100
+        barcodes:
+            - Valid: ~

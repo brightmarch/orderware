@@ -67,6 +67,7 @@ Orderware\AppBundle\Entity\Item:
         skus:
             targetEntity: ItemSku
             mappedBy: item
+            cascade: [persist]
     lifecycleCallbacks:
         prePersist: [onCreate]
         preUpdate: [onUpdate]

@@ -16,6 +16,13 @@ class ItemSkuTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('SKU (0000001)', $sku->__toString());
     }
 
+    public function testItemIsInitiallyInactive()
+    {
+        $sku = new ItemSku;
+
+        $this->assertFalse($sku->isActive());
+    }
+
     public function testSettingPickDescriptionIsUppercased()
     {
         $sku = new ItemSku;
