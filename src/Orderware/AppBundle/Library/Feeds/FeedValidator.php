@@ -37,21 +37,28 @@ class FeedValidator
             throw new InvalidArgumentException(sprintf("The feed (%s) at version (%s) does not exist.", $schema, $version));
         }
 
-        // Use internal XML error reporting to trap the errors.
+        // Use internal XML error reporting to capture the errors.
         libxml_use_internal_errors(true);
+
+        // Clear any previous errors to ensure we only capture
+        // the errors actually thrown by this validation attempt.
+        libxml_clear_errors();
 
         $dom = new DOMDocument('1.0', 'UTF-8');
         $dom->load($feedPath);
 
-        // Validate the feed file against the XSD. Report any errors and stop.
-        $dom->schemaValidate($schemaPath);
-        $errors = libxml_get_errors();
+        // Actually perform the validation against the schema.
+        if (!$dom->schemaValidate($schemaPath)) {
+            $errors = libxml_get_errors();
 
-        if (count($errors) > 0) {
             throw new RuntimeException(sprintf("The feed file (%s) failed to validate for the following reason: %s", $feedPath, $errors[0]->message));
         }
 
-        return simplexml_import_dom($dom);
+        // Convert the DOMDocument into a SimpleXMLElement object
+        // because SimpleXML is just so much easier to work with.
+        $xml = simplexml_import_dom($dom);
+
+        return $xml;
     }
 
 }
