@@ -4,8 +4,6 @@ namespace Orderware\AppBundle\Tests\Library\Feeds;
 
 use Orderware\AppBundle\Tests\TestCase;
 
-use \SimpleXMLElement;
-
 class FeedValidatorTest extends TestCase
 {
 
@@ -37,11 +35,11 @@ class FeedValidatorTest extends TestCase
      */
     public function testValidingInvalidFeed($schema, $version, $feedFile)
     {
-        $feedPath = sprintf('%s/%s', __DIR__, $feedFile);
+        $feedFilePath = sprintf('%s/%s', __DIR__, $feedFile);
 
         $this->getContainer()
             ->get('orderware.feed_validator')
-            ->validate($schema, $version, $feedPath);
+            ->validate($schema, $version, $feedFilePath);
     }
 
     /**
@@ -49,17 +47,17 @@ class FeedValidatorTest extends TestCase
      */
     public function testValidatingFeed($schema, $version)
     {
-        $schemaFile = sprintf('%s_%s.example.xml', $schema, $version);
+        $schemaFilePath = sprintf('%s_%s.example.xml', $schema, $version);
 
-        $feedPath = $this->getContainer()
+        $feedFilePath = $this->getContainer()
             ->get('kernel')
-            ->locateResource(sprintf('@OrderwareAppBundle/Resources/public/schemas/%s', $schemaFile));
+            ->locateResource(sprintf('@OrderwareAppBundle/Resources/public/schemas/%s', $schemaFilePath));
 
-        $xml = $this->getContainer()
+        $isValid = $this->getContainer()
             ->get('orderware.feed_validator')
-            ->validate($schema, $version, $feedPath);
+            ->validate($schema, $version, $feedFilePath);
 
-        $this->assertInstanceOf(SimpleXMLELement::class, $xml);
+        $this->assertTrue($isValid);
     }
 
     public function providerInvalidFeed()
