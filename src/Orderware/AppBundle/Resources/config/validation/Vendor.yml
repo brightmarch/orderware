@@ -11,7 +11,10 @@ Orderware\AppBundle\Entity\Vendor:
         vendorNum:
             - NotBlank: ~
             - Length:
-                max: 24
+                max: 36
+            - Regex:
+                pattern: '/^[a-zA-Z0-9]+$/'
+                message: "The vendor number must be alpha-numeric."
         displayName:
             - NotBlank: ~
         primaryContact:
