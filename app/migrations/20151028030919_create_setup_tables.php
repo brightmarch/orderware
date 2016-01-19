@@ -20,8 +20,8 @@ class CreateSetupTables extends AbstractMigration
                 (0, 'Disabled'),
                 (1, 'Enabled'),
 
-                (600, 'Item Available'),
-                (610, 'Item Unavailable')
+                (600, 'Item Active'),
+                (610, 'Item Inactive')
         ");
 
         $this->execute("
