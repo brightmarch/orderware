@@ -3,6 +3,7 @@
 namespace Orderware\AppBundle\Tests\Entity;
 
 use Orderware\AppBundle\Entity\Item;
+use Orderware\AppBundle\Entity\ItemSku;
 
 class ItemTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,15 +42,36 @@ class ItemTest extends \PHPUnit_Framework_TestCase
 
         $item->setStatus('ACTIVE');
         $this->assertTrue($item->isActive());
-    }
 
-    public function testSettingStatusIgnoresCase()
-    {
-        $item = new Item;
+        $item->setStatus('inactive');
         $this->assertFalse($item->isActive());
 
         $item->setStatus('active');
         $this->assertTrue($item->isActive());
+    }
+
+    public function testDeactivatingItemDeactivatesAllChildSkus()
+    {
+        $sku1 = new ItemSku;
+        $sku1->setStatus('ACTIVE');
+
+        $sku2 = new ItemSku;
+        $sku2->setStatus('ACTIVE');
+
+        $this->assertTrue($sku1->isActive());
+        $this->assertTrue($sku2->isActive());
+
+        $item = new Item;
+        $item->setStatus('ACTIVE');
+
+        $item->addSku($sku1);
+        $item->addSku($sku2);
+
+        $item->setStatus('INACTIVE');
+
+        $this->assertFalse($item->isActive());
+        $this->assertFalse($sku1->isActive());
+        $this->assertFalse($sku2->isActive());
     }
 
     public function testIsShipAlone()

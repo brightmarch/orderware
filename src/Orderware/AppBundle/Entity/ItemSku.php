@@ -450,6 +450,26 @@ class ItemSku
     }
 
     /**
+     * Set status
+     *
+     * @param string $status
+     * @return ItemSku
+     */
+    public function setStatus($status)
+    {
+        $status = strtoupper($status);
+
+        if ($status === Status::ITEM_ACTIVE_TEXT) {
+            $this->setStatusId(Status::ITEM_ACTIVE);
+        } else {
+            // By default the SKU is inctive.
+            $this->setStatusId(Status::ITEM_INACTIVE);
+        }
+
+        return $this;
+    }
+
+    /**
      * Is active
      *
      * @return boolean

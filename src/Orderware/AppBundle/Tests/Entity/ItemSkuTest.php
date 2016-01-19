@@ -31,4 +31,22 @@ class ItemSkuTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('SUMATRA COFFEE', $sku->getPickDescription());
     }
 
+    public function testSettingStatusDeterminesStatusId()
+    {
+        $sku = new ItemSku;
+        $this->assertFalse($sku->isActive());
+
+        $sku->setStatus('INVALID');
+        $this->assertFalse($sku->isActive());
+
+        $sku->setStatus('ACTIVE');
+        $this->assertTrue($sku->isActive());
+
+        $sku->setStatus('inactive');
+        $this->assertFalse($sku->isActive());
+
+        $sku->setStatus('active');
+        $this->assertTrue($sku->isActive());
+    }
+
 }

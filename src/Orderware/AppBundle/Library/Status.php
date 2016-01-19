@@ -21,6 +21,6 @@ class Status
     const ITEM_ACTIVE_TEXT = 'ACTIVE';
 
     /** @const string */
-    const ITEM_INACTIVE_TEXT = 'ACTIVE';
+    const ITEM_INACTIVE_TEXT = 'INACTIVE';
 
 }

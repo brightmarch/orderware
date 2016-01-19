@@ -578,7 +578,13 @@ class Item
         if ($status === Status::ITEM_ACTIVE_TEXT) {
             $this->setStatusId(Status::ITEM_ACTIVE);
         } else {
+            // Mark the item itself as inactive.
             $this->setStatusId(Status::ITEM_INACTIVE);
+
+            // And then deactivate all of the child SKUs.
+            foreach ($this->getSkus() as $sku) {
+                $sku->setStatus(Status::ITEM_INACTIVE_TEXT);
+            }
         }
 
         return $this;
