@@ -163,14 +163,16 @@ class CreateSetupTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
                 sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
                 barcode text NOT NULL,
                 CONSTRAINT item_sku_barcode_pkey PRIMARY KEY (barcode_id)
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX item_sku_barcode_sku_id_idx ON item_sku_barcode (barcode)");
-        $this->execute("CREATE UNIQUE INDEX item_sku_barcode_sku_id_barcode_idx ON item_sku_barcode (sku_id, barcode)");
+        $this->execute("CREATE INDEX item_sku_barcode_sku_id_idx ON item_sku_barcode (sku_id)");
+        $this->execute("CREATE INDEX item_sku_barcode_barcode_idx ON item_sku_barcode (barcode)");
+        $this->execute("CREATE UNIQUE INDEX item_sku_barcode_division_barcode_idx ON item_sku_barcode (division, barcode)");
 
         $this->execute("
             CREATE TABLE inventory (
