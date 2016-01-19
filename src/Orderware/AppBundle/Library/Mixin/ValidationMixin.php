@@ -9,7 +9,7 @@ trait ValidationMixin
 
     private function validate($entity, $entityName, $uniqueKeyValue)
     {
-        $errors = $this->getValidator()
+        $errors = $this->validator
             ->validate($entity);
 
         if ($errors->count() > 0) {
