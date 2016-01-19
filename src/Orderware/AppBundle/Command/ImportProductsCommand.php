@@ -216,7 +216,11 @@ class ImportProductsCommand extends ContainerAwareCommand
             $_em->persist($item);
         }
 
-        $_em->flush();
+        try {
+            $_em->flush();
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            echo($e->getPrevious()->getPrevious()->getMessage() . "\n\n");
+        }
 
         return 0;
     }
