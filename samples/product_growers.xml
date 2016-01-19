@@ -44,7 +44,7 @@
     </Vendors>
     <Items>
         <Item>
-            <Status>ACTIVE</Status>
+            <Status>INACTIVE</Status>
             <Number>G000001</Number>
             <DisplayName>Sumatra Coffee</DisplayName>
             <Weight>16.00</Weight>
