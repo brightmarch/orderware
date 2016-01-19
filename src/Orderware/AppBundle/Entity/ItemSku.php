@@ -59,6 +59,11 @@ class ItemSku
     private $pickDescription;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $barcodes;
+
+    /**
      * @var \Orderware\AppBundle\Entity\Division
      */
     private $division;
@@ -67,6 +72,14 @@ class ItemSku
      * @var \Orderware\AppBundle\Entity\Item
      */
     private $item;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->barcodes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * To string
@@ -304,6 +317,40 @@ class ItemSku
     public function getPickDescription()
     {
         return $this->pickDescription;
+    }
+
+    /**
+     * Add barcode
+     *
+     * @param \Orderware\AppBundle\Entity\ItemSkuBarcode $barcode
+     *
+     * @return ItemSku
+     */
+    public function addBarcode(\Orderware\AppBundle\Entity\ItemSkuBarcode $barcode)
+    {
+        $this->barcodes[] = $barcode;
+
+        return $this;
+    }
+
+    /**
+     * Remove barcode
+     *
+     * @param \Orderware\AppBundle\Entity\ItemSkuBarcode $barcode
+     */
+    public function removeBarcode(\Orderware\AppBundle\Entity\ItemSkuBarcode $barcode)
+    {
+        $this->barcodes->removeElement($barcode);
+    }
+
+    /**
+     * Get barcodes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBarcodes()
+    {
+        return $this->barcodes;
     }
 
     /**

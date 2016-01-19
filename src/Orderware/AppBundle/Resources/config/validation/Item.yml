@@ -13,7 +13,10 @@ Orderware\AppBundle\Entity\Item:
         itemNum:
             - NotBlank: ~
             - Length:
-                max: 24
+                max: 36
+            - Regex:
+                pattern: '/^[A-Z0-9]+$/'
+                message: "The item number must be alpha-numeric."
         displayName:
             - NotBlank: ~
         weight:
@@ -28,3 +31,39 @@ Orderware\AppBundle\Entity\Item:
         depth:
             - Range:
                 min: 0.0
+
+Orderware\AppBundle\Entity\ItemSku:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [division, skucode]
+            errorPath: skucode
+    properties:
+        item:
+            - NotNull: ~
+        createdBy:
+            - NotBlank: ~
+        updatedBy:
+            - NotBlank: ~
+        statusId:
+            - NotBlank: ~
+        skucode:
+            - NotBlank: ~
+            - Length:
+                max: 36
+            - Regex:
+                pattern: '/^[A-Z0-9]+$/'
+                message: "The skucode must be alpha-numeric."
+        costPrice:
+            - Type:
+                type: integer
+            - GreaterThanOrEqual:
+                value: 0
+        retailPrice:
+            - Type:
+                type: integer
+            - GreaterThanOrEqual:
+                value: 0
+        pickDescription:
+            - NotBlank: ~
+            - Length:
+                max: 100
