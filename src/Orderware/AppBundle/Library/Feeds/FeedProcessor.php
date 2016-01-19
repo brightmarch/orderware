@@ -12,7 +12,7 @@ class FeedProcessor
         $this->container = $container;
     }
 
-    public function process()
+    public function process($division, $feedName, $direction)
     {
     }
 
