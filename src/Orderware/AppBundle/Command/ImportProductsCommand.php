@@ -43,36 +43,8 @@ class ImportProductsCommand extends ContainerAwareCommand
             throw new RuntimeException(sprintf("The division (%s) is not enabled.", $divisionName));
         }
 
-        // Ensure the path to the feed file is valid.
         $feedFile = $input->getArgument('feed-file');
 
-        if (!is_file($feedFile)) {
-            throw new InvalidArgumentException(sprintf("The feed file (%s) does not exist.", $feedFile));
-        }
-
-        // And can be read by Orderware.
-        if (!is_readable($feedFile)) {
-            throw new InvalidArgumentException(sprintf("The feed file (%s) is not readable.", $feedFile));
-        }
-
-        // Get the corresponding XSD to validate the feed against.
-        $schemaPath = $this->getContainer()
-            ->get('kernel')
-            ->locateResource('@OrderwareAppBundle/Resources/public/schemas/product_1.0.0.schema.xsd');
-
-        // Use internal XML error reporting to trap the errors.
-        libxml_use_internal_errors(true);
-
-        $dom = new DOMDocument('1.0', 'UTF-8');
-        $dom->load($feedFile);
-
-        // Validate the feed file against the XSD. Report any errors and stop.
-        $dom->schemaValidate($schemaPath);
-        $errors = libxml_get_errors();
-
-        if (count($errors) > 0) {
-            throw new RuntimeException(sprintf("The feed file %s failed to validate for the following reason: %s", $feedFile, $errors[0]->message));
-        }
 
         $validator = $this->getContainer()
             ->get('validator');
