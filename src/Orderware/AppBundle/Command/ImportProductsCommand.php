@@ -45,13 +45,8 @@ class ImportProductsCommand extends ContainerAwareCommand
 
         $feedFile = $input->getArgument('feed-file');
 
-
-        $validator = $this->getContainer()
-            ->get('validator');
-
-        // Convert the DOM to a SimpleXML object
-        // because they are much easier to work with.
-        $xml = simplexml_import_dom($dom);
+        #$validator = $this->getContainer()
+        #    ->get('validator');
 
         foreach ($xml->Vendors->Vendor as $recordType => $_vend) {
             $vendorNum = (string)$_vend->Number;

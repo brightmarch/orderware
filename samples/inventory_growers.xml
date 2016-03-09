@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+    <Header>
+        <Version>1.0.0</Version>
+        <Division>GROWERS</Division>
+        <SubmittedAt>2016-01-14T21:47:46+00:00</SubmittedAt>
+        <FeedType>IVENTORY</FeedType>
+    </Header>
+
+    <Facilities>
+        <Facility>
+            <Code>GROWERS01</Code>
+            <DisplayName>Growers - Dallas, TX</DisplayName>
+            <Address1>Growers - Dallas, TX</Address1>
+            <Address2></Address2>
+            <CityName>Dallas</CityName>
+            <StateName>Texas</StateName>
+            <StateCode>TX</StateCode>
+            <PostalCode>75228</PostalCode>
+            <CountryName>United States</CountryName>
+            <CountryCode>US</CountryCode>
+            <Longitude>0.0</Longitude>
+            <Latitude>0.0</Latitude>
+            <UnitsPerDay>0</Address1>
+            <IsMaster>true</Address1>
+        </Facility>
+    </Facilities>
+
+    <Channels>
+        <Channel>
+            <Number>000001</Number>
+            <Name>WEB</Name>
+            <DisplayName>.com Website</DisplayName>
+            <Facilities>
+                <FacilityCode>GROWERS01</FacilityCode>
+            </Facilities>
+        </Channel>
+        <Channel>
+            <Number>000002</Number>
+            <Name>EBAY</Name>
+            <DisplayName>Ebay Sales</DisplayName>
+            <Facilities></Facilities>
+        </Channel>
+    </Channels>
+
+    <Inventory>
+        <Pix>
+            <Skucode>G000001D</Skucode>
+            <ChannelNumber>000001</ChannelNumber>
+            <FacilityCode>GROWERS01</FacilityCode>
+            <Quantity>1001</Quantity>
+        </Pix>
+    </Inventory>
+</Envelope>
