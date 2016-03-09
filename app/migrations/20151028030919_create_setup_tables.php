@@ -46,6 +46,33 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("CREATE INDEX division_status_id_idx ON division (status_id)");
 
         $this->execute("
+            CREATE TABLE feed_config (
+                config_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                name text NOT NULL,
+                version text NOT NULL,
+                direction text NOT NULL,
+                service text NOT NULL,
+                server_host text,
+                server_port integer NOT NULL DEFAULT 0,
+                server_username text,
+                server_private_key text,
+                remote_dir text,
+                local_dir text,
+                environment text NOT NULL,
+                filename text,
+                CONSTRAINT feed_config_pkey PRIMARY KEY (config_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX feed_config_division_idx ON feed_config (division)");
+        $this->execute("CREATE UNIQUE INDEX feed_config_division_name_direction_idx ON feed_config (division, name, direction)");
+
+        $this->execute("
             CREATE TABLE vendor (
                 vendor_id serial NOT NULL,
                 created_at timestamp without time zone NOT NULL,
@@ -225,6 +252,7 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("DROP TABLE IF EXISTS facility CASCADE");
         $this->execute("DROP TABLE IF EXISTS vendor CASCADE");
 
+        $this->execute("DROP TABLE IF EXISTS feed_config CASCADE");
         $this->execute("DROP TABLE IF EXISTS division CASCADE");
         $this->execute("DROP TABLE IF EXISTS status CASCADE");
 

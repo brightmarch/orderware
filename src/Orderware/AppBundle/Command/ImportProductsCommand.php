@@ -43,10 +43,27 @@ class ImportProductsCommand extends ContainerAwareCommand
             throw new RuntimeException(sprintf("The division (%s) is not enabled.", $divisionName));
         }
 
-        $feedFile = $input->getArgument('feed-file');
+        // Find the FeedConfig record and ensure this division is enabled to handle this feed.
+        // Validate the feed against the schema (ensure the feed version matches the config version).
+        // Bootstrap a new feed service to process the feed.
+        // 
 
         #$validator = $this->getContainer()
         #    ->get('validator');
+
+        #$feedFile = $input->getArgument('feed-file');
+
+        #$this->getContainer()
+        #    ->get('orderware.feed_validator')
+        #    ->validate('item', '1.0.0', $feedFile);
+
+        /*
+        $validator = $this->getContainer()
+            ->get('validator');
+
+        // Convert the DOM to a SimpleXML object
+        // because they are much easier to work with.
+        $xml = simplexml_import_dom($dom);
 
         foreach ($xml->Vendors->Vendor as $recordType => $_vend) {
             $vendorNum = (string)$_vend->Number;
@@ -188,6 +205,7 @@ class ImportProductsCommand extends ContainerAwareCommand
         } catch (\Doctrine\DBAL\DBALException $e) {
             echo($e->getPrevious()->getPrevious()->getMessage() . "\n\n");
         }
+        */
 
         return 0;
     }
