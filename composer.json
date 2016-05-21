@@ -26,9 +26,10 @@
         "chrisboulton/php-resque": "dev-master",
         "drak/native-session": "^1.0",
         "jms/serializer-bundle": "^1.0",
+        "league/flysystem": "^1.0",
+        "league/flysystem-sftp": "^1.0",
         "robmorgan/phinx": "^0.5",
-        "sonata-project/intl-bundle": "^2.2",
-        "league/flysystem-sftp": "^1.0"
+        "sonata-project/intl-bundle": "^2.2"
     },
     "require-dev": {
         "doctrine/data-fixtures": "^1.1",
