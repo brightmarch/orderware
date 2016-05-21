@@ -14,7 +14,7 @@ class CreateOrderTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 status_id integer NOT NULL REFERENCES status (status_id),
                 ordered_at timestamp without time zone NOT NULL,
                 order_date date NOT NULL,
@@ -45,13 +45,13 @@ class CreateOrderTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX ord_header_division_idx ON ord_header (division)");
+        $this->execute("CREATE INDEX ord_header_account_idx ON ord_header (account)");
         $this->execute("CREATE INDEX ord_header_status_id_idx ON ord_header (status_id)");
         $this->execute("CREATE INDEX ord_header_order_date_idx ON ord_header (order_date)");
         $this->execute("CREATE INDEX ord_header_source_code_idx ON ord_header (source_code)");
         $this->execute("CREATE INDEX ord_header_order_type_idx ON ord_header (order_type)");
         $this->execute("CREATE INDEX ord_header_is_virtual_idx ON ord_header (is_virtual)");
-        $this->execute("CREATE UNIQUE INDEX ord_header_division_order_num_idx ON ord_header (division, order_num)");
+        $this->execute("CREATE UNIQUE INDEX ord_header_account_order_num_idx ON ord_header (account, order_num)");
 
         $this->execute("
             CREATE TABLE ord_ship (
@@ -60,7 +60,7 @@ class CreateOrderTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
                 ship_method text NOT NULL,
                 first_name text,
@@ -85,7 +85,7 @@ class CreateOrderTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX ord_ship_division_idx ON ord_ship (division)");
+        $this->execute("CREATE INDEX ord_ship_account_idx ON ord_ship (account)");
         $this->execute("CREATE INDEX ord_ship_ord_id_idx ON ord_ship (ord_id)");
         $this->execute("CREATE INDEX ord_ship_ship_method_idx ON ord_ship (ship_method)");
 
@@ -96,7 +96,7 @@ class CreateOrderTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
                 ord_ship_id integer NOT NULL REFERENCES ord_ship (ord_ship_id) ON DELETE CASCADE,
                 item_id integer NOT NULL REFERENCES item (item_id) ON DELETE CASCADE,
@@ -127,7 +127,7 @@ class CreateOrderTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX ord_line_division_idx ON ord_line (division)");
+        $this->execute("CREATE INDEX ord_line_account_idx ON ord_line (account)");
         $this->execute("CREATE INDEX ord_line_ord_id_idx ON ord_line (ord_id)");
         $this->execute("CREATE INDEX ord_line_ord_ship_id_idx ON ord_line (ord_ship_id)");
         $this->execute("CREATE INDEX ord_line_item_id_idx ON ord_line (item_id)");
@@ -167,7 +167,7 @@ class CreateOrderTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
                 pay_method text NOT NULL,
                 authed_amount integer NOT NULL DEFAULT 0,
@@ -177,7 +177,7 @@ class CreateOrderTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX ord_pay_division_idx ON ord_pay (division)");
+        $this->execute("CREATE INDEX ord_pay_account_idx ON ord_pay (account)");
         $this->execute("CREATE INDEX ord_pay_ord_id_idx ON ord_pay (ord_id)");
         $this->execute("CREATE INDEX ord_pay_pay_method_idx ON ord_pay (pay_method)");
 
@@ -188,7 +188,7 @@ class CreateOrderTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 ord_id integer NOT NULL REFERENCES ord_header (ord_id) ON DELETE CASCADE,
                 status_id integer NOT NULL REFERENCES status (status_id),
                 lock_reason text,
@@ -197,7 +197,7 @@ class CreateOrderTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX ord_lock_division_idx ON ord_lock (division)");
+        $this->execute("CREATE INDEX ord_lock_account_idx ON ord_lock (account)");
         $this->execute("CREATE INDEX ord_lock_ord_id_idx ON ord_lock (ord_id)");
         $this->execute("CREATE INDEX ord_lock_status_id_idx ON ord_lock (status_id)");
         $this->execute("CREATE UNIQUE INDEX ord_lock_ord_id_status_id_idx ON ord_lock (ord_id, status_id) WHERE removed_at IS NULL");
@@ -213,14 +213,14 @@ class CreateOrderTables extends AbstractMigration
                 WHERE oh.ord_id = _ord_id;
 
                 IF NOT FOUND THEN
-                    RAISE EXCEPTION 'order (%) does not exist', _ord_id;
+                    RETURN FALSE;
                 END IF;
 
                 SELECT INTO _status FROM status s
                 WHERE s.status_id = _status_id;
 
                 IF NOT FOUND THEN
-                    RAISE EXCEPTION 'lock status (%) does not exist', _status_id;
+                    RETURN FALSE;
                 END IF;
 
                 SELECT INTO _lock FROM ord_lock ol
@@ -229,14 +229,14 @@ class CreateOrderTables extends AbstractMigration
                     AND ol.removed_at IS NULL;
 
                 IF FOUND THEN
-                    RAISE EXCEPTION 'order (%) is already locked by status (%)', _ord_id, _status_id;
+                    RETURN FALSE;
                 END IF;
 
                 INSERT INTO ord_lock (
-                    created_by, updated_by, division,
+                    created_by, updated_by, account,
                     ord_id, status_id, lock_reason
                 ) SELECT 'lock_order', 'lock_order',
-                    oh.division, oh.ord_id, _status_id, _reason
+                    oh.account, oh.ord_id, _status_id, _reason
                 FROM ord_header oh
                 WHERE oh.ord_id = _ord_id;
 
@@ -261,13 +261,13 @@ class CreateOrderTables extends AbstractMigration
         ");
 
         $this->execute("
-            CREATE OR REPLACE FUNCTION lookup_order(_division text, _order_num text) RETURNS integer AS $$
+            CREATE OR REPLACE FUNCTION lookup_order(_account text, _order_num text) RETURNS integer AS $$
             DECLARE
                 _ord_id integer;
             BEGIN
                 SELECT INTO _ord_id oh.ord_id
                 FROM ord_header oh
-                WHERE oh.division = UPPER(_division)
+                WHERE oh.account = UPPER(_account)
                     AND oh.order_num = UPPER(_order_num);
 
                 IF FOUND THEN
@@ -338,7 +338,7 @@ class CreateOrderTables extends AbstractMigration
     public function down()
     {
         $this->execute("DROP FUNCTION IF EXISTS calculate_order(_ord_id integer)");
-        $this->execute("DROP FUNCTION IF EXISTS lookup_order(_division text, _order_num text)");
+        $this->execute("DROP FUNCTION IF EXISTS lookup_order(_account text, _order_num text)");
         $this->execute("DROP FUNCTION IF EXISTS lock_order(_ord_id integer, _status_id integer, _reason text)");
         $this->execute("DROP FUNCTION IF EXISTS unlock_order(_ord_id integer, _status_id integer)");
 

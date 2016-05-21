@@ -25,8 +25,8 @@ class CreateSetupTables extends AbstractMigration
         ");
 
         $this->execute("
-            CREATE TABLE division (
-                division text NOT NULL,
+            CREATE TABLE account (
+                account text NOT NULL,
                 created_at timestamp without time zone NOT NULL,
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
@@ -38,39 +38,12 @@ class CreateSetupTables extends AbstractMigration
                 primary_email text,
                 notification_email text,
                 merch_description text,
-                CONSTRAINT division_pkey PRIMARY KEY (division),
-                CONSTRAINT division_requires_alphanum CHECK (division ~ '^[A-Z0-9]+$')
+                CONSTRAINT account_pkey PRIMARY KEY (account),
+                CONSTRAINT account_requires_alphanum CHECK (account ~ '^[A-Z0-9]+$')
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX division_status_id_idx ON division (status_id)");
-
-        $this->execute("
-            CREATE TABLE feed_config (
-                config_id serial NOT NULL,
-                created_at timestamp without time zone NOT NULL,
-                updated_at timestamp without time zone NOT NULL,
-                created_by text NOT NULL,
-                updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
-                name text NOT NULL,
-                version text NOT NULL,
-                direction text NOT NULL,
-                service text NOT NULL,
-                server_host text,
-                server_port integer NOT NULL DEFAULT 0,
-                server_username text,
-                server_private_key text,
-                remote_dir text,
-                local_dir text,
-                environment text NOT NULL,
-                filename text,
-                CONSTRAINT feed_config_pkey PRIMARY KEY (config_id)
-            ) WITH (OIDS=FALSE)
-        ");
-
-        $this->execute("CREATE INDEX feed_config_division_idx ON feed_config (division)");
-        $this->execute("CREATE UNIQUE INDEX feed_config_division_name_direction_idx ON feed_config (division, name, direction)");
+        $this->execute("CREATE INDEX account_status_id_idx ON account (status_id)");
 
         $this->execute("
             CREATE TABLE vendor (
@@ -79,10 +52,11 @@ class CreateSetupTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 vendor_num text NOT NULL,
                 display_name text NOT NULL,
                 primary_contact text NOT NULL,
+                account_num text,
                 address1 text,
                 address2 text,
                 city_name text,
@@ -99,8 +73,8 @@ class CreateSetupTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX vendor_division_idx ON vendor (division)");
-        $this->execute("CREATE UNIQUE INDEX vendor_division_vendor_num_idx ON vendor (division, vendor_num)");
+        $this->execute("CREATE INDEX vendor_account_idx ON vendor (account)");
+        $this->execute("CREATE UNIQUE INDEX vendor_account_vendor_num_idx ON vendor (account, vendor_num)");
 
         $this->execute("
             CREATE TABLE facility (
@@ -109,7 +83,7 @@ class CreateSetupTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 facility_code text NOT NULL,
                 name text NOT NULL,
                 address1 text,
@@ -128,9 +102,9 @@ class CreateSetupTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX facility_division_idx ON facility (division)");
-        $this->execute("CREATE UNIQUE INDEX facility_division_facility_code_idx ON facility (division, facility_code)");
-        $this->execute("CREATE UNIQUE INDEX facility_division_is_master_idx ON facility (division, is_master) WHERE is_master = true");
+        $this->execute("CREATE INDEX facility_account_idx ON facility (account)");
+        $this->execute("CREATE UNIQUE INDEX facility_account_facility_code_idx ON facility (account, facility_code)");
+        $this->execute("CREATE UNIQUE INDEX facility_account_is_master_idx ON facility (account, is_master) WHERE is_master = true");
 
         $this->execute("
             CREATE TABLE item (
@@ -139,7 +113,7 @@ class CreateSetupTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 status_id integer NOT NULL REFERENCES status (status_id),
                 item_num text NOT NULL,
                 display_name text NOT NULL,
@@ -155,9 +129,26 @@ class CreateSetupTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX item_division_idx ON item (division)");
+        $this->execute("CREATE INDEX item_account_idx ON item (account)");
         $this->execute("CREATE INDEX item_status_id_idx ON item (status_id)");
-        $this->execute("CREATE UNIQUE INDEX item_division_item_num_idx ON item (division, item_num)");
+        $this->execute("CREATE UNIQUE INDEX item_account_item_num_idx ON item (account, item_num)");
+
+        $this->execute("
+            CREATE TABLE item_attribute (
+                item_attribute_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                item_id integer NOT NULL REFERENCES item (item_id) ON DELETE CASCADE,
+                attribute text NOT NULL,
+                value text NOT NULL,
+                CONSTRAINT item_attribute_pkey PRIMARY KEY (item_attribute_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX item_attribute_item_id_idx ON item_attribute (item_id)");
+        $this->execute("CREATE UNIQUE INDEX item_attribute_item_id_attribute_idx ON item_attribute (item_id, attribute)");
 
         $this->execute("
             CREATE TABLE item_sku (
@@ -166,7 +157,7 @@ class CreateSetupTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 item_id integer NOT NULL REFERENCES item (item_id) ON DELETE CASCADE,
                 vendor_id integer REFERENCES vendor (vendor_id) ON DELETE SET NULL,
                 status_id integer NOT NULL REFERENCES status (status_id),
@@ -174,14 +165,33 @@ class CreateSetupTables extends AbstractMigration
                 cost_price integer NOT NULL DEFAULT 0,
                 retail_price integer NOT NULL DEFAULT 0,
                 pick_description text NOT NULL,
+                part_number text,
                 CONSTRAINT item_sku_pkey PRIMARY KEY (sku_id)
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX item_sku_division_idx ON item_sku (division)");
+        $this->execute("CREATE INDEX item_sku_account_idx ON item_sku (account)");
         $this->execute("CREATE INDEX item_sku_vendor_id_idx ON item_sku (vendor_id)");
         $this->execute("CREATE INDEX item_sku_status_id_idx ON item_sku (status_id)");
         $this->execute("CREATE UNIQUE INDEX item_sku_item_id_skucode_idx ON item_sku (item_id, skucode)");
+
+        $this->execute("
+            CREATE TABLE item_sku_attribute (
+                item_sku_attribute_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
+                attribute text NOT NULL,
+                value text NOT NULL,
+                CONSTRAINT item_sku_attribute_pkey PRIMARY KEY (item_sku_attribute_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX item_sku_attribute_sku_id_idx ON item_sku_attribute (sku_id)");
+        $this->execute("CREATE UNIQUE INDEX item_sku_attribute_sku_id_attribute_idx ON item_sku_attribute (sku_id, attribute)");
+
 
         $this->execute("
             CREATE TABLE item_sku_barcode (
@@ -190,7 +200,7 @@ class CreateSetupTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
                 barcode text NOT NULL,
                 CONSTRAINT item_sku_barcode_pkey PRIMARY KEY (barcode_id)
@@ -199,7 +209,7 @@ class CreateSetupTables extends AbstractMigration
 
         $this->execute("CREATE INDEX item_sku_barcode_sku_id_idx ON item_sku_barcode (sku_id)");
         $this->execute("CREATE INDEX item_sku_barcode_barcode_idx ON item_sku_barcode (barcode)");
-        $this->execute("CREATE UNIQUE INDEX item_sku_barcode_division_barcode_idx ON item_sku_barcode (division, barcode)");
+        $this->execute("CREATE UNIQUE INDEX item_sku_barcode_account_barcode_idx ON item_sku_barcode (account, barcode)");
 
         $this->execute("
             CREATE TABLE inventory (
@@ -208,7 +218,7 @@ class CreateSetupTables extends AbstractMigration
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
-                division text NOT NULL REFERENCES division (division) ON DELETE CASCADE,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
                 facility_id integer NOT NULL REFERENCES facility (facility_id) ON DELETE CASCADE,
                 qty_received integer NOT NULL DEFAULT 0,
@@ -220,10 +230,10 @@ class CreateSetupTables extends AbstractMigration
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX inventory_division_idx ON inventory (division)");
+        $this->execute("CREATE INDEX inventory_account_idx ON inventory (account)");
         $this->execute("CREATE INDEX inventory_sku_id_idx ON inventory (sku_id)");
         $this->execute("CREATE INDEX inventory_facility_id_idx ON inventory (facility_id)");
-        $this->execute("CREATE UNIQUE INDEX inventory_division_sku_id_facility_id_idx ON inventory (division, sku_id, facility_id)");
+        $this->execute("CREATE UNIQUE INDEX inventory_account_sku_id_facility_id_idx ON inventory (account, sku_id, facility_id)");
 
         $this->execute("
             CREATE OR REPLACE FUNCTION calculate_inventory_buckets() RETURNS TRIGGER AS $$
@@ -247,13 +257,14 @@ class CreateSetupTables extends AbstractMigration
     {
         $this->execute("DROP TABLE IF EXISTS inventory CASCADE");
         $this->execute("DROP TABLE IF EXISTS item_sku_barcode CASCADE");
+        $this->execute("DROP TABLE IF EXISTS item_sku_attribute CASCADE");
         $this->execute("DROP TABLE IF EXISTS item_sku CASCADE");
+        $this->execute("DROP TABLE IF EXISTS item_attribute CASCADE");
         $this->execute("DROP TABLE IF EXISTS item CASCADE");
         $this->execute("DROP TABLE IF EXISTS facility CASCADE");
         $this->execute("DROP TABLE IF EXISTS vendor CASCADE");
 
-        $this->execute("DROP TABLE IF EXISTS feed_config CASCADE");
-        $this->execute("DROP TABLE IF EXISTS division CASCADE");
+        $this->execute("DROP TABLE IF EXISTS account CASCADE");
         $this->execute("DROP TABLE IF EXISTS status CASCADE");
 
         $this->execute("DROP FUNCTION IF EXISTS calculate_inventory_buckets()");
