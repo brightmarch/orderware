@@ -38,11 +38,11 @@ services:
     # Feeds
     orderware.feed_validator:
         class: Orderware\AppBundle\Library\Feeds\FeedValidator
-        arguments: [@kernel]
+        arguments: ["@kernel"]
 
     orderware.item_feed:
         class: Orderware\AppBundle\Library\Feeds\ItemFeed
-        arguments: [@doctrine.orm.orderware_entity_manager, @validator]
+        arguments: ["@doctrine.orm.orderware_entity_manager", "@validator"]
 
     #orderware.feed_importer:
     #    class: Orderware\AppBundle\Library\Feeds\FeedImporter
