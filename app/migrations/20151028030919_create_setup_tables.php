@@ -76,7 +76,7 @@ class CreateSetupTables extends AbstractMigration
                 updated_by text NOT NULL,
                 account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 status_id integer NOT NULL REFERENCES status (status_id),
-                connection_id integer NOT NULL REFERENCES feed_connection (connection_id),
+                connection_id integer REFERENCES feed_connection (connection_id) ON DELETE SET NULL,
                 direction text NOT NULL,
                 name text NOT NULL,
                 service text NOT NULL,
