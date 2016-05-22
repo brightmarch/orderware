@@ -1,6 +1,6 @@
 Orderware\AppBundle\Entity\Account:
     type: entity
-    table: division
+    table: account
     id:
         account:
             type: text
