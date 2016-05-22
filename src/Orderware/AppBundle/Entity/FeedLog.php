@@ -3,6 +3,7 @@
 namespace Orderware\AppBundle\Entity;
 
 use Orderware\AppBundle\Entity\FeedLogEntry;
+use Orderware\AppBundle\Entity\FeedLogFile;
 
 /**
  * FeedLog
@@ -430,12 +431,36 @@ class FeedLog
     }
 
     /**
+     * Create file
+     *
+     * @param string $fileName
+     * @param string $contents
+     *
+     * @return FeedLog
+     */
+    public function createFile($fileName, $contents) : FeedLog
+    {
+        $feedLogFile = new FeedLogFile;
+        $feedLogFile->setFeedLog($this)
+            ->setFileName($fileName)
+            ->setFilePath($fileName)
+            ->setContents($contents);
+
+        $this->addFile($feedLogFile)
+            ->setFileName($fileName);
+
+        return $this;
+    }
+
+    /**
      * Log entry
      *
      * @param string $message
      * @param boolean $isError
+     *
+     * @return FeedLog
      */
-    public function logEntry($message, $isError)
+    public function logEntry($message, $isError) : FeedLog
     {
         $feedLogEntry = new FeedLogEntry;
         $feedLogEntry->setFeedLog($this)
