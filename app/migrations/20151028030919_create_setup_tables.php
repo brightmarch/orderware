@@ -46,6 +46,125 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("CREATE INDEX account_status_id_idx ON account (status_id)");
 
         $this->execute("
+            CREATE TABLE feed_connection (
+                connection_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                type text NOT NULL,
+                name text NOT NULL,
+                host text,
+                username text,
+                password text,
+                port integer NOT NULL DEFAULT 0,
+                private_key text,
+                timeout integer NOT NULL DEFAULT 0,
+                CONSTRAINT feed_connection_pkey PRIMARY KEY (connection_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX feed_connection_type_idx ON feed_connection (type)");
+        $this->execute("CREATE INDEX feed_connection_name_idx ON feed_connection (name)");
+
+        $this->execute("
+            CREATE TABLE feed (
+                feed_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
+                status_id integer NOT NULL REFERENCES status (status_id),
+                connection_id integer NOT NULL REFERENCES feed_connection (connection_id),
+                direction text NOT NULL,
+                name text NOT NULL,
+                remote_root_dir text,
+                local_root_dir text,
+                filename text,
+                CONSTRAINT feed_pkey PRIMARY KEY (feed_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX feed_account_idx ON feed (account)");
+        $this->execute("CREATE INDEX feed_status_id_idx ON feed (status_id)");
+        $this->execute("CREATE INDEX feed_connection_id_idx ON feed (connection_id)");
+        $this->execute("CREATE UNIQUE INDEX feed_account_direction_name_idx ON feed (account, direction, name)");
+
+        $this->execute("
+            CREATE TABLE feed_attribute (
+                attribute_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                feed_id integer NOT NULL REFERENCES feed (feed_id) ON DELETE CASCADE,
+                attribute text NOT NULL,
+                value text NOT NULL,
+                CONSTRAINT feed_attribute_pkey PRIMARY KEY (attribute_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX feed_attribute_feed_id_idx ON feed_attribute (feed_id)");
+        $this->execute("CREATE UNIQUE INDEX feed_attribute_feed_id_attribute_idx ON feed_attribute (feed_id, attribute)");
+
+        $this->execute("
+            CREATE TABLE feed_log (
+                log_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
+                feed_id integer NOT NULL REFERENCES feed (feed_id) ON DELETE CASCADE,
+                file_name text NOT NULL,
+                runtime integer NOT NULL DEFAULT 0,
+                memory_usage integer NOT NULL DEFAULT 0,
+                has_error boolean NOT NULL DEFAULT false,
+                error_message text,
+                CONSTRAINT feed_log_pkey PRIMARY KEY (log_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX feed_log_account_idx ON feed_log (account)");
+        $this->execute("CREATE INDEX feed_log_feed_id_idx ON feed_log (feed_id)");
+
+        $this->execute("
+            CREATE TABLE feed_log_file (
+                file_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                log_id integer NOT NULL REFERENCES feed_log (log_id) ON DELETE CASCADE,
+                file_name text NOT NULL,
+                file_path text NOT NULL,
+                file_size integer NOT NULL DEFAULT 0,
+                contents text,
+                CONSTRAINT feed_log_file_pkey PRIMARY KEY (file_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX feed_log_file_log_id_idx ON feed_log_file (log_id)");
+        $this->execute("CREATE INDEX feed_log_file_file_name_idx ON feed_log_file (file_name)");
+
+        $this->execute("
+            CREATE TABLE feed_log_entry (
+                entry_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                log_id integer NOT NULL REFERENCES feed_log (log_id) ON DELETE CASCADE,
+                is_error boolean NOT NULL DEFAULT false,
+                message text NOT NULL,
+                CONSTRAINT feed_log_entry_pkey PRIMARY KEY (entry_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX feed_log_entry_log_id_idx ON feed_log_entry (log_id)");
+
+        $this->execute("
             CREATE TABLE vendor (
                 vendor_id serial NOT NULL,
                 created_at timestamp without time zone NOT NULL,
@@ -135,7 +254,7 @@ class CreateSetupTables extends AbstractMigration
 
         $this->execute("
             CREATE TABLE item_attribute (
-                item_attribute_id serial NOT NULL,
+                attribute_id serial NOT NULL,
                 created_at timestamp without time zone NOT NULL,
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
@@ -143,7 +262,7 @@ class CreateSetupTables extends AbstractMigration
                 item_id integer NOT NULL REFERENCES item (item_id) ON DELETE CASCADE,
                 attribute text NOT NULL,
                 value text NOT NULL,
-                CONSTRAINT item_attribute_pkey PRIMARY KEY (item_attribute_id)
+                CONSTRAINT item_attribute_pkey PRIMARY KEY (attribute_id)
             ) WITH (OIDS=FALSE)
         ");
 
@@ -177,7 +296,7 @@ class CreateSetupTables extends AbstractMigration
 
         $this->execute("
             CREATE TABLE item_sku_attribute (
-                item_sku_attribute_id serial NOT NULL,
+                attribute_id serial NOT NULL,
                 created_at timestamp without time zone NOT NULL,
                 updated_at timestamp without time zone NOT NULL,
                 created_by text NOT NULL,
@@ -185,7 +304,7 @@ class CreateSetupTables extends AbstractMigration
                 sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
                 attribute text NOT NULL,
                 value text NOT NULL,
-                CONSTRAINT item_sku_attribute_pkey PRIMARY KEY (item_sku_attribute_id)
+                CONSTRAINT item_sku_attribute_pkey PRIMARY KEY (attribute_id)
             ) WITH (OIDS=FALSE)
         ");
 
@@ -263,6 +382,13 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("DROP TABLE IF EXISTS item CASCADE");
         $this->execute("DROP TABLE IF EXISTS facility CASCADE");
         $this->execute("DROP TABLE IF EXISTS vendor CASCADE");
+
+        $this->execute("DROP TABLE IF EXISTS feed_log_entry CASCADE");
+        $this->execute("DROP TABLE IF EXISTS feed_log_file CASCADE");
+        $this->execute("DROP TABLE IF EXISTS feed_log CASCADE");
+        $this->execute("DROP TABLE IF EXISTS feed_attribute CASCADE");
+        $this->execute("DROP TABLE IF EXISTS feed CASCADE");
+        $this->execute("DROP TABLE IF EXISTS feed_connection CASCADE");
 
         $this->execute("DROP TABLE IF EXISTS account CASCADE");
         $this->execute("DROP TABLE IF EXISTS status CASCADE");
