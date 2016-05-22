@@ -3,7 +3,7 @@ Orderware\AppBundle\Entity\Account:
     table: account
     id:
         account:
-            type: text
+            type: string
     fields:
         createdAt:
             column: created_at
@@ -13,33 +13,33 @@ Orderware\AppBundle\Entity\Account:
             type: datetime
         createdBy:
             column: created_by
-            type: text
+            type: string
         updatedBy:
             column: updated_by
-            type: text
+            type: string
         statusId:
             column: status_id
             type: integer
         displayName:
             column: display_name
-            type: text
+            type: string
         currency:
             column: currency
-            type: text
+            type: string
         timeZone:
             column: time_zone
-            type: text
+            type: string
         primaryEmail:
             column: primary_email
-            type: text
+            type: string
             nullable: true
         notificationEmail:
             column: notification_email
-            type: text
+            type: string
             nullable: true
         merchDescription:
             column: merch_description
-            type: text
+            type: string
             nullable: true
     oneToMany: ~
     lifecycleCallbacks:
