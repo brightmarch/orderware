@@ -1,6 +1,6 @@
 Orderware\AppBundle\Entity\Account:
     account:
-        division: GROWERS
+        account: GROWERS
         createdBy: test_runner
         updatedBy: test_runner
         statusId: 1
