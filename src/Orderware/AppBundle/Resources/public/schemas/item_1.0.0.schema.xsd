@@ -100,10 +100,10 @@
         <xsd:element name="Header">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="Version" type="xsd:string"/>
-              <xsd:element name="Division" type="xsd:string"/>
+              <xsd:element name="Version" type="RequiredString"/>
+              <xsd:element name="Account" type="RequiredString"/>
               <xsd:element name="SubmittedAt" type="xsd:dateTime"/>
-              <xsd:element name="FeedType" type="xsd:string"/>
+              <xsd:element name="FeedType" type="RequiredString"/>
             </xsd:sequence>
           </xsd:complexType>
         </xsd:element>
