@@ -18,12 +18,6 @@ Orderware\AppBundle\Entity\FeedLogFile:
         updatedAt:
             column: updated_at
             type: datetime
-        createdBy:
-            column: created_by
-            type: string
-        updatedBy:
-            column: updated_by
-            type: string
         fileName:
             column: file_name
             type: string
