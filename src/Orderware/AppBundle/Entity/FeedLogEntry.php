@@ -7,6 +7,7 @@ namespace Orderware\AppBundle\Entity;
  */
 class FeedLogEntry
 {
+
     /**
      * @var integer
      */
@@ -25,7 +26,7 @@ class FeedLogEntry
     /**
      * @var boolean
      */
-    private $isError;
+    private $isError = false;
 
     /**
      * @var string
@@ -36,7 +37,6 @@ class FeedLogEntry
      * @var \Orderware\AppBundle\Entity\FeedLog
      */
     private $feedLog;
-
 
     /**
      * Get entryId
@@ -105,7 +105,7 @@ class FeedLogEntry
      */
     public function setIsError($isError)
     {
-        $this->isError = $isError;
+        $this->isError = (bool)$isError;
 
         return $this;
     }
@@ -173,7 +173,8 @@ class FeedLogEntry
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -181,7 +182,17 @@ class FeedLogEntry
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
+    }
+
+    /**
+     * Is error
+     *
+     * @return boolean
+     */
+    public function isError() : bool
+    {
+        return $this->getIsError();
     }
 
 }

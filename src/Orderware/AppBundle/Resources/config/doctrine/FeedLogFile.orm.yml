@@ -26,7 +26,7 @@ Orderware\AppBundle\Entity\FeedLogFile:
             type: string
         fileSize:
             column: file_size
-            type: string
+            type: integer
         contents:
             column: contents
             type: text
