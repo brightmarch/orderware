@@ -63,7 +63,7 @@ class FeedValidatorTest extends TestCase
     public function providerInvalidFeed()
     {
         $provider = [
-            ['item', '1.0.0', 'item_1.0.0_invalid1.xml']
+            ['item', '1.0.0', 'samples/item_1.0.0_invalid1.xml']
         ];
 
         return $provider;

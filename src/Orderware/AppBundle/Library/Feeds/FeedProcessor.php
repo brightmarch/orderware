@@ -20,6 +20,8 @@ class FeedProcessor
 
     public function process($account, $direction, $feedName)
     {
+        // Alias because this is going to be used a lot.
+
         // Get the feed configuration.
 
         // If inbound, get files.
