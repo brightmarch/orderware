@@ -8,12 +8,12 @@ abstract class TestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
 {
 
     /** @var array */
-    protected $fixtures = [];
+    protected $fixtures = [ ];
 
     public function setUp()
     {
         $this->fixtures = $this->loadFixtureFiles([
-            '@OrderwareAppBundle/Resources/config/fixtures/Division.yml'
+            '@OrderwareAppBundle/Resources/config/fixtures/Account.yml'
             #'@OrderwareAppBundle/Resources/config/fixtures/User.yml',
             #'@OrderwareAppBundle/Resources/config/fixtures/Feed.yml',
             #'@OrderwareAppBundle/Resources/config/fixtures/Items.yml',

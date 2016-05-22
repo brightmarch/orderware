@@ -1,5 +1,5 @@
-Orderware\AppBundle\Entity\Division:
-    division:
+Orderware\AppBundle\Entity\Account:
+    account:
         division: GROWERS
         createdBy: test_runner
         updatedBy: test_runner
