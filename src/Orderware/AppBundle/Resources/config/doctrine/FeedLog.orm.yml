@@ -1,0 +1,62 @@
+Orderware\AppBundle\Entity\FeedLog:
+    type: entity
+    table: feed_log
+    id:
+        logId:
+            column: log_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: feed_log_log_id_seq
+                allocationSize: 1
+                initialValue: 1 
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: string
+        updatedBy:
+            column: updated_by
+            type: string
+        fileName:
+            column: file_name
+            type: string
+        runtime:
+            column: runtime
+            type: integer
+        memoryUsage:
+            column: memory_usage
+            type: integer
+        hasError:
+            column: has_error
+            type: boolean
+        errorMessage:
+            column: error_message
+            type: string
+            nullable: true
+    manyToOne:
+        feed:
+            targetEntity: Feed
+            joinColumn:
+                name: feed_id
+                referencedColumnName: feed_id
+    oneToMany:
+        entries:
+            targetEntity: FeedLogEntry
+            mappedBy: feedLog
+            orderBy:
+                entryId: ASC
+        files:
+            targetEntity: FeedLogFile
+            mappedBy: feedLog
+            orderBy:
+                fileId: ASC
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]

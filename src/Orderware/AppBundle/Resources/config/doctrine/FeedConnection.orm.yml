@@ -1,0 +1,63 @@
+Orderware\AppBundle\Entity\FeedConnection:
+    type: entity
+    table: feed_connection
+    id:
+        connectionId:
+            column: connection_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: feed_connection_connection_id_seq
+                allocationSize: 1
+                initialValue: 1 
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: string
+        updatedBy:
+            column: updated_by
+            type: string
+        type:
+            column: type
+            type: string
+        name:
+            column: name
+            type: string
+        host:
+            column: host
+            type: string
+            nullable: true
+        username:
+            column: username
+            type: string
+            nullable: true
+        password:
+            column: password
+            type: string
+            nullable: true
+        port:
+            column: port
+            type: integer
+        privateKey:
+            column: private_key
+            type: string
+            nullable: true
+        timeout:
+            column: timeout
+            type: integer
+    oneToMany:
+        feeds:
+            targetEntity: Feed
+            mappedBy: connection
+            orderBy:
+                feedId: ASC
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]

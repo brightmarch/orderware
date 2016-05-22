@@ -1,0 +1,42 @@
+Orderware\AppBundle\Entity\FeedAttribute:
+    type: entity
+    table: feed_attribute
+    id:
+        attributeId:
+            column: attribute_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: feed_attribute_attribute_id_seq
+                allocationSize: 1
+                initialValue: 1 
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: string
+        updatedBy:
+            column: updated_by
+            type: string
+        attribute:
+            column: attribute
+            type: string
+        value:
+            column: value
+            type: string
+    manyToOne:
+        feed:
+            targetEntity: Feed
+            inversedBy: attributes
+            joinColumn:
+                name: feed_id
+                referencedColumnName: feed_id
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]
