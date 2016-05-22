@@ -79,6 +79,7 @@ class CreateSetupTables extends AbstractMigration
                 connection_id integer NOT NULL REFERENCES feed_connection (connection_id),
                 direction text NOT NULL,
                 name text NOT NULL,
+                service text NOT NULL,
                 remote_root_dir text,
                 local_root_dir text,
                 filename text,
