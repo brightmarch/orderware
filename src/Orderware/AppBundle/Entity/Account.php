@@ -5,15 +5,15 @@ namespace Orderware\AppBundle\Entity;
 use Orderware\AppBundle\Library\Status;
 
 /**
- * Division
+ * Account
  */
-class Division
+class Account
 {
 
     /**
      * @var string
      */
-    private $division;
+    private $account;
 
     /**
      * @var \DateTime
@@ -84,31 +84,31 @@ class Division
      */
     public function __toString()
     {
-        return $this->getDivision();
+        return $this->getAccount();
     }
 
     /**
-     * Set division
+     * Set account
      *
-     * @param string $division
+     * @param string $account
      *
-     * @return Division
+     * @return Account
      */
-    public function setDivision($division)
+    public function setAccount($account)
     {
-        $this->division = strtoupper($division);
+        $this->account = strtoupper($account);
 
         return $this;
     }
 
     /**
-     * Get division
+     * Get account
      *
      * @return string
      */
-    public function getDivision()
+    public function getAccount()
     {
-        return $this->division;
+        return $this->account;
     }
 
     /**
@@ -116,7 +116,7 @@ class Division
      *
      * @param \DateTime $createdAt
      *
-     * @return Division
+     * @return Account
      */
     public function setCreatedAt($createdAt)
     {
@@ -140,7 +140,7 @@ class Division
      *
      * @param \DateTime $updatedAt
      *
-     * @return Division
+     * @return Account
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -164,7 +164,7 @@ class Division
      *
      * @param string $createdBy
      *
-     * @return Division
+     * @return Account
      */
     public function setCreatedBy($createdBy)
     {
@@ -188,7 +188,7 @@ class Division
      *
      * @param string $updatedBy
      *
-     * @return Division
+     * @return Account
      */
     public function setUpdatedBy($updatedBy)
     {
@@ -212,7 +212,7 @@ class Division
      *
      * @param integer $statusId
      *
-     * @return Division
+     * @return Account
      */
     public function setStatusId($statusId)
     {
@@ -236,7 +236,7 @@ class Division
      *
      * @param string $displayName
      *
-     * @return Division
+     * @return Account
      */
     public function setDisplayName($displayName)
     {
@@ -260,7 +260,7 @@ class Division
      *
      * @param string $currency
      *
-     * @return Division
+     * @return Account
      */
     public function setCurrency($currency)
     {
@@ -284,7 +284,7 @@ class Division
      *
      * @param string $timeZone
      *
-     * @return Division
+     * @return Account
      */
     public function setTimeZone($timeZone)
     {
@@ -308,7 +308,7 @@ class Division
      *
      * @param string $primaryEmail
      *
-     * @return Division
+     * @return Account
      */
     public function setPrimaryEmail($primaryEmail)
     {
@@ -332,7 +332,7 @@ class Division
      *
      * @param string $notificationEmail
      *
-     * @return Division
+     * @return Account
      */
     public function setNotificationEmail($notificationEmail)
     {
@@ -356,7 +356,7 @@ class Division
      *
      * @param string $merchDescription
      *
-     * @return Division
+     * @return Account
      */
     public function setMerchDescription($merchDescription)
     {

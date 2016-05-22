@@ -1,8 +1,8 @@
-Orderware\AppBundle\Entity\Division:
+Orderware\AppBundle\Entity\Account:
     type: entity
     table: division
     id:
-        division:
+        account:
             type: text
     fields:
         createdAt:
