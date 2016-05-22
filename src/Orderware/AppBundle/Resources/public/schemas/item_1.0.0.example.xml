@@ -37,6 +37,16 @@
       <ShipAlone>false</ShipAlone>
       <Taxable>true</Taxable>
       <Virtual>false</Virtual>
+      <Attributes>
+        <Attribute>
+          <Key>original_price</Key>
+          <Value>19.99</Value>
+        </Attribute>
+        <Attribute>
+          <Key>meta_description</Key>
+          <Value>Dark sumatra coffee from the island of Indonesia.</Value>
+        </Attribute>
+      </Attributes>
       <Skus>
         <Sku>
           <Status>ACTIVE</Status>
@@ -45,6 +55,12 @@
           <CostPrice>599</CostPrice>
           <RetailPrice>1699</RetailPrice>
           <PickDescription>SUMATRA COFFEE (DARK ROAST)</PickDescription>
+          <Attributes>
+            <Attribute>
+              <Key>flavor_key</Key>
+              <Value>dark roast</Value>
+            </Attribute>
+          </Attributes>
           <Barcodes>
             <Barcode>UPCG000001D</Barcode>
           </Barcodes>
@@ -56,6 +72,7 @@
           <CostPrice>599</CostPrice>
           <RetailPrice>1699</RetailPrice>
           <PickDescription>SUMATRA COFFEE (LIGHT ROAST)</PickDescription>
+          <Attributes/>
           <Barcodes>
             <Barcode>UPCG000001L</Barcode>
             <Barcode>UPCG000001F</Barcode>
