@@ -37,7 +37,7 @@ abstract class AbstractFeedProcessor
         return false;
     }
 
-    public function setFeedLog(FeedLog $feedLog) : AbstractFeed
+    public function setFeedLog(FeedLog $feedLog)
     {
         $this->feedLog = $feedLog;
 

@@ -70,7 +70,40 @@ class Processor
                 throw new InvalidArgumentException(sprintf("The feed (%s:%s) for (%s) is disabled and can not run.", $direction, $feedName, $account));
             }
 
+            // Ensure the processor actually exists.
+            $processor = $this->container
+                ->get($feed->getService());
+
+            // Associate the log with the
+            // processor so it can access it.
+            $processor->setFeedLog($feedLog);
+
             // Start main feed processing.
+            if ($feed->isInbound()) {
+                if (!$this->hasLocalFile()) {
+                    $localFiles = [ ];
+                } else {
+                    // Associate the local file with the feed.
+                    $localFiles = [$this->localFile];
+                }
+
+                foreach ($localFiles as $localFile) {
+                    /*
+                    $contents = file_get_contents($localFile);
+                    $fileName = basename($localFile);
+
+                    $feedLog->createFile($fileName, $contents);
+                    */
+                }
+            }
+
+            if ($feed->isOutbound()) {
+                // Process the feed.
+
+                // If local file, put contents there.
+
+                // Else, generate file. Push it remotely.
+            }
         } catch (Exception $e) {
             $feedLog->setErrorMessage($e->getMessage())
                 ->setErrorFileName($e->getFile())
@@ -93,6 +126,14 @@ class Processor
         $this->localFile = $localFile;
 
         return $this;
+    }
+
+    private function hasLocalFile()
+    {
+        return (
+            !empty($this->localFile) &&
+            is_file($this->localFile)
+        );
     }
 
 }
