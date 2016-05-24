@@ -32,12 +32,12 @@ services:
     #    arguments: [@doctrine.orm.orderware_entity_manager, @validator]
 
     # Feeds
-    orderware.feed_processor:
-        class: Orderware\AppBundle\Library\Feeds\FeedProcessor
+    orderware.feeds.processor:
+        class: Orderware\AppBundle\Library\Feeds\Processor
         arguments: ["@service_container"]
 
-    orderware.feed_validator:
-        class: Orderware\AppBundle\Library\Feeds\FeedValidator
+    orderware.feeds.validator:
+        class: Orderware\AppBundle\Library\Feeds\Validator
         arguments: ["@kernel"]
 
     orderware.feeds.item_feed_processor:
