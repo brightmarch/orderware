@@ -34,7 +34,9 @@ class ProcessFeedCommand extends ContainerAwareCommand
         );
 
         foreach ($accounts as $account) {
-            $processor->process($account, $direction, $feedName);
+            $feedLog = $processor->process(
+                $account, $direction, $feedName
+            );
         }
 
         return 0;
