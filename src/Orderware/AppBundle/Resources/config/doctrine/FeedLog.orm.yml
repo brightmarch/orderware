@@ -62,11 +62,13 @@ Orderware\AppBundle\Entity\FeedLog:
         entries:
             targetEntity: FeedLogEntry
             mappedBy: feedLog
+            cascade: [persist]
             orderBy:
                 entryId: ASC
         files:
             targetEntity: FeedLogFile
             mappedBy: feedLog
+            cascade: [persist]
             orderBy:
                 fileId: ASC
     lifecycleCallbacks:
