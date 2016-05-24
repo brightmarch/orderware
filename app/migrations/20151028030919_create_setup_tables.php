@@ -20,6 +20,10 @@ class CreateSetupTables extends AbstractMigration
                 (0, 'Disabled'),
                 (1, 'Enabled'),
 
+                (100, 'Feed Queued'),
+                (110, 'Feed Processing'),
+                (120, 'Feed Completed'),
+
                 (600, 'Item Active'),
                 (610, 'Item Inactive')
         ");
@@ -117,17 +121,20 @@ class CreateSetupTables extends AbstractMigration
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
+                status_id integer NOT NULL REFERENCES status (status_id),
                 feed_id integer NOT NULL REFERENCES feed (feed_id) ON DELETE CASCADE,
-                file_name text NOT NULL,
                 runtime integer NOT NULL DEFAULT 0,
                 memory_usage integer NOT NULL DEFAULT 0,
                 has_error boolean NOT NULL DEFAULT false,
                 error_message text,
+                error_file_name text,
+                error_line_number integer NOT NULL DEFAULT 0,
                 CONSTRAINT feed_log_pkey PRIMARY KEY (log_id)
             ) WITH (OIDS=FALSE)
         ");
 
         $this->execute("CREATE INDEX feed_log_account_idx ON feed_log (account)");
+        $this->execute("CREATE INDEX feed_log_status_id_idx ON feed_log (status_id)");
         $this->execute("CREATE INDEX feed_log_feed_id_idx ON feed_log (feed_id)");
 
         $this->execute("
