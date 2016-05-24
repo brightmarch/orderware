@@ -4,7 +4,7 @@ namespace Orderware\AppBundle\Tests\Library\Feeds;
 
 use Orderware\AppBundle\Tests\TestCase;
 
-class FeedValidatorTest extends TestCase
+class ValidatorTest extends TestCase
 {
 
     /**
@@ -14,7 +14,7 @@ class FeedValidatorTest extends TestCase
     public function testValidatingFeedRequiresFeedFileToExist()
     {
         $this->getContainer()
-            ->get('orderware.feed_validator')
+            ->get('orderware.feeds.validator')
             ->validate('item', '1.0.0', '/tmp/invalid');
     }
 
@@ -25,7 +25,7 @@ class FeedValidatorTest extends TestCase
     public function testValidatingFeedRequiresValidSchema()
     {
         $this->getContainer()
-            ->get('orderware.feed_validator')
+            ->get('orderware.feeds.validator')
             ->validate('invalid', '1.0.1', __FILE__);
     }
 
@@ -38,7 +38,7 @@ class FeedValidatorTest extends TestCase
         $feedFilePath = sprintf('%s/%s', __DIR__, $feedFile);
 
         $this->getContainer()
-            ->get('orderware.feed_validator')
+            ->get('orderware.feeds.validator')
             ->validate($schema, $version, $feedFilePath);
     }
 
@@ -54,7 +54,7 @@ class FeedValidatorTest extends TestCase
             ->locateResource(sprintf('@OrderwareAppBundle/Resources/public/schemas/%s', $schemaFilePath));
 
         $isValid = $this->getContainer()
-            ->get('orderware.feed_validator')
+            ->get('orderware.feeds.validator')
             ->validate($schema, $version, $feedFilePath);
 
         $this->assertTrue($isValid);

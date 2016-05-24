@@ -9,7 +9,7 @@ use \DOMDocument;
 use \InvalidArgumentException,
     \RuntimeException;
 
-class FeedValidator
+class Validator
 {
 
     /** @var Symfony\Component\HttpKernel\Kernel */
