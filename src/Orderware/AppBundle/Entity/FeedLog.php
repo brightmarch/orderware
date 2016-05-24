@@ -37,9 +37,9 @@ class FeedLog
     private $updatedBy;
 
     /**
-     * @var string
+     * @var integer
      */
-    private $fileName;
+    private $statusId;
 
     /**
      * @var integer
@@ -60,6 +60,16 @@ class FeedLog
      * @var string
      */
     private $errorMessage;
+
+    /**
+     * @var string
+     */
+    private $errorFileName;
+
+    /**
+     * @var integer
+     */
+    private $errorLineNumber = 0;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -197,27 +207,27 @@ class FeedLog
     }
 
     /**
-     * Set fileName
+     * Set statusId
      *
-     * @param string $fileName
+     * @param integer $statusId
      *
      * @return FeedLog
      */
-    public function setFileName($fileName)
+    public function setStatusId($statusId)
     {
-        $this->fileName = $fileName;
+        $this->statusId = $statusId;
 
         return $this;
     }
 
     /**
-     * Get fileName
+     * Get statusId
      *
-     * @return string
+     * @return integer
      */
-    public function getFileName()
+    public function getStatusId()
     {
-        return $this->fileName;
+        return $this->statusId;
     }
 
     /**
@@ -314,6 +324,54 @@ class FeedLog
     public function getErrorMessage()
     {
         return $this->errorMessage;
+    }
+
+    /**
+     * Set errorFileName
+     *
+     * @param string $errorFileName
+     *
+     * @return FeedLog
+     */
+    public function setErrorFileName($errorFileName)
+    {
+        $this->errorFileName = $errorFileName;
+
+        return $this;
+    }
+
+    /**
+     * Get errorFileName
+     *
+     * @return string
+     */
+    public function getErrorFileName()
+    {
+        return $this->errorFileName;
+    }
+
+    /**
+     * Set errorLineNumber
+     *
+     * @param integer $errorLineNumber
+     *
+     * @return FeedLog
+     */
+    public function setErrorLineNumber($errorLineNumber)
+    {
+        $this->errorLineNumber = (int)$errorLineNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get errorLineNumber
+     *
+     * @return integer
+     */
+    public function getErrorLineNumber()
+    {
+        return $this->errorLineNumber;
     }
 
     /**
@@ -475,8 +533,7 @@ class FeedLog
             ->setFilePath($fileName)
             ->setContents($contents);
 
-        $this->addFile($feedLogFile)
-            ->setFileName($fileName);
+        $this->addFile($feedLogFile);
 
         return $this;
     }

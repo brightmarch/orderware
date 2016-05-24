@@ -13,14 +13,11 @@ class FeedLogTest extends \PHPUnit_Framework_TestCase
         $contents = '<xml><items></xml>';
 
         $feedLog = new FeedLog;
-        $this->assertNull($feedLog->getFileName());
         $this->assertCount(0, $feedLog->getFiles());
 
         $feedLog->createFile($fileName, $contents);
         $feedFile = $feedLog->getFiles()->first();
 
-        $this->assertEquals($fileName, $feedLog->getFileName());
-        $this->assertEquals($fileName, $feedFile->getFileName());
         $this->assertEquals($contents, $feedFile->getContents());
     }
 

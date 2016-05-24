@@ -24,9 +24,9 @@ Orderware\AppBundle\Entity\FeedLog:
         updatedBy:
             column: updated_by
             type: string
-        fileName:
-            column: file_name
-            type: string
+        statusId:
+            column: status_id
+            type: integer
         runtime:
             column: runtime
             type: integer
@@ -40,6 +40,13 @@ Orderware\AppBundle\Entity\FeedLog:
             column: error_message
             type: string
             nullable: true
+        errorFileName:
+            column: error_file_name
+            type: string
+            nullable: true
+        errorLineNumber:
+            column: error_line_number
+            type: integer
     manyToOne:
         account:
             targetEntity: Account
