@@ -455,8 +455,7 @@ class Feed
     public function onCreate()
     {
         $this->setCreatedAt(date_create())
-            ->setUpdatedAt(date_create())
-            ->setStatus(Status::ENABLED);
+            ->setUpdatedAt(date_create());
     }
 
     /**
