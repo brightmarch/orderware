@@ -41,6 +41,11 @@ Orderware\AppBundle\Entity\FeedLog:
             type: string
             nullable: true
     manyToOne:
+        account:
+            targetEntity: Account
+            joinColumn:
+                name: account
+                referencedColumnName: account
         feed:
             targetEntity: Feed
             joinColumn:

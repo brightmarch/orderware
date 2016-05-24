@@ -72,6 +72,11 @@ class FeedLog
     private $files;
 
     /**
+     * @var \Orderware\AppBundle\Entity\Account
+     */
+    private $account;
+
+    /**
      * @var \Orderware\AppBundle\Entity\Feed
      */
     private $feed;
@@ -377,6 +382,30 @@ class FeedLog
     public function getFiles()
     {
         return $this->files;
+    }
+
+    /**
+     * Set account
+     *
+     * @param \Orderware\AppBundle\Entity\Account $account
+     *
+     * @return FeedLog
+     */
+    public function setAccount(\Orderware\AppBundle\Entity\Account $account = null)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * Get account
+     *
+     * @return \Orderware\AppBundle\Entity\Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
     }
 
     /**

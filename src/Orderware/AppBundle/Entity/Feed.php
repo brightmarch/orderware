@@ -76,6 +76,11 @@ class Feed
     private $attributes;
 
     /**
+     * @var \Orderware\AppBundle\Entity\Account
+     */
+    private $account;
+
+    /**
      * @var \Orderware\AppBundle\Entity\FeedConnection
      */
     private $connection;
@@ -394,6 +399,30 @@ class Feed
     public function getAttributes()
     {
         return $this->attributes;
+    }
+
+    /**
+     * Set account
+     *
+     * @param \Orderware\AppBundle\Entity\Account $account
+     *
+     * @return Feed
+     */
+    public function setAccount(\Orderware\AppBundle\Entity\Account $account = null)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * Get account
+     *
+     * @return \Orderware\AppBundle\Entity\Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
     }
 
     /**

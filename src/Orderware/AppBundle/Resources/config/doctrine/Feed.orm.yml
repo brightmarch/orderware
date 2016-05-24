@@ -46,6 +46,11 @@ Orderware\AppBundle\Entity\Feed:
             column: filename
             type: string
     manyToOne:
+        account:
+            targetEntity: Account
+            joinColumn:
+                name: account
+                referencedColumnName: account
         connection:
             targetEntity: FeedConnection
             inversedBy: feeds
