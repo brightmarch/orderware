@@ -1,10 +1,10 @@
 <?php
 
-namespace Orderware\AppBundle\Library\Feeds;
+namespace Orderware\AppBundle\Library\Feeds\Processors;
 
 use Orderware\AppBundle\Library\Feeds\AbstractFeed;
 
-abstract class InboundFeed extends AbstractFeed
+abstract class InboundFeedProcessor extends AbstractFeedProcessor
 {
 
     public function isInbound()

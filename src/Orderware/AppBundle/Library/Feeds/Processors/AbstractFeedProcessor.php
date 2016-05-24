@@ -1,12 +1,12 @@
 <?php
 
-namespace Orderware\AppBundle\Library\Feeds;
+namespace Orderware\AppBundle\Library\Feeds\Processors;
 
 use Orderware\AppBundle\Entity\FeedLog;
 
 use Doctrine\ORM\EntityManager;
 
-abstract class AbstractFeed
+abstract class AbstractFeedProcessor
 {
 
     /** @var Doctrine\ORM\EntityManager */
