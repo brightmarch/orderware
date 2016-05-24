@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope>
+  <Header>
+    <Version>1.0.0</Version>
+    <Division>GROWERS</Division>
+    <SubmittedAt>2016-01-14T21:47:46+00:00</SubmittedAt>
+    <FeedType>ITEM</FeedType>
+  </Header>
+  <Vendors>
+    <Vendor>
+      <Number>000001</Number>
+      <DisplayName>Starbucks Coffee</DisplayName>
+      <PrimaryContact>James Smarth</PrimaryContact>
+      <Address1>2401 Utah Avenue South</Address1>
+      <Address2/>
+      <CityName>Seattle</CityName>
+      <PostalCode>98134</PostalCode>
+      <StateCode>WA</StateCode>
+      <StateName>Washington</StateName>
+      <CountryCode>US</CountryCode>
+      <CountryName>United States</CountryName>
+      <EmailAddress>vendors@starbucks.com</EmailAddress>
+      <PhoneNumber>800-782-7282</PhoneNumber>
+      <FaxNumber>800-782-8888</FaxNumber>
+      <Notes>Vendor pays net-30.</Notes>
+    </Vendor>
+    <Vendor>
+      <Number>000002</Number>
+      <DisplayName>Sweet Maria's Coffee</DisplayName>
+      <PrimaryContact>Maria Cordova</PrimaryContact>
+      <Address1>1115 21st Street</Address1>
+      <Address2/>
+      <CityName>West Oakland</CityName>
+      <PostalCode>94607</PostalCode>
+      <StateCode>CA</StateCode>
+      <StateName>California</StateName>
+      <CountryCode>US</CountryCode>
+      <CountryName>United States</CountryName>
+      <EmailAddress>info@sweetmarias.com</EmailAddress>
+      <PhoneNumber>(888) 876-5917</PhoneNumber>
+      <FaxNumber/>
+      <Notes>Watch out for recent credit card hack.</Notes>
+    </Vendor>
+  </Vendors>
+  <Items>
+    <Item>
+      <Status>INACTIVE</Status>
+      <Number>G000001</Number>
+      <DisplayName>Sumatra Coffee</DisplayName>
+      <Weight>16.00</Weight>
+      <Length>10.38</Length>
+      <Width>4.23</Width>
+      <Depth>4.56</Depth>
+      <ShipAlone>false</ShipAlone>
+      <Taxable>true</Taxable>
+      <Virtual>false</Virtual>
+      <Skus>
+        <Sku>
+          <Status>ACTIVE</Status>
+          <VendorNumber>000001</VendorNumber>
+          <Skucode>G000001D</Skucode>
+          <CostPrice>599</CostPrice>
+          <RetailPrice>1699</RetailPrice>
+          <PickDescription>SUMATRA COFFEE (DARK ROAST)</PickDescription>
+          <Barcodes>
+            <Barcode>UPCG000001D</Barcode>
+          </Barcodes>
+        </Sku>
+        <Sku>
+          <Status>ACTIVE</Status>
+          <VendorNumber/>
+          <Skucode>G000001L</Skucode>
+          <CostPrice>599</CostPrice>
+          <RetailPrice>1699</RetailPrice>
+          <PickDescription>SUMATRA COFFEE (LIGHT ROAST)</PickDescription>
+          <Barcodes>
+            <Barcode>UPCG000001L0</Barcode>
+            <Barcode>UPCG000001L1</Barcode>
+          </Barcodes>
+        </Sku>
+      </Skus>
+    </Item>
+  </Items>
+</Envelope>
