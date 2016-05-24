@@ -41,4 +41,37 @@ class FeedTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($feed->isEnabled());
     }
 
+    public function testIsInbound()
+    {
+        $feed = new Feed;
+        $this->assertFalse($feed->isInbound());
+
+        $feed->setDirection('inbound');
+        $this->assertTrue($feed->isInbound());
+    }
+
+    public function testIsOutbound()
+    {
+        $feed = new Feed;
+        $this->assertFalse($feed->isOutbound());
+
+        $feed->setDirection('outbound');
+        $this->assertTrue($feed->isOutbound());
+    }
+
+    public function testFeedCanOnlyBeInboundOrOutbound()
+    {
+        $feed = new Feed;
+        $this->assertFalse($feed->isInbound());
+        $this->assertFalse($feed->isOutbound());
+
+        $feed->setDirection('inbound');
+        $this->assertTrue($feed->isInbound());
+        $this->assertFalse($feed->isOutbound());
+
+        $feed->setDirection('outbound');
+        $this->assertFalse($feed->isInbound());
+        $this->assertTrue($feed->isOutbound());
+    }
+
 }

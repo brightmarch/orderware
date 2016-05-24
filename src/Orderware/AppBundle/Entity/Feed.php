@@ -476,4 +476,24 @@ class Feed
         return ($this->getStatusId() === Status::ENABLED);
     }
 
+    /**
+     * Is inbound
+     *
+     * @return boolean
+     */
+    public function isInbound()
+    {
+        return ('inbound' === $this->getDirection());
+    }
+
+    /**
+     * Is outbound
+     *
+     * @return boolean
+     */
+    public function isOutbound()
+    {
+        return ('outbound' === $this->getDirection());
+    }
+
 }
