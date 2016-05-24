@@ -44,7 +44,7 @@
   </Vendors>
   <Items>
     <Item>
-      <Status>INACTIVE</Status>
+      <Status>ACTIVE</Status>
       <Number>G000001</Number>
       <DisplayName>Sumatra Coffee</DisplayName>
       <Weight>16.00</Weight>
@@ -54,6 +54,16 @@
       <ShipAlone>false</ShipAlone>
       <Taxable>true</Taxable>
       <Virtual>false</Virtual>
+      <Attributes>
+        <Attribute>
+          <Key>origin</Key>
+          <Value>Sumatra, Indonesia</Value>
+        </Attribute>
+        <Attribute>
+          <Key>is_organic</Key>
+          <Value>true</Value>
+        </Attribute>
+      </Attributes>
       <Skus>
         <Sku>
           <Status>ACTIVE</Status>
@@ -62,6 +72,13 @@
           <CostPrice>599</CostPrice>
           <RetailPrice>1699</RetailPrice>
           <PickDescription>SUMATRA COFFEE (DARK ROAST)</PickDescription>
+          <PartNumber>8000001</PartNumber>
+          <Attributes>
+            <Attribute>
+              <Key>flavor_profile</Key>
+              <Value>dark</Value>
+            </Attribute>
+          </Attributes>
           <Barcodes>
             <Barcode>UPCG000001D</Barcode>
           </Barcodes>
@@ -73,6 +90,13 @@
           <CostPrice>599</CostPrice>
           <RetailPrice>1699</RetailPrice>
           <PickDescription>SUMATRA COFFEE (LIGHT ROAST)</PickDescription>
+          <PartNumber/>
+          <Attributes>
+            <Attribute>
+              <Key>flavor_profile</Key>
+              <Value>light</Value>
+            </Attribute>
+          </Attributes>
           <Barcodes>
             <Barcode>UPCG000001L0</Barcode>
             <Barcode>UPCG000001L1</Barcode>

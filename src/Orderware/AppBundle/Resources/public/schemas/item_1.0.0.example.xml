@@ -55,6 +55,7 @@
           <CostPrice>599</CostPrice>
           <RetailPrice>1699</RetailPrice>
           <PickDescription>SUMATRA COFFEE (DARK ROAST)</PickDescription>
+          <PartNumber/>
           <Attributes>
             <Attribute>
               <Key>flavor_key</Key>
@@ -72,6 +73,7 @@
           <CostPrice>599</CostPrice>
           <RetailPrice>1699</RetailPrice>
           <PickDescription>SUMATRA COFFEE (LIGHT ROAST)</PickDescription>
+          <PartNumber/>
           <Attributes/>
           <Barcodes>
             <Barcode>UPCG000001L</Barcode>
