@@ -1,0 +1,9 @@
+Orderware\AppBundle\Entity\Feed:
+    disabled_feed:
+        createdBy: test_runner
+        updatedBy: test_runner
+        account: "@account"
+        statusId: 0
+        direction: inbound
+        name: disabled
+        service: orderware.feeds.disabled_feed_processor

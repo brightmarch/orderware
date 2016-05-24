@@ -2,11 +2,15 @@
 
 namespace Orderware\AppBundle\Library\Feeds;
 
+use Orderware\AppBundle\Entity\FeedLog;
+
 use Symfony\Component\DependencyInjection\Container;
 
-use \RuntimeException;
+use \Exception,
+    \InvalidArgumentException,
+    \RuntimeException;
 
-class FeedProcessor
+class Processor
 {
 
     /** @var Symfony\Component\DependencyInjection\Container */
@@ -39,19 +43,42 @@ class FeedProcessor
             ]);
 
         if (!$feed) {
-            throw new RuntimeException("dick butts");
+            throw new InvalidArgumentException(sprintf("A feed (%s:%s) for (%s) could not be found.", $direction, $feedName, $account));
         }
 
+        try {
+            // Immediately record this processing attempt.
+            $feedLog = new FeedLog;
+            $feedLog->setAccount($feed->getAccount())
+                ->setFeed($feed)
+                ->setCreatedBy(self::AUTHOR)
+                ->setUpdatedBy(self::AUTHOR);
 
-        // Immediately create a feed log record to ensure this always has a record of running.
+            $this->entityManager
+                ->persist($feedLog);
 
-        // Alias because this is going to be used a lot.
+            $this->entityManager
+                ->flush($feedLog);
 
-        // Get the feed configuration.
+            if (!$feed->isEnabled()) {
+                throw new InvalidArgumentException(sprintf("The feed (%s:%s) for (%s) is disabled and can not run.", $direction, $feedName, $account));
+            }
 
-        // If inbound, get files.
+            // Start main feed processing.
+        } catch (Exception $e) {
+            $feedLog->setHasError(true)
+                ->setErrorMessage($e->getMessage())
+                ->setErrorFileName($e->getFile())
+                ->setErrorLineNumber($e->getLine());
+        }
 
-        // Else if outbound, run feed and generate file.
+        $this->entityManager
+            ->persist($feedLog);
+
+        $this->entityManager
+            ->flush($feedLog);
+
+        return $feedLog;
     }
 
     public function setLocalFile($localFile)

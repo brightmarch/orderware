@@ -13,7 +13,8 @@ abstract class TestCase extends \Liip\FunctionalTestBundle\Test\WebTestCase
     public function setUp()
     {
         $this->fixtures = $this->loadFixtureFiles([
-            '@OrderwareAppBundle/Resources/config/fixtures/Account.yml'
+            '@OrderwareAppBundle/Resources/config/fixtures/Account.yml',
+            '@OrderwareAppBundle/Resources/config/fixtures/Feeds.yml'
         ]);
     }
 
