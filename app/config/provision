@@ -10,3 +10,8 @@ echo 'alias cd-apps="cd /var/apps/orderware"' >> /home/vagrant/.bash_aliases
 echo >> /home/vagrant/.bash_aliases
 echo 'alias db-orderware="psql -hlocalhost -Uorderware orderware"' >> /home/vagrant/.bash_aliases
 echo 'alias db-orderware_test="psql -hlocalhost -Uorderware_test orderware_test"' >> /home/vagrant/.bash_aliases
+
+mkdir -p /var/apps/data/remote/{catalog,sales}
+mkdir -p /var/apps/data/local/{catalog,sales}
+
+chown -R vagrant:vagrant /var/apps/data
