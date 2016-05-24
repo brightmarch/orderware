@@ -12,15 +12,18 @@ class Status
     const ENABLED = 1;
 
     /** @const integer */
+    const FEED_QUEUED = 100;
+
+    /** @const integer */
+    const FEED_PROCESSING = 110;
+
+    /** @const integer */
+    const FEED_COMPLETED = 120;
+
+    /** @const integer */
     const ITEM_ACTIVE = 600;
 
     /** @const integer */
     const ITEM_INACTIVE = 610;
-
-    /** @const string */
-    const ITEM_ACTIVE_TEXT = 'ACTIVE';
-
-    /** @const string */
-    const ITEM_INACTIVE_TEXT = 'INACTIVE';
 
 }

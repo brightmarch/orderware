@@ -3,9 +3,22 @@
 namespace Orderware\AppBundle\Tests\Entity;
 
 use Orderware\AppBundle\Entity\FeedLog;
+use Orderware\AppBundle\Library\Status;
 
 class FeedLogTest extends \PHPUnit_Framework_TestCase
 {
+
+    public function testSettingErrorMessageTogglesHasErrorFlag()
+    {
+        $feedLog = new FeedLog;
+        $this->assertFalse($feedLog->hasError());
+
+        $feedLog->setErrorMessage("Error #1");
+        $this->assertTrue($feedLog->hasError());
+
+        $feedLog->setErrorMessage(null);
+        $this->assertFalse($feedLog->hasError());
+    }
 
     public function testCreatingFile()
     {
@@ -52,6 +65,28 @@ class FeedLogTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Error #2", $feedLog->getErrorMessage());
 
         $this->assertCount(3, $feedLog->getEntries());
+    }
+
+    public function testBeginningProcessing()
+    {
+        $feedLog = new FeedLog;
+        $this->assertEquals(Status::FEED_QUEUED, $feedLog->getStatusId());
+
+        $feedLog->beginProcessing();
+        $this->assertEquals(Status::FEED_PROCESSING, $feedLog->getStatusId());
+    }
+
+    public function testCompletingProcessing()
+    {
+        $feedLog = new FeedLog;
+        $this->assertEquals(Status::FEED_QUEUED, $feedLog->getStatusId());
+        $this->assertEquals(0, $feedLog->getMemoryUsage());
+
+        $feedLog->beginProcessing();
+        $feedLog->completeProcessing();
+
+        $this->assertEquals(Status::FEED_COMPLETED, $feedLog->getStatusId());
+        $this->assertGreaterThan(0, $feedLog->getMemoryUsage());
     }
 
 }

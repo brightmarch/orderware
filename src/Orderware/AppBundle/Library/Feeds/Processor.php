@@ -22,6 +22,9 @@ class Processor
     /** @var string */
     private $localFile;
 
+    /** @const string */
+    const AUTHOR = 'feed_processor';
+
     public function __construct(Container $container)
     {
         $this->container = $container;
@@ -47,12 +50,15 @@ class Processor
         }
 
         try {
+            $account = $feed->getAccount();
+
             // Immediately record this processing attempt.
             $feedLog = new FeedLog;
-            $feedLog->setAccount($feed->getAccount())
+            $feedLog->setAccount($account)
                 ->setFeed($feed)
                 ->setCreatedBy(self::AUTHOR)
-                ->setUpdatedBy(self::AUTHOR);
+                ->setUpdatedBy(self::AUTHOR)
+                ->beginProcessing();
 
             $this->entityManager
                 ->persist($feedLog);
@@ -66,11 +72,12 @@ class Processor
 
             // Start main feed processing.
         } catch (Exception $e) {
-            $feedLog->setHasError(true)
-                ->setErrorMessage($e->getMessage())
+            $feedLog->setErrorMessage($e->getMessage())
                 ->setErrorFileName($e->getFile())
                 ->setErrorLineNumber($e->getLine());
         }
+
+        $feedLog->completeProcessing();
 
         $this->entityManager
             ->persist($feedLog);

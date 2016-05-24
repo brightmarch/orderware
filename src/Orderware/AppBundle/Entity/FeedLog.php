@@ -4,6 +4,7 @@ namespace Orderware\AppBundle\Entity;
 
 use Orderware\AppBundle\Entity\FeedLogEntry;
 use Orderware\AppBundle\Entity\FeedLogFile;
+use Orderware\AppBundle\Library\Status;
 
 /**
  * FeedLog
@@ -39,7 +40,7 @@ class FeedLog
     /**
      * @var integer
      */
-    private $statusId;
+    private $statusId = Status::FEED_QUEUED;
 
     /**
      * @var integer
@@ -90,6 +91,11 @@ class FeedLog
      * @var \Orderware\AppBundle\Entity\Feed
      */
     private $feed;
+
+    /**
+     * @var float
+     */
+    private $startTime = null;
 
     /**
      * Constructor
@@ -312,6 +318,7 @@ class FeedLog
     public function setErrorMessage($errorMessage)
     {
         $this->errorMessage = $errorMessage;
+        $this->setHasError(!empty($errorMessage));
 
         return $this;
     }
@@ -561,6 +568,36 @@ class FeedLog
         }
 
         return $this;
+    }
+
+    /**
+     * Begin processing
+     *
+     * @return FeedLog
+     */
+    public function beginProcessing() : FeedLog
+    {
+        $this->startTime = microtime(true);
+
+        return $this->setStatusId(Status::FEED_PROCESSING);
+    }
+
+    /**
+     * Complete processing
+     *
+     * @return FeedLog
+     */
+    public function completeProcessing() : FeedLog
+    {
+        if (!is_null($this->startTime)) {
+            $runtime = microtime(true) - $this->startTime;
+            $runtime = (int)(round($runtime * 1000, 0));
+
+            $this->setRuntime($runtime);
+        }
+
+        return $this->setStatusId(Status::FEED_COMPLETED)
+            ->setMemoryUsage(memory_get_peak_usage());
     }
 
 }
