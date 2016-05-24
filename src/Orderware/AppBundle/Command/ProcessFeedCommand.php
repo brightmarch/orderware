@@ -26,7 +26,7 @@ class ProcessFeedCommand extends ContainerAwareCommand
         $feedName = strtolower($input->getArgument('feed-name'));
 
         $processor = $this->getContainer()
-            ->get('orderware.feed_processor');
+            ->get('orderware.feeds.processor');
 
         // Associate a local file with this feed.
         $processor->setLocalFile(
