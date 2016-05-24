@@ -31,10 +31,6 @@ services:
     #    class: Orderware\AppBundle\Library\Orders\Importer
     #    arguments: [@doctrine.orm.orderware_entity_manager, @validator]
 
-    #orderware.order_recorder:
-    #    class: Orderware\AppBundle\Library\Orders\Recorder
-    #    arguments: [@doctrine.orm.orderware_entity_manager]
-
     # Feeds
     orderware.feed_processor:
         class: Orderware\AppBundle\Library\Feeds\FeedProcessor
@@ -44,22 +40,6 @@ services:
         class: Orderware\AppBundle\Library\Feeds\FeedValidator
         arguments: ["@kernel"]
 
-    orderware.item_feed:
-        class: Orderware\AppBundle\Library\Feeds\ItemFeed
-        arguments: ["@doctrine.orm.orderware_entity_manager", "@validator"]
-
-    #orderware.feed_importer:
-    #    class: Orderware\AppBundle\Library\Feeds\FeedImporter
-    #    arguments: [@doctrine.orm.orderware_entity_manager, @orderware.json_validator]
-
-    #orderware.feed_processor_factory:
-    #    class: Orderware\AppBundle\Library\Feeds\ProcessorFactory
-    #    arguments: [@service_container]
-
-    #orderware.feed_processor_inventory:
-    #    class: Orderware\AppBundle\Library\Feeds\InventoryProcessor
-    #    arguments: [@doctrine.orm.orderware_entity_manager, @validator]
-
-    #orderware.feed_processor_product:
-    #    class: Orderware\AppBundle\Library\Feeds\ProductProcessor
-    #    arguments: [@doctrine.orm.orderware_entity_manager, @validator, @orderware.json_validator]
+    orderware.feeds.item_feed_processor:
+        class: Orderware\AppBundle\Library\Feeds\Processors\ItemFeedProcessor
+        arguments: ["@doctrine.orm.orderware_entity_manager"]
