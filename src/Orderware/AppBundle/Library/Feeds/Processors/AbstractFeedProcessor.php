@@ -25,7 +25,7 @@ abstract class AbstractFeedProcessor
      *
      * @return boolean
      */
-    abstract public function process();
+    abstract public function process() : bool;
 
     public function isInbound()
     {
@@ -40,6 +40,22 @@ abstract class AbstractFeedProcessor
     public function setFeedLog(FeedLog $feedLog)
     {
         $this->feedLog = $feedLog;
+
+        return $this;
+    }
+
+    protected function logInfo($message)
+    {
+        $this->feedLog
+            ->logEntry($message, false);
+
+        return $this;
+    }
+
+    protected function logError($message)
+    {
+        $this->feedLog
+            ->logEntry($message, true);
 
         return $this;
     }

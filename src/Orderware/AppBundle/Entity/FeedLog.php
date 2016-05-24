@@ -563,8 +563,7 @@ class FeedLog
         $this->addEntry($feedLogEntry);
 
         if ($isError) {
-            $this->setHasError(true)
-                ->setErrorMessage($message);
+            $this->setErrorMessage($message);
         }
 
         return $this;
