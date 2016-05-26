@@ -80,8 +80,19 @@ class Filesystem
         return $localFiles;
     }
 
-    public function writeRemoteFile() : bool
+    public function writeRemoteFile(string $fileName, string $contents) : bool
     {
+        if (!empty($this->localFile)) {
+            file_put_contents($this->localFile, $contents);
+        } else {
+            // Write the file on the local mount first.
+            $this->local->put($fileName, $contents);
+
+            // And then write it on the remote mount.
+            $this->remote->put($fileName, $contents);
+        }
+
+        return true;
     }
 
     public function setFeed(Feed $feed) : Filesystem
