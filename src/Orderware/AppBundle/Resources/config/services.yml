@@ -32,6 +32,10 @@ services:
     #    arguments: [@doctrine.orm.orderware_entity_manager, @validator]
 
     # Feeds
+    orderware.feeds.filesystem:
+        class: Orderware\AppBundle\Library\Feeds\Filesystem
+        arguments: ~
+
     orderware.feeds.processor:
         class: Orderware\AppBundle\Library\Feeds\Processor
         arguments: ["@service_container"]

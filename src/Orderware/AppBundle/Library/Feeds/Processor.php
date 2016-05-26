@@ -78,14 +78,21 @@ class Processor
             // processor so it can access it.
             $processor->setFeedLog($feedLog);
 
+            // And get access to the filesystem
+            // for reading and writing feed files.
+            $filesystem = $this->container
+                ->get('orderware.feeds.filesystem');
+
             // Start main feed processing.
             if ($feed->isInbound()) {
+                /*
                 if (!$this->hasLocalFile()) {
                     $localFiles = [ ];
                 } else {
                     // Associate the local file with the feed.
                     $localFiles = [$this->localFile];
                 }
+                */
 
                 foreach ($localFiles as $localFile) {
                     /*
