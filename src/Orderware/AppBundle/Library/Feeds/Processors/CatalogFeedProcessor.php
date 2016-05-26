@@ -4,6 +4,8 @@ namespace Orderware\AppBundle\Library\Feeds\Processors;
 
 use Orderware\AppBundle\Library\Feeds\Processors\InboundFeedProcessor;
 
+use \SimpleXMLElement;
+
 class CatalogFeedProcessor extends InboundFeedProcessor
 {
 
@@ -15,13 +17,9 @@ class CatalogFeedProcessor extends InboundFeedProcessor
 
     public function process() : bool
     {
-        $this->logInfo("Starting catalog processing.");
-
-        $this->loadCache()
+        $this->initializeCache()
             ->processVendors()
             ->processItems();
-
-        $this->logInfo("Finished catalog processing.");
 
         return true;
     }
@@ -36,12 +34,26 @@ class CatalogFeedProcessor extends InboundFeedProcessor
         return $this;
     }
 
-    private function loadCache() : CatalogFeedProcessor
+    private function initializeCache() : CatalogFeedProcessor
     {
         $this->cache = $this->feed = [
             'vendors' => [ ],
             'items' => [ ]
         ];
+
+        /*
+        $xml = new SimpleXMLElement($this->contents);
+
+        foreach ($xml->Vendors->Vendor as $vendor) {
+            var_dump((string)$vendor->Number);
+        }
+
+        foreach ($xml->Items->Item as $item) {
+            var_dump((string)$item->Number);
+        }
+        */
+
+        // Hydrate the cache from the database.
 
         return $this;
     }
