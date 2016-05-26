@@ -44,6 +44,6 @@ services:
         class: Orderware\AppBundle\Library\Feeds\Validator
         arguments: ["@kernel"]
 
-    orderware.feeds.item_feed_processor:
-        class: Orderware\AppBundle\Library\Feeds\Processors\ItemFeedProcessor
+    orderware.feeds.catalog_feed_processor:
+        class: Orderware\AppBundle\Library\Feeds\Processors\CatalogFeedProcessor
         arguments: ["@doctrine.orm.orderware_entity_manager"]

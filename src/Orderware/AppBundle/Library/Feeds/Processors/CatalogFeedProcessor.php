@@ -4,7 +4,7 @@ namespace Orderware\AppBundle\Library\Feeds\Processors;
 
 use Orderware\AppBundle\Library\Feeds\Processors\InboundFeedProcessor;
 
-class ItemFeedProcessor extends InboundFeedProcessor
+class CatalogFeedProcessor extends InboundFeedProcessor
 {
 
     /** @var array */
@@ -22,17 +22,17 @@ class ItemFeedProcessor extends InboundFeedProcessor
         return true;
     }
 
-    private function processVendors() : ItemFeedProcessor
+    private function processVendors() : CatalogFeedProcessor
     {
         return $this;
     }
 
-    private function processItems() : ItemFeedProcessor
+    private function processItems() : CatalogFeedProcessor
     {
         return $this;
     }
 
-    private function loadCache() : ItemFeedProcessor
+    private function loadCache() : CatalogFeedProcessor
     {
         $this->cache = $this->feed = [
             'vendors' => [ ],
