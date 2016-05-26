@@ -4,9 +4,6 @@ namespace Orderware\AppBundle\Library\Feeds;
 
 use Orderware\AppBundle\Entity\FeedLog;
 
-use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Local;
-
 use Symfony\Component\DependencyInjection\Container;
 
 use \Exception,
@@ -83,41 +80,30 @@ class Processor
 
             // And get access to the filesystem
             // for reading and writing feed files.
-            #$filesystem = $this->container
-            #    ->get('orderware.feeds.filesystem');
+            $filesystem = $this->container
+                ->get('orderware.feeds.filesystem')
+                ->setFeed($feed)
+                ->setLocalFile($this->localFile);
 
             // Start main feed processing.
             if ($feed->isInbound()) {
-                $connection = $feed->getConnection();
+                $localFiles = $filesystem->copyRemoteFiles();
 
-                $remote = new Filesystem(
-                    new Local($feed->getRemoteRootDir())
-                );
+                foreach ($localFiles as $file) {
+                    // Associate the file with the log.
+                    $feedLog->createFile(
+                        $file['basename'], $file['contents']
+                    );
 
-                $local = new Filesystem(
-                    new Local($feed->getLocalRootDir())
-                );
-
-                $fileList = $remote->listContents();
-
-                foreach ($fileList as $file) {
-                    if (preg_match($feed->getFilename(), $file['basename'])) {
-                        $contents = $remote->read($file['basename']);
-                        #$local->put($file['basename'], $contents);
-
-                        $feedLog->createFile($file['basename'], $contents);
-
-                        $processor->setContents($contents);
-                        $processor->process();
-                    }
+                    // And away we go.
+                    $processor->setContents($file['contents']);
+                    $processor->process();
                 }
             }
 
             if ($feed->isOutbound()) {
                 // Process the feed.
-
                 // If local file, put contents there.
-
                 // Else, generate file. Push it remotely.
             }
         } catch (Exception $e) {
