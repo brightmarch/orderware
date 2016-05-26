@@ -4,6 +4,9 @@ namespace Orderware\AppBundle\Library\Feeds;
 
 use Orderware\AppBundle\Entity\FeedLog;
 
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
+
 use Symfony\Component\DependencyInjection\Container;
 
 use \Exception,
@@ -34,7 +37,7 @@ class Processor
             ->getManager('orderware');
     }
 
-    public function process($account, $direction, $feedName)
+    public function process($account, $direction, $feedName) : FeedLog
     {
         // Get the feed configuration.
         $feed = $this->entityManager
@@ -80,27 +83,33 @@ class Processor
 
             // And get access to the filesystem
             // for reading and writing feed files.
-            $filesystem = $this->container
-                ->get('orderware.feeds.filesystem');
+            #$filesystem = $this->container
+            #    ->get('orderware.feeds.filesystem');
 
             // Start main feed processing.
             if ($feed->isInbound()) {
-                /*
-                if (!$this->hasLocalFile()) {
-                    $localFiles = [ ];
-                } else {
-                    // Associate the local file with the feed.
-                    $localFiles = [$this->localFile];
-                }
-                */
+                $connection = $feed->getConnection();
 
-                foreach ($localFiles as $localFile) {
-                    /*
-                    $contents = file_get_contents($localFile);
-                    $fileName = basename($localFile);
+                $remote = new Filesystem(
+                    new Local($feed->getRemoteRootDir())
+                );
 
-                    $feedLog->createFile($fileName, $contents);
-                    */
+                $local = new Filesystem(
+                    new Local($feed->getLocalRootDir())
+                );
+
+                $fileList = $remote->listContents();
+
+                foreach ($fileList as $file) {
+                    if (preg_match($feed->getFilename(), $file['basename'])) {
+                        $contents = $remote->read($file['basename']);
+                        #$local->put($file['basename'], $contents);
+
+                        $feedLog->createFile($file['basename'], $contents);
+
+                        $processor->setContents($contents);
+                        $processor->process();
+                    }
                 }
             }
 

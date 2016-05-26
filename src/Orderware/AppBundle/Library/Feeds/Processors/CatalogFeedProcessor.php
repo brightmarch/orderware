@@ -15,9 +15,13 @@ class CatalogFeedProcessor extends InboundFeedProcessor
 
     public function process() : bool
     {
+        $this->logInfo("Starting catalog processing.");
+
         $this->loadCache()
             ->processVendors()
             ->processItems();
+
+        $this->logInfo("Finished catalog processing.");
 
         return true;
     }

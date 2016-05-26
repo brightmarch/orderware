@@ -15,6 +15,9 @@ abstract class AbstractFeedProcessor
     /** @var Orderware\AppBundle\Entity\FeedLog */
     protected $feedLog;
 
+    /** @var string */
+    protected $contents;
+
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -44,7 +47,14 @@ abstract class AbstractFeedProcessor
         return $this;
     }
 
-    protected function logInfo($message)
+    public function setContents(string $contents)
+    {
+        $this->contents = $contents;
+
+        return $this;
+    }
+
+    protected function logInfo(string $message)
     {
         $this->feedLog
             ->logEntry($message, false);
@@ -52,7 +62,7 @@ abstract class AbstractFeedProcessor
         return $this;
     }
 
-    protected function logError($message)
+    protected function logError(string $message)
     {
         $this->feedLog
             ->logEntry($message, true);
