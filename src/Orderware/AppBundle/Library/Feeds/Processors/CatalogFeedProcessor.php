@@ -45,18 +45,39 @@ class CatalogFeedProcessor extends InboundFeedProcessor
         $conn = $this->entityManager
             ->getConnection();
 
-        foreach ($this->feed['vendors'] as $vendor) {
+        foreach ($this->feed['vendors'] as $record) {
             // Grab the primary key for fast cache lookups.
-            $vendorNum = $vendor['vendor_num'];
+            $vendorNum = $record['vendorNum'];
 
             try {
                 $conn->beginTransaction();
 
+                // Vendor Master
+                $vendor = [
+                    'account' => $this->account,
+                    'updated_at' => Utils::dbDate(),
+                    'updated_by' => self::AUTHOR,
+                    'vendor_num' => $record['vendorNum'],
+                    'display_name' => $record['displayName'],
+                    'primary_contact' => $record['primaryContact'],
+                    'address1' => $record['address1'],
+                    'address2' => $record['address2'],
+                    'city_name' => $record['cityName'],
+                    'postal_code' => $record['postalCode'],
+                    'state_code' => $record['stateCode'],
+                    'state_name' => $record['stateName'],
+                    'country_code' => $record['countryCode'],
+                    'country_name' => $record['countryName'],
+                    'email_address' => $record['emailAddress'],
+                    'phone_number' => $record['phoneNumber'],
+                    'fax_number' => $record['faxNumber'],
+                    'notes' => $record['notes']
+                ];
+
                 if (($vendorId = $this->getCachedId('vendors', $vendorNum))) {
-                    $conn->update('vendor', $vendor + [
-                        'updated_at' => Utils::dbDate(),
-                        'updated_by' => self::AUTHOR
-                    ], ['vendor_id' => $vendorId]);
+                    $conn->update('vendor', $vendor, [
+                        'vendor_id' => $vendorId
+                    ]);
                 } else {
                     $vendorId = $conn->fetchColumn("
                         SELECT nextval('vendor_vendor_id_seq')
@@ -65,10 +86,7 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                     $conn->insert('vendor', $vendor + [
                         'vendor_id' => $vendorId,
                         'created_at' => Utils::dbDate(),
-                        'updated_at' => Utils::dbDate(),
-                        'created_by' => self::AUTHOR,
-                        'updated_by' => self::AUTHOR,
-                        'account' => $this->account
+                        'created_by' => self::AUTHOR
                     ]);
 
                     $this->writeCacheId('vendors', $vendorNum, $vendorId);
@@ -100,6 +118,8 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                 // Item Master
                 $item = [
                     'account' => $this->account,
+                    'updated_at' => Utils::dbDate(),
+                    'updated_by' => self::AUTHOR,
                     'status_id' => $this->statuses[$record['status']],
                     'item_num' => $record['itemNum'],
                     'display_name' => $record['displayName'],
@@ -109,9 +129,7 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                     'depth' => $record['depth'],
                     'is_ship_alone' => Utils::dbBool($record['shipAlone']),
                     'is_taxable' => Utils::dbBool($record['taxable']),
-                    'is_virtual' => Utils::dbBool($record['virtual']),
-                    'updated_at' => Utils::dbDate(),
-                    'updated_by' => self::AUTHOR
+                    'is_virtual' => Utils::dbBool($record['virtual'])
                 ];
 
                 if (($itemId = $this->getCachedId('items', $itemNum))) {
@@ -133,12 +151,77 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                 }
 
                 // Item Attributes
+                /*
+                $query = $conn->createQueryBuilder()
+                    ->select('ia.attribute_id', 'ia.attribute')
+                    ->from('item_attribute', 'ia')
+                    ->where('ia.item_id = ?');
+
+                $attributes = $conn->fetchAll($query->getSQL(), [$itemId]);
+                $attributes = array_column(
+                    $attributes, 'attribute_id', 'attribute'
+                );
+
+                foreach ($record['attributes'] as $attribute => $value) {
+                    if (($attributeId = $attributes[$attribute])) {
+                    } else {
+
+                    }
+                }
+                */
 
                 // SKUs
+                foreach ($record['skus'] as $record) {
+                    // SKU Lookup
+                    $query = $conn->createQueryBuilder()
+                        ->select('isk.sku_id')
+                        ->from('item_sku', 'isk')
+                        ->where('isk.item_id = ?')
+                        ->andWhere('isk.skucode = ?');
 
-                // SKU Attributes
+                    $skuId = $conn->fetchColumn($query->getSQL(), [
+                        $itemId, $record['skucode']
+                    ]);
 
-                // SKU Barcodes
+                    // Vendor Lookup
+                    $vendorId = $this->getCachedId(
+                        'vendors', $record['vendorNumber']
+                    );
+
+                    $sku = [
+                        'account' => $this->account,
+                        'item_id' => $itemId,
+                        'vendor_id' => $vendorId,
+                        'status_id' => $this->statuses[$record['status']],
+                        'updated_at' => Utils::dbDate(),
+                        'updated_by' => self::AUTHOR,
+                        'skucode' => $record['skucode'],
+                        'cost_price' => $record['costPrice'],
+                        'retail_price' => $record['retailPrice'],
+                        'pick_description' => $record['pickDescription'],
+                        'part_number' => $record['partNumber']
+                    ];
+
+                    if ($skuId) {
+                        $conn->update('item_sku', $sku, [
+                            'sku_id' => $skuId
+                        ]);
+                    } else {
+                        $skuId = $conn->fetchColumn("
+                            SELECT nextval('item_sku_sku_id_seq')
+                        ");
+
+                        $conn->insert('item_sku', $sku + [
+                            'sku_id' => $skuId,
+                            'created_at' => Utils::dbDate(),
+                            'created_by' => self::AUTHOR
+                        ]);
+                    }
+
+                    // SKU Attributes
+
+                    // SKU Barcodes
+                }
 
                 $conn->commit();
             } catch (Exception $e) {
@@ -171,20 +254,20 @@ class CatalogFeedProcessor extends InboundFeedProcessor
             $this->xpathRegisterRoot($vendor);
 
             $this->feed['vendors'][] = [
-                'vendor_num' => $this->xpathLookup('Number'),
-                'display_name' => $this->xpathLookup('DisplayName'),
-                'primary_contact' => $this->xpathLookup('PrimaryContact'),
+                'vendorNum' => $this->xpathLookup('Number'),
+                'displayName' => $this->xpathLookup('DisplayName'),
+                'primaryContact' => $this->xpathLookup('PrimaryContact'),
                 'address1' => $this->xpathLookup('Address1'),
                 'address2' => $this->xpathLookup('Address2'),
-                'city_name' => $this->xpathLookup('CityName'),
-                'postal_code' => $this->xpathLookup('PostalCode'),
-                'state_code' => $this->xpathLookup('StateCode'),
-                'state_name' => $this->xpathLookup('StateName'),
-                'country_code' => $this->xpathLookup('CountryCode'),
-                'country_name' => $this->xpathLookup('CountryName'),
-                'email_address' => $this->xpathLookup('EmailAddress'),
-                'phone_number' => $this->xpathLookup('PhoneNumber'),
-                'fax_number' => $this->xpathLookup('FaxNumber'),
+                'cityName' => $this->xpathLookup('CityName'),
+                'postalCode' => $this->xpathLookup('PostalCode'),
+                'stateCode' => $this->xpathLookup('StateCode'),
+                'stateName' => $this->xpathLookup('StateName'),
+                'countryCode' => $this->xpathLookup('CountryCode'),
+                'countryName' => $this->xpathLookup('CountryName'),
+                'emailAddress' => $this->xpathLookup('EmailAddress'),
+                'phoneNumber' => $this->xpathLookup('PhoneNumber'),
+                'faxNumber' => $this->xpathLookup('FaxNumber'),
                 'notes' => $this->xpathLookup('Notes')
             ];
         }
@@ -217,10 +300,10 @@ class CatalogFeedProcessor extends InboundFeedProcessor
             foreach ($attributes as $attribute) {
                 $this->xpathRegisterRoot($attribute);
 
-                $this->feed['items'][$idx]['attributes'][] = [
-                    'attribute' => $this->xpathLookup('Key'),
-                    'value' => $this->xpathLookup('Value')
-                ];
+                $attribute = $this->xpathLookup('Key');
+                $value = $this->xpathLookup('Value');
+
+                $this->feed['items'][$idx]['attributes'][$attribute] = $value;
             }
 
             // Load Item SKUs
@@ -249,10 +332,10 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                 foreach ($attributes as $attribute) {
                     $this->xpathRegisterRoot($attribute);
 
-                    $this->feed['items'][$idx]['skus'][$sdx]['attributes'][] = [
-                        'attribute' => $this->xpathLookup('Key'),
-                        'value' => $this->xpathLookup('Value')
-                    ];
+                    $attribute = $this->xpathLookup('Key');
+                    $value = $this->xpathLookup('Value');
+
+                    $this->feed['items'][$idx]['skus'][$sdx]['attributes'][$attribute] = $value;
                 }
 
                 // Load SKU Barcodes
@@ -260,9 +343,7 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                     ->xpathQuery('Barcodes/Barcode');
 
                 foreach ($barcodes as $barcode) {
-                    $this->feed['items'][$idx]['skus'][$sdx]['barcodes'][] = [
-                        'barcode' => $barcode->textContent
-                    ];
+                    $this->feed['items'][$idx]['skus'][$sdx]['barcodes'][] = $barcode->textContent;
                 }
             }
         }
