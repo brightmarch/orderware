@@ -16,6 +16,9 @@ abstract class AbstractFeedProcessor
     protected $feedLog;
 
     /** @var string */
+    protected $account;
+
+    /** @var string */
     protected $contents;
 
     public function __construct(EntityManager $entityManager)
@@ -38,6 +41,13 @@ abstract class AbstractFeedProcessor
     public function isOutbound()
     {
         return false;
+    }
+
+    public function setAccount(string $account)
+    {
+        $this->account = $account;
+
+        return $this;
     }
 
     public function setFeedLog(FeedLog $feedLog)

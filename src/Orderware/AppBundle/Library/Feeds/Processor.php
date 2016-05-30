@@ -76,7 +76,8 @@ class Processor
 
             // Associate the log with the
             // processor so it can access it.
-            $processor->setFeedLog($feedLog);
+            $processor->setFeedLog($feedLog)
+                ->setAccount($account->getAccount());
 
             // And get access to the filesystem
             // for reading and writing feed files.
