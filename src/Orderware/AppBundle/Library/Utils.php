@@ -6,6 +6,21 @@ class Utils
 {
 
     /**
+     * Casts a value to a database boolean.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    public static function dbBool($value)
+    {
+        if (is_bool($value)) {
+            return (true === $value ? 't' : 'f');
+        }
+
+        return ('true' === strtolower($value) ? 't' : 'f');
+    }
+
+    /**
      * Returns an ISO YYYY-MM-DD HH:mm:ss date format.
      *
      * @param mixed $time
