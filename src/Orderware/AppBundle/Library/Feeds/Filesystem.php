@@ -6,6 +6,7 @@ use Orderware\AppBundle\Entity\Feed;
 
 use League\Flysystem\Filesystem as Mount;
 use League\Flysystem\Adapter\Local as LocalAdapter;
+use League\Flysystem\Memory\MemoryAdapter;
 
 use \ReflectionClass,
     \InvalidArgumentException,
@@ -18,10 +19,10 @@ class Filesystem
     private $feed;
 
     /** @var League\Flysystem\Filesystem */
-    private $local;
+    private $localMount;
 
     /** @var League\Flysystem\Filesystem */
-    private $remote;
+    private $remoteMount;
 
     /** @var array */
     private $connectionTypes = [ ];
@@ -32,10 +33,14 @@ class Filesystem
     /** @const string */
     const CONNECTION_LOCAL = 'local';
 
+    /** @const string */
+    const CONNECTION_MEMORY = 'memory';
+
     public function __construct()
     {
         $this->connectionTypes = [
-            self::CONNECTION_LOCAL => LocalAdapter::class
+            self::CONNECTION_LOCAL => LocalAdapter::class,
+            self::CONNECTION_MEMORY => MemoryAdapter::class
         ];
     }
 
@@ -53,7 +58,7 @@ class Filesystem
             ];
         } else {
             // Get a list of files from the remote mount.
-            $fileList = $this->remote->listContents();
+            $fileList = $this->remoteMount->listContents();
 
             foreach ($fileList as $file) {
                 $isMatched = preg_match(
@@ -61,13 +66,13 @@ class Filesystem
                 );
 
                 if ($isMatched) {
-                    $contents = $this->remote
+                    $contents = $this->remoteMount
                         ->readAndDelete($file['basename']);
 
-                    $this->local
+                    $this->localMount
                         ->put($file['basename'], $contents);
 
-                    if ($this->local->has($file['basename'])) {
+                    if ($this->localMount->has($file['basename'])) {
                         $localFiles[] = [
                             'basename' => $file['basename'],
                             'contents' => $contents
@@ -86,13 +91,21 @@ class Filesystem
             file_put_contents($this->localFile, $contents);
         } else {
             // Write the file on the local mount first.
-            $this->local->put($fileName, $contents);
+            $this->localMount->put($fileName, $contents);
 
             // And then write it on the remote mount.
-            $this->remote->put($fileName, $contents);
+            $this->remoteMount->put($fileName, $contents);
         }
 
         return true;
+    }
+
+    public function isMounted() : bool
+    {
+        return (
+            $this->localMount instanceof Mount &&
+            $this->remoteMount instanceof Mount 
+        );
     }
 
     public function setFeed(Feed $feed) : Filesystem
@@ -109,9 +122,19 @@ class Filesystem
         return $this;
     }
 
+    public function getLocalMount()
+    {
+        return $this->localMount;
+    }
+
+    public function getRemoteMount()
+    {
+        return $this->remoteMount;
+    }
+
     private function initialize() : bool
     {
-        if (!$this->local && !$this->remote) {
+        if (!$this->isMounted()) {
             if (!$this->feed) {
                 throw new RuntimeException("The feed configuration has not been attached to the filesystem manager.");
             }
@@ -128,7 +151,7 @@ class Filesystem
 
             // Construct a local mount of the filesystem.
             // This always uses the LocalAdapter from Flysystem.
-            $this->local = new Mount(
+            $this->localMount = new Mount(
                 new LocalAdapter($this->feed->getLocalRootDir())
             );
 
@@ -148,13 +171,11 @@ class Filesystem
                 );
             }
 
-            if (!$remoteAdapter) {
-                throw new InvalidArgumentException(
-                    sprintf("A remote filesystem could not be mounted. The connection type (%s) does not have an adapter.", $connectionType)
-                );
+            if (self::CONNECTION_MEMORY === $connectionType) {
+                $remoteAdapter = $class->newInstance();
             }
 
-            $this->remote = new Mount($remoteAdapter);
+            $this->remoteMount = new Mount($remoteAdapter);
         }
 
         return true;
