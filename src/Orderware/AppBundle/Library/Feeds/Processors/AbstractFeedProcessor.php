@@ -80,4 +80,12 @@ abstract class AbstractFeedProcessor
         return $this;
     }
 
+    protected function nextval($sequence)
+    {
+        return $this->entityManager
+            ->getConnection()
+            ->getDatabasePlatform()
+            ->getSequenceNextValSQL($sequence);
+    }
+
 }

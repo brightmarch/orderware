@@ -79,9 +79,9 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                         'vendor_id' => $vendorId
                     ]);
                 } else {
-                    $vendorId = $conn->fetchColumn("
-                        SELECT nextval('vendor_vendor_id_seq')
-                    ");
+                    $vendorId = $conn->fetchColumn(
+                        $this->nextval('vendor_vendor_id_seq')
+                    );
 
                     $conn->insert('vendor', $vendor + [
                         'vendor_id' => $vendorId,
@@ -115,7 +115,7 @@ class CatalogFeedProcessor extends InboundFeedProcessor
             try {
                 $conn->beginTransaction();
 
-                // Item Master
+                // Item Record
                 $item = [
                     'account' => $this->account,
                     'updated_at' => Utils::dbDate(),
@@ -137,9 +137,9 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                         'item_id' => $itemId
                     ]);
                 } else {
-                    $itemId = $conn->fetchColumn("
-                        SELECT nextval('item_item_id_seq')
-                    ");
+                    $itemId = $conn->fetchColumn(
+                        $this->nextval('item_item_id_seq')
+                    );
 
                     $conn->insert('item', $item + [
                         'item_id' => $itemId,
@@ -151,24 +151,42 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                 }
 
                 // Item Attributes
-                /*
-                $query = $conn->createQueryBuilder()
-                    ->select('ia.attribute_id', 'ia.attribute')
-                    ->from('item_attribute', 'ia')
-                    ->where('ia.item_id = ?');
-
-                $attributes = $conn->fetchAll($query->getSQL(), [$itemId]);
-                $attributes = array_column(
-                    $attributes, 'attribute_id', 'attribute'
-                );
-
                 foreach ($record['attributes'] as $attribute => $value) {
-                    if (($attributeId = $attributes[$attribute])) {
-                    } else {
+                    $query = $conn->createQueryBuilder()
+                        ->select('ia.attribute_id')
+                        ->from('item_attribute', 'ia')
+                        ->where('ia.item_id = ?')
+                        ->andWhere('ia.attribute = ?');
 
+                    $attributeId = $conn->fetchColumn($query->getSQL(), [
+                        $itemId, $attribute
+                    ]);
+
+                    // Attribute Record
+                    $attribute = [
+                        'item_id' => $itemId,
+                        'updated_at' => Utils::dbDate(),
+                        'updated_by' => self::AUTHOR,
+                        'attribute' => $attribute,
+                        'value' => $value
+                    ];
+
+                    if ($attributeId) {
+                        $conn->update('item_attribute', $attribute, [
+                            'attribute_id' => $attributeId
+                        ]);
+                    } else {
+                        $attributeId = $conn->fetchColumn(
+                            $this->nextval('item_attribute_attribute_id_seq')
+                        );
+
+                        $conn->insert('item_attribute', $attribute + [
+                            'attribute_id' => $attributeId,
+                            'created_at' => Utils::dbDate(),
+                            'created_by' => self::AUTHOR
+                        ]);
                     }
                 }
-                */
 
                 // SKUs
                 foreach ($record['skus'] as $record) {
@@ -188,6 +206,7 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                         'vendors', $record['vendorNumber']
                     );
 
+                    // SKU Record
                     $sku = [
                         'account' => $this->account,
                         'item_id' => $itemId,
@@ -207,9 +226,9 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                             'sku_id' => $skuId
                         ]);
                     } else {
-                        $skuId = $conn->fetchColumn("
-                            SELECT nextval('item_sku_sku_id_seq')
-                        ");
+                        $skuId = $conn->fetchColumn(
+                            $this->nextval('item_sku_sku_id_seq')
+                        );
 
                         $conn->insert('item_sku', $sku + [
                             'sku_id' => $skuId,
@@ -219,8 +238,80 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                     }
 
                     // SKU Attributes
+                    foreach ($record['attributes'] as $attribute => $value) {
+                        $query = $conn->createQueryBuilder()
+                            ->select('isa.attribute_id')
+                            ->from('item_sku_attribute', 'isa')
+                            ->where('isa.sku_id = ?')
+                            ->andWhere('isa.attribute = ?');
+
+                        $attributeId = $conn->fetchColumn($query->getSQL(), [
+                            $skuId, $attribute
+                        ]);
+
+                        // Attribute Record
+                        $attribute = [
+                            'sku_id' => $skuId,
+                            'updated_at' => Utils::dbDate(),
+                            'updated_by' => self::AUTHOR,
+                            'attribute' => $attribute,
+                            'value' => $value
+                        ];
+
+                        if ($attributeId) {
+                            $conn->update('item_sku_attribute', $attribute, [
+                                'attribute_id' => $attributeId
+                            ]);
+                        } else {
+                            $attributeId = $conn->fetchColumn(
+                                $this->nextval('item_sku_attribute_attribute_id_seq')
+                            );
+
+                            $conn->insert('item_sku_attribute', $attribute + [
+                                'attribute_id' => $attributeId,
+                                'created_at' => Utils::dbDate(),
+                                'created_by' => self::AUTHOR
+                            ]);
+                        }
+                    }
 
                     // SKU Barcodes
+                    foreach ($record['barcodes'] as $barcode) {
+                        $query = $conn->createQueryBuilder()
+                            ->select('isb.barcode_id')
+                            ->from('item_sku_barcode', 'isb')
+                            ->where('isb.account = ?')
+                            ->andWhere('isb.barcode = ?');
+
+                        $barcodeId = $conn->fetchColumn($query->getSQL(), [
+                            $this->account, $barcode
+                        ]);
+
+                        // Barcode Record
+                        $barcode = [
+                            'account' => $this->account,
+                            'sku_id' => $skuId,
+                            'updated_at' => Utils::dbDate(),
+                            'updated_by' => self::AUTHOR,
+                            'barcode' => $barcode
+                        ];
+
+                        if ($barcodeId) {
+                            $conn->update('item_sku_barcode', $barcode, [
+                                'barcode_id' => $barcodeId
+                            ]);
+                        } else {
+                            $barcodeId = $conn->fetchColumn(
+                                $this->nextval('item_sku_barcode_barcode_id_seq')
+                            );
+
+                            $conn->insert('item_sku_barcode', $barcode + [
+                                'barcode_id' => $barcodeId,
+                                'created_at' => Utils::dbDate(),
+                                'created_by' => self::AUTHOR
+                            ]);
+                        }
+                    }
                 }
 
                 $conn->commit();
