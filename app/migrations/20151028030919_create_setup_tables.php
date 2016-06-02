@@ -230,6 +230,26 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("CREATE UNIQUE INDEX facility_account_is_master_idx ON facility (account, is_master) WHERE is_master = true");
 
         $this->execute("
+            CREATE TABLE channel (
+                channel_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
+                channel_code text NOT NULL,
+                name text NOT NULL,
+                allocation_percent integer NOT NULL DEFAULT 0,
+                is_master boolean NOT NULL DEFAULT false,
+                CONSTRAINT channel_pkey PRIMARY KEY (channel_id)
+            ) WITH (OIDS=FALSE)
+        ");
+
+        $this->execute("CREATE INDEX channel_account_idx ON channel (account)");
+        $this->execute("CREATE UNIQUE INDEX channel_account_channel_code_idx ON channel (account, channel_code)");
+        $this->execute("CREATE UNIQUE INDEX channel_account_is_master_idx ON channel (account, is_master) WHERE is_master = true");
+
+        $this->execute("
             CREATE TABLE item (
                 item_id serial NOT NULL,
                 created_at timestamp without time zone NOT NULL,
@@ -343,9 +363,10 @@ class CreateSetupTables extends AbstractMigration
                 updated_by text NOT NULL,
                 account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
-                facility_id integer NOT NULL REFERENCES facility (facility_id) ON DELETE CASCADE,
+                facility_id integer REFERENCES facility (facility_id),
                 qty_received integer NOT NULL DEFAULT 0,
                 qty_ordered integer NOT NULL DEFAULT 0,
+                qty_canceled integer NOT NULL DEFAULT 0,
                 qty_shipped integer NOT NULL DEFAULT 0,
                 qty_onhand integer NOT NULL DEFAULT 0,
                 qty_available integer NOT NULL DEFAULT 0,
@@ -356,13 +377,28 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("CREATE INDEX inventory_account_idx ON inventory (account)");
         $this->execute("CREATE INDEX inventory_sku_id_idx ON inventory (sku_id)");
         $this->execute("CREATE INDEX inventory_facility_id_idx ON inventory (facility_id)");
-        $this->execute("CREATE UNIQUE INDEX inventory_account_sku_id_facility_id_idx ON inventory (account, sku_id, facility_id)");
+        $this->execute("CREATE UNIQUE INDEX inventory_account_sku_id_idx ON inventory (account, sku_id) WHERE facility_id IS NULL");
+
+        $this->execute("
+            CREATE OR REPLACE FUNCTION calculate_inventory_sum(_sku_id integer) RETURNS boolean AS $$
+            BEGIN
+                UPDATE inventory SET qty_received = (
+                    SELECT SUM(inv.qty_received) FROM inventory inv
+                    WHERE inv.sku_id = _sku_id
+                        AND inv.facility_id IS NOT NULL
+                ) WHERE sku_id = _sku_id
+                    AND facility_id IS NULL;
+
+                RETURN TRUE;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
 
         $this->execute("
             CREATE OR REPLACE FUNCTION calculate_inventory_buckets() RETURNS TRIGGER AS $$
             BEGIN
                 NEW.qty_onhand = NEW.qty_received - NEW.qty_shipped;
-                NEW.qty_available = NEW.qty_received - NEW.qty_ordered;
+                NEW.qty_available = NEW.qty_received - NEW.qty_ordered - NEW.qty_canceled;
 
                 RETURN NEW;
             END;
@@ -384,6 +420,7 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("DROP TABLE IF EXISTS item_sku CASCADE");
         $this->execute("DROP TABLE IF EXISTS item_attribute CASCADE");
         $this->execute("DROP TABLE IF EXISTS item CASCADE");
+        $this->execute("DROP TABLE IF EXISTS channel CASCADE");
         $this->execute("DROP TABLE IF EXISTS facility CASCADE");
         $this->execute("DROP TABLE IF EXISTS vendor CASCADE");
 
