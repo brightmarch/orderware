@@ -73,6 +73,11 @@ class Account
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
+    private $items;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
     private $vendors;
 
     /**
@@ -80,6 +85,7 @@ class Account
      */
     public function __construct()
     {
+        $this->items = new \Doctrine\Common\Collections\ArrayCollection();
         $this->vendors = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -379,6 +385,40 @@ class Account
     public function getMerchDescription()
     {
         return $this->merchDescription;
+    }
+
+    /**
+     * Add item
+     *
+     * @param \Orderware\AppBundle\Entity\Item $item
+     *
+     * @return Account
+     */
+    public function addItem(\Orderware\AppBundle\Entity\Item $item)
+    {
+        $this->items[] = $item;
+
+        return $this;
+    }
+
+    /**
+     * Remove item
+     *
+     * @param \Orderware\AppBundle\Entity\Item $item
+     */
+    public function removeItem(\Orderware\AppBundle\Entity\Item $item)
+    {
+        $this->items->removeElement($item);
+    }
+
+    /**
+     * Get items
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 
     /**

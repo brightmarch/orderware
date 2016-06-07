@@ -42,11 +42,11 @@ Orderware\AppBundle\Entity\Account:
             type: string
             nullable: true
     oneToMany:
-        #items:
-        #    targetEntity: Item
-        #    mappedBy: account
-        #    orderBy:
-        #        itemNum: ASC
+        items:
+            targetEntity: Item
+            mappedBy: account
+            orderBy:
+                itemNum: ASC
         #skus:
         #    targetEntity: ItemSku
         #    mappedBy: account

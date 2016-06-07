@@ -33,6 +33,30 @@ Orderware\AppBundle\Entity\Item:
         displayName:
             column: display_name
             type: string
+        weight:
+            column: weight
+            type: decimal
+        length:
+            column: length
+            type: decimal
+        width:
+            column: width
+            type: decimal
+        depth:
+            column: depth
+            type: decimal
+        isShipAlone:
+            column: is_ship_alone
+            type: boolean
+        isTaxable:
+            column: is_taxable
+            type: boolean
+        isVirtual:
+            column: is_virtual
+            type: boolean
+        trackInventory:
+            column: track_inventory
+            type: boolean
     manyToOne:
         account:
             targetEntity: Account
@@ -40,19 +64,19 @@ Orderware\AppBundle\Entity\Item:
             joinColumn:
                 name: account
                 referencedColumnName: account
-    oneToMany:
-        attributes:
-            targetEntity: ItemAttribute
-            mappedBy: item
-            cascade: [persist]
-            orderBy:
-                attribute: ASC
-        skus:
-            targetEntity: ItemSku
-            mappedBy: item
-            cascade: [persist]
-            orderBy:
-                skucode: ASC
+    oneToMany: ~
+        #attributes:
+        #    targetEntity: ItemAttribute
+        #    mappedBy: item
+        #    cascade: [persist]
+        #    orderBy:
+        #        attribute: ASC
+        #skus:
+        #    targetEntity: ItemSku
+        #    mappedBy: item
+        #    cascade: [persist]
+        #    orderBy:
+        #        skucode: ASC
     lifecycleCallbacks:
         prePersist: [onCreate]
         preUpdate: [onUpdate]
