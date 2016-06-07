@@ -14,10 +14,10 @@ phing -e -Dsettings=build.settings -f app/config/phing.xml -logger phing.listene
 echo
 composer install --no-ansi
 echo
-compass compile src/Orderware/AppBundle/Resources/config/compass
-echo
-php bin/phinx --configuration=app/config/phinx.yml --environment=dev --no-interaction --no-ansi migrate
-php bin/phinx --configuration=app/config/phinx.yml --environment=test --no-interaction --no-ansi migrate
+#compass compile src/Orderware/AppBundle/Resources/config/compass
+#echo
+#php bin/phinx --configuration=app/config/phinx.yml --environment=dev --no-interaction --no-ansi migrate
+#php bin/phinx --configuration=app/config/phinx.yml --environment=test --no-interaction --no-ansi migrate
 #echo
 #psql -hlocalhost -Uorderware orderware < app/config/initdb.sql
 
