@@ -1,0 +1,93 @@
+Orderware\AppBundle\Entity\Vendor:
+    type: entity
+    table: vendor
+    id:
+        vendorId:
+            column: vendor_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: vendor_vendor_id_seq
+                allocationSize: 1
+                initialValue: 1 
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: string
+        updatedBy:
+            column: updated_by
+            type: string
+        vendorNum:
+            column: vendor_num
+            type: string
+        displayName:
+            column: display_name
+            type: string
+        primaryContact:
+            column: primary_contact
+            type: string
+        accountNum:
+            column: account_num
+            type: string
+            nullable: true
+        address1:
+            column: address1
+            type: string
+            nullable: true
+        address2:
+            column: address2
+            type: string
+            nullable: true
+        cityName:
+            column: city_name
+            type: string
+            nullable: true
+        postalCode:
+            column: postal_code
+            type: string
+            nullable: true
+        stateCode:
+            column: state_code
+            type: string
+            nullable: true
+        stateName:
+            column: state_name
+            type: string
+            nullable: true
+        countryCode:
+            column: country_code
+            type: string
+            nullable: true
+        countryName:
+            column: country_name
+            type: string
+            nullable: true
+        emailAddress:
+            column: email_address
+            type: string
+            nullable: true
+        faxNumber:
+            column: fax_number
+            type: string
+            nullable: true
+        notes:
+            column: notes
+            type: string
+            nullable: true
+    manyToOne:
+        account:
+            targetEntity: Account
+            inversedBy: vendors
+            joinColumn:
+                name: account
+                referencedColumnName: account
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]

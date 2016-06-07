@@ -1,0 +1,58 @@
+Orderware\AppBundle\Entity\Item:
+    type: entity
+    table: item
+    id:
+        itemId:
+            column: item_id
+            type: integer
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: item_item_id_seq
+                allocationSize: 1
+                initialValue: 1 
+    fields:
+        createdAt:
+            column: created_at
+            type: datetime
+        updatedAt:
+            column: updated_at
+            type: datetime
+        createdBy:
+            column: created_by
+            type: string
+        updatedBy:
+            column: updated_by
+            type: string
+        statusId:
+            column: status_id
+            type: integer
+        itemNum:
+            column: item_num
+            type: string
+        displayName:
+            column: display_name
+            type: string
+    manyToOne:
+        account:
+            targetEntity: Account
+            inversedBy: items
+            joinColumn:
+                name: account
+                referencedColumnName: account
+    oneToMany:
+        attributes:
+            targetEntity: ItemAttribute
+            mappedBy: item
+            cascade: [persist]
+            orderBy:
+                attribute: ASC
+        skus:
+            targetEntity: ItemSku
+            mappedBy: item
+            cascade: [persist]
+            orderBy:
+                skucode: ASC
+    lifecycleCallbacks:
+        prePersist: [onCreate]
+        preUpdate: [onUpdate]

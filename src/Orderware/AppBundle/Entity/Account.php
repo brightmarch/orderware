@@ -71,10 +71,16 @@ class Account
     private $merchDescription;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $vendors;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
+        $this->vendors = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -373,6 +379,40 @@ class Account
     public function getMerchDescription()
     {
         return $this->merchDescription;
+    }
+
+    /**
+     * Add vendor
+     *
+     * @param \Orderware\AppBundle\Entity\Vendor $vendor
+     *
+     * @return Account
+     */
+    public function addVendor(\Orderware\AppBundle\Entity\Vendor $vendor)
+    {
+        $this->vendors[] = $vendor;
+
+        return $this;
+    }
+
+    /**
+     * Remove vendor
+     *
+     * @param \Orderware\AppBundle\Entity\Vendor $vendor
+     */
+    public function removeVendor(\Orderware\AppBundle\Entity\Vendor $vendor)
+    {
+        $this->vendors->removeElement($vendor);
+    }
+
+    /**
+     * Get vendors
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVendors()
+    {
+        return $this->vendors;
     }
 
     /**

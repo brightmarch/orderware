@@ -41,7 +41,22 @@ Orderware\AppBundle\Entity\Account:
             column: merch_description
             type: string
             nullable: true
-    oneToMany: ~
+    oneToMany:
+        #items:
+        #    targetEntity: Item
+        #    mappedBy: account
+        #    orderBy:
+        #        itemNum: ASC
+        #skus:
+        #    targetEntity: ItemSku
+        #    mappedBy: account
+        #    orderBy:
+        #        skucode: ASC
+        vendors:
+            targetEntity: Vendor
+            mappedBy: account
+            orderBy:
+                vendorNum: ASC
     lifecycleCallbacks:
         prePersist: [onCreate]
         preUpdate: [onUpdate]
