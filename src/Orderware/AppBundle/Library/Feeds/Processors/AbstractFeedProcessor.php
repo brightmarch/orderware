@@ -2,6 +2,7 @@
 
 namespace Orderware\AppBundle\Library\Feeds\Processors;
 
+use Orderware\AppBundle\Entity\Account;
 use Orderware\AppBundle\Entity\FeedLog;
 
 use Doctrine\ORM\EntityManager;
@@ -12,11 +13,11 @@ abstract class AbstractFeedProcessor
     /** @var Doctrine\ORM\EntityManager */
     protected $entityManager;
 
+    /** @var Orderware\AppBundle\Entity\Account */
+    protected $account;
+
     /** @var Orderware\AppBundle\Entity\FeedLog */
     protected $feedLog;
-
-    /** @var string */
-    protected $account;
 
     /** @var string */
     protected $contents;
@@ -43,7 +44,7 @@ abstract class AbstractFeedProcessor
         return false;
     }
 
-    public function setAccount(string $account)
+    public function setAccount(Account $account)
     {
         $this->account = $account;
 
@@ -80,6 +81,7 @@ abstract class AbstractFeedProcessor
         return $this;
     }
 
+    /*
     protected function nextval($sequence)
     {
         return $this->entityManager
@@ -87,5 +89,6 @@ abstract class AbstractFeedProcessor
             ->getDatabasePlatform()
             ->getSequenceNextValSQL($sequence);
     }
+    */
 
 }

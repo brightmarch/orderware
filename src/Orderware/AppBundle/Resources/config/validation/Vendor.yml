@@ -1,0 +1,14 @@
+Orderware\AppBundle\Entity\Vendor:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [account, vendorNum]
+            errorPath: vendorNum
+    properties:
+        vendorNum:
+            - NotBlank: ~
+        displayName:
+            - NotBlank: ~
+        primaryContact:
+            - NotBlank: ~
+        emailAddress:
+            - Email: ~

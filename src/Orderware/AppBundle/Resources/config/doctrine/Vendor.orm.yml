@@ -73,6 +73,10 @@ Orderware\AppBundle\Entity\Vendor:
             column: email_address
             type: string
             nullable: true
+        phoneNumber:
+            column: phone_number
+            type: string
+            nullable: true
         faxNumber:
             column: fax_number
             type: string

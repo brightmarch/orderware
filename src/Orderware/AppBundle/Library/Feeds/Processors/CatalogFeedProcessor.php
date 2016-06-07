@@ -2,6 +2,7 @@
 
 namespace Orderware\AppBundle\Library\Feeds\Processors;
 
+use Orderware\AppBundle\Entity\Vendor;
 use Orderware\AppBundle\Library\Feeds\Processors\InboundFeedProcessor;
 use Orderware\AppBundle\Library\Status;
 use Orderware\AppBundle\Library\Utils;
@@ -34,70 +35,58 @@ class CatalogFeedProcessor extends InboundFeedProcessor
         $this->initializeDom();
 
         $this->initializeCache()
-            ->processVendors()
-            ->processItems();
+            ->processVendors();
+            #->processItems();
 
         return true;
     }
 
     private function processVendors() : CatalogFeedProcessor
     {
-        $conn = $this->entityManager
-            ->getConnection();
+        $vendors = $this->xpathQuery('//Envelope/Vendors/Vendor');
 
-        foreach ($this->feed['vendors'] as $record) {
-            // Grab the primary key for fast cache lookups.
-            $vendorNum = $record['vendorNum'];
+        foreach ($vendors as $vendor) {
+            $this->xpathRegisterRoot($vendor);
 
-            try {
-                $conn->beginTransaction();
+            // Primary Key
+            $vendorNum = $this->xpathLookup('Number');
 
-                // Vendor Master
-                $vendor = [
+            // Vendor Search
+            $vendor = $this->entityManager
+                ->getRepository('Orderware:Vendor')
+                ->findOneBy([
                     'account' => $this->account,
-                    'updated_at' => Utils::dbDate(),
-                    'updated_by' => self::AUTHOR,
-                    'vendor_num' => $record['vendorNum'],
-                    'display_name' => $record['displayName'],
-                    'primary_contact' => $record['primaryContact'],
-                    'address1' => $record['address1'],
-                    'address2' => $record['address2'],
-                    'city_name' => $record['cityName'],
-                    'postal_code' => $record['postalCode'],
-                    'state_code' => $record['stateCode'],
-                    'state_name' => $record['stateName'],
-                    'country_code' => $record['countryCode'],
-                    'country_name' => $record['countryName'],
-                    'email_address' => $record['emailAddress'],
-                    'phone_number' => $record['phoneNumber'],
-                    'fax_number' => $record['faxNumber'],
-                    'notes' => $record['notes']
-                ];
+                    'vendorNum' => $vendorNum
+                ]);
 
-                if (($vendorId = $this->getCachedId('vendors', $vendorNum))) {
-                    $conn->update('vendor', $vendor, [
-                        'vendor_id' => $vendorId
-                    ]);
-                } else {
-                    $vendorId = $conn->fetchColumn(
-                        $this->nextval('vendor_vendor_id_seq')
-                    );
-
-                    $conn->insert('vendor', $vendor + [
-                        'vendor_id' => $vendorId,
-                        'created_at' => Utils::dbDate(),
-                        'created_by' => self::AUTHOR
-                    ]);
-
-                    $this->writeCacheId('vendors', $vendorNum, $vendorId);
-                }
-
-                $conn->commit();
-            } catch (Exception $e) {
-                $conn->rollback();
-
-                $this->logError($e->getMessage());
+            if (!$vendor) {
+                $vendor = new Vendor;
+                $vendor->setAccount($this->account)
+                    ->setCreatedBy(self::AUTHOR)
+                    ->setVendorNum($vendorNum);
             }
+
+            $vendor->setUpdatedBy(self::AUTHOR)
+                ->setDisplayName($this->xpathLookup('DisplayName'))
+                ->setPrimaryContact($this->xpathLookup('PrimaryContact'))
+                ->setAddress1($this->xpathLookup('Address1'))
+                ->setAddress2($this->xpathLookup('Address2'))
+                ->setCityName($this->xpathLookup('CityName'))
+                ->setPostalCode($this->xpathLookup('PostalCode'))
+                ->setStateCode($this->xpathLookup('StateCode'))
+                ->setStateName($this->xpathLookup('StateName'))
+                ->setCountryCode($this->xpathLookup('CountryCode'))
+                ->setCountryName($this->xpathLookup('CountryName'))
+                ->setEmailAddress($this->xpathLookup('EmailAddress'))
+                ->setPhoneNumber($this->xpathLookup('PhoneNumber'))
+                ->setFaxNumber($this->xpathLookup('FaxNumber'))
+                ->setNotes($this->xpathLookup('Notes'));
+
+            $this->entityManager
+                ->persist($vendor);
+
+            $this->entityManager
+                ->flush($vendor);
         }
 
         return $this;
@@ -105,6 +94,7 @@ class CatalogFeedProcessor extends InboundFeedProcessor
 
     private function processItems() : CatalogFeedProcessor
     {
+        /*
         $conn = $this->entityManager
             ->getConnection();
 
@@ -321,12 +311,14 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                 $this->logError($e->getMessage());
             }
         }
+        */
 
         return $this;
     }
 
     private function initializeCache() : CatalogFeedProcessor
     {
+        /*
         // Placeholder Arrays
         $this->cache = [
             'vendors' => [ ],
@@ -470,10 +462,12 @@ class CatalogFeedProcessor extends InboundFeedProcessor
         $this->cache['items'] = array_column(
             $items, 'item_id', 'item_num'
         );
+        */
 
         return $this;
     }
 
+    /*
     private function getCachedId($source, $key)
     {
         if (isset($this->cache[$source][$key])) {
@@ -491,5 +485,6 @@ class CatalogFeedProcessor extends InboundFeedProcessor
 
         return true;
     }
+    */
 
 }

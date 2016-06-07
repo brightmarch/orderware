@@ -101,6 +101,11 @@ class Vendor
     /**
      * @var string
      */
+    private $phoneNumber;
+
+    /**
+     * @var string
+     */
     private $faxNumber;
 
     /**
@@ -529,6 +534,30 @@ class Vendor
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * Set phoneNumber
+     *
+     * @param string $phoneNumber
+     *
+     * @return Vendor
+     */
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get phoneNumber
+     *
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
     }
 
     /**
