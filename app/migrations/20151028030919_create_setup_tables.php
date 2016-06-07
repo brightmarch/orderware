@@ -355,7 +355,7 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("CREATE UNIQUE INDEX item_sku_barcode_account_barcode_idx ON item_sku_barcode (account, barcode)");
 
         $this->execute("
-            CREATE TABLE inventory (
+            CREATE TABLE master_inventory (
                 inventory_id serial NOT NULL,
                 created_at timestamp without time zone NOT NULL,
                 updated_at timestamp without time zone NOT NULL,
@@ -363,36 +363,44 @@ class CreateSetupTables extends AbstractMigration
                 updated_by text NOT NULL,
                 account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
                 sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
-                facility_id integer REFERENCES facility (facility_id),
                 qty_received integer NOT NULL DEFAULT 0,
                 qty_ordered integer NOT NULL DEFAULT 0,
                 qty_canceled integer NOT NULL DEFAULT 0,
                 qty_shipped integer NOT NULL DEFAULT 0,
                 qty_onhand integer NOT NULL DEFAULT 0,
                 qty_available integer NOT NULL DEFAULT 0,
-                CONSTRAINT inventory_pkey PRIMARY KEY (inventory_id)
+                CONSTRAINT master_inventory_pkey PRIMARY KEY (inventory_id)
             ) WITH (OIDS=FALSE)
         ");
 
-        $this->execute("CREATE INDEX inventory_account_idx ON inventory (account)");
-        $this->execute("CREATE INDEX inventory_sku_id_idx ON inventory (sku_id)");
-        $this->execute("CREATE INDEX inventory_facility_id_idx ON inventory (facility_id)");
-        $this->execute("CREATE UNIQUE INDEX inventory_account_sku_id_idx ON inventory (account, sku_id) WHERE facility_id IS NULL");
+        $this->execute("CREATE INDEX master_inventory_account_idx ON master_inventory (account)");
+        $this->execute("CREATE INDEX master_inventory_sku_id_idx ON master_inventory (sku_id)");
+        $this->execute("CREATE UNIQUE INDEX master_inventory_account_sku_id_idx ON master_inventory (account, sku_id)");
 
         $this->execute("
-            CREATE OR REPLACE FUNCTION calculate_inventory_sum(_sku_id integer) RETURNS boolean AS $$
-            BEGIN
-                UPDATE inventory SET qty_received = (
-                    SELECT SUM(inv.qty_received) FROM inventory inv
-                    WHERE inv.sku_id = _sku_id
-                        AND inv.facility_id IS NOT NULL
-                ) WHERE sku_id = _sku_id
-                    AND facility_id IS NULL;
-
-                RETURN TRUE;
-            END;
-            $$ LANGUAGE plpgsql
+            CREATE TABLE reserved_inventory (
+                inventory_id serial NOT NULL,
+                created_at timestamp without time zone NOT NULL,
+                updated_at timestamp without time zone NOT NULL,
+                created_by text NOT NULL,
+                updated_by text NOT NULL,
+                account text NOT NULL REFERENCES account (account) ON DELETE CASCADE,
+                sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
+                facility_id integer NOT NULL REFERENCES facility (facility_id) ON DELETE CASCADE,
+                qty_received integer NOT NULL DEFAULT 0,
+                qty_ordered integer NOT NULL DEFAULT 0,
+                qty_canceled integer NOT NULL DEFAULT 0,
+                qty_shipped integer NOT NULL DEFAULT 0,
+                qty_onhand integer NOT NULL DEFAULT 0,
+                qty_available integer NOT NULL DEFAULT 0,
+                CONSTRAINT reserved_inventory_pkey PRIMARY KEY (inventory_id)
+            ) WITH (OIDS=FALSE)
         ");
+
+        $this->execute("CREATE INDEX reserved_inventory_account_idx ON reserved_inventory (account)");
+        $this->execute("CREATE INDEX reserved_inventory_sku_id_idx ON reserved_inventory (sku_id)");
+        $this->execute("CREATE INDEX reserved_inventory_facility_id_idx ON reserved_inventory (facility_id)");
+        $this->execute("CREATE UNIQUE INDEX reserved_inventory_account_sku_id_facility_id_idx ON reserved_inventory (account, sku_id, facility_id)");
 
         $this->execute("
             CREATE OR REPLACE FUNCTION calculate_inventory_buckets() RETURNS TRIGGER AS $$
@@ -406,15 +414,39 @@ class CreateSetupTables extends AbstractMigration
         ");
 
         $this->execute("
-            CREATE TRIGGER calculate_inventory_buckets_on_insert_on_update
-            BEFORE INSERT OR UPDATE ON inventory
+            CREATE OR REPLACE FUNCTION sync_received_units() RETURNS TRIGGER AS $$
+            BEGIN
+                UPDATE master_inventory SET qty_received = NEW.qty_received WHERE sku_id = NEW.sku_id;
+
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql
+        ");
+
+        $this->execute("
+            CREATE TRIGGER calculate_master_inventory_buckets_on_insert_on_update
+            BEFORE INSERT OR UPDATE ON master_inventory
             FOR EACH ROW EXECUTE PROCEDURE calculate_inventory_buckets()
+        ");
+
+        $this->execute("
+            CREATE TRIGGER calculate_reserved_inventory_buckets_on_insert_on_update
+            BEFORE INSERT OR UPDATE ON reserved_inventory
+            FOR EACH ROW EXECUTE PROCEDURE calculate_inventory_buckets()
+        ");
+
+        $this->execute("
+            CREATE TRIGGER sync_received_units_on_insert_on_update
+            BEFORE INSERT OR UPDATE ON reserved_inventory
+            FOR EACH ROW EXECUTE PROCEDURE sync_received_units()
         ");
     }
 
     public function down()
     {
-        $this->execute("DROP TABLE IF EXISTS inventory CASCADE");
+        $this->execute("DROP TABLE IF EXISTS reserved_inventory CASCADE");
+        $this->execute("DROP TABLE IF EXISTS master_inventory CASCADE");
+
         $this->execute("DROP TABLE IF EXISTS item_sku_barcode CASCADE");
         $this->execute("DROP TABLE IF EXISTS item_sku_attribute CASCADE");
         $this->execute("DROP TABLE IF EXISTS item_sku CASCADE");
@@ -435,6 +467,7 @@ class CreateSetupTables extends AbstractMigration
         $this->execute("DROP TABLE IF EXISTS status CASCADE");
 
         $this->execute("DROP FUNCTION IF EXISTS calculate_inventory_buckets()");
+        $this->execute("DROP FUNCTION IF EXISTS sync_received_units()");
     }
 
 }
