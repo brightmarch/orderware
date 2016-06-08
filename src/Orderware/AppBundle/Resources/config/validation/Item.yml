@@ -1,0 +1,10 @@
+Orderware\AppBundle\Entity\Item:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [account, itemNum]
+            errorPath: itemNum
+    properties:
+        itemNum:
+            - NotBlank: ~
+        displayName:
+            - NotBlank: ~
