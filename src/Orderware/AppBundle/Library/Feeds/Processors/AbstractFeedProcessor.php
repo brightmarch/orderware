@@ -5,13 +5,20 @@ namespace Orderware\AppBundle\Library\Feeds\Processors;
 use Orderware\AppBundle\Entity\Account;
 use Orderware\AppBundle\Entity\FeedLog;
 
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 use Doctrine\ORM\EntityManager;
+
+use \ReflectionClass;
 
 abstract class AbstractFeedProcessor
 {
 
     /** @var Doctrine\ORM\EntityManager */
     protected $entityManager;
+
+    /** @var Symfony\Component\Validator\Validator\ValidatorInterface */
+    protected $validator;
 
     /** @var Orderware\AppBundle\Entity\Account */
     protected $account;
@@ -22,9 +29,13 @@ abstract class AbstractFeedProcessor
     /** @var string */
     protected $contents;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(
+        EntityManager $entityManager,
+        ValidatorInterface $validator
+    )
     {
         $this->entityManager = $entityManager;
+        $this->validator = $validator;
     }
 
     /**
@@ -65,6 +76,42 @@ abstract class AbstractFeedProcessor
         return $this;
     }
 
+    protected function save($record)
+    {
+        if ($this->isValid($record)) {
+            $this->entityManager
+                ->persist($record);
+
+            $this->entityManager
+                ->flush($record);
+        }
+
+        return true;
+    }
+
+    protected function isValid($entity)
+    {
+        $errors = $this->validator
+            ->validate($entity);
+
+        if ($errors->count() > 0) {
+            $recordShortName = (new ReflectionClass($entity))
+                ->getShortName();
+
+            $message = sprintf("Invalid (%s.%s): %s",
+                $recordShortName,
+                $errors[0]->getPropertyPath(),
+                $errors[0]->getMessage()
+            );
+
+            $this->logError($message);
+
+            return false;
+        }
+
+        return true;
+    }
+
     protected function logInfo(string $message)
     {
         $this->feedLog
@@ -80,15 +127,5 @@ abstract class AbstractFeedProcessor
 
         return $this;
     }
-
-    /*
-    protected function nextval($sequence)
-    {
-        return $this->entityManager
-            ->getConnection()
-            ->getDatabasePlatform()
-            ->getSequenceNextValSQL($sequence);
-    }
-    */
 
 }

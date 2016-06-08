@@ -2,6 +2,11 @@
 
 namespace Orderware\AppBundle\Library\Feeds\Processors;
 
+use Orderware\AppBundle\Entity\Item;
+use Orderware\AppBundle\Entity\ItemAttribute;
+use Orderware\AppBundle\Entity\ItemSku;
+use Orderware\AppBundle\Entity\ItemSkuAttribute;
+use Orderware\AppBundle\Entity\ItemSkuBarcode;
 use Orderware\AppBundle\Entity\Vendor;
 use Orderware\AppBundle\Library\Feeds\Processors\InboundFeedProcessor;
 use Orderware\AppBundle\Library\Status;
@@ -13,12 +18,6 @@ class CatalogFeedProcessor extends InboundFeedProcessor
 {
 
     use Mixin\XmlMixin;
-
-    /** @var array */
-    private $cache = [ ];
-
-    /** @var array */
-    private $feed = [ ];
 
     /** @var array */
     private $statuses = [
@@ -34,9 +33,8 @@ class CatalogFeedProcessor extends InboundFeedProcessor
         // Initialze the XML parsers.
         $this->initializeDom();
 
-        $this->initializeCache()
-            ->processVendors();
-            #->processItems();
+        $this->processVendors()
+            ->processItems();
 
         return true;
     }
@@ -82,11 +80,7 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                 ->setFaxNumber($this->xpathLookup('FaxNumber'))
                 ->setNotes($this->xpathLookup('Notes'));
 
-            $this->entityManager
-                ->persist($vendor);
-
-            $this->entityManager
-                ->flush($vendor);
+            $this->save($vendor);
         }
 
         return $this;
@@ -94,52 +88,57 @@ class CatalogFeedProcessor extends InboundFeedProcessor
 
     private function processItems() : CatalogFeedProcessor
     {
-        /*
-        $conn = $this->entityManager
-            ->getConnection();
+        $items = $this->xpathQuery('//Envelope/Items/Item');
 
+        foreach ($items as $item) {
+            $this->xpathRegisterRoot($item);
+
+            // Primary Key
+            $itemNum = $this->xpathLookup('Number');
+
+            // Item Search
+            $item = $this->entityManager
+                ->getRepository('Orderware:Item')
+                ->findOneBy([
+                    'account' => $this->account,
+                    'itemNum' => $itemNum
+                ]);
+
+            if (!$item) {
+                $item = new Item;
+                $item->setAccount($this->account)
+                    ->setCreatedBy(self::AUTHOR)
+                    ->setItemNum($itemNum);
+            }
+
+            $item->setUpdatedBy(self::AUTHOR)
+                ->setDisplayName($this->xpathLookup('DisplayName'))
+                ->setWeight($this->xpathLookup('Weight'))
+                ->setLength($this->xpathLookup('Length'))
+                ->setWidth($this->xpathLookup('Width'))
+                ->setDepth($this->xpathLookup('Depth'))
+                ->setIsShipAlone(Utils::dbBool($this->xpathLookup('ShipAlone')))
+                ->setIsTaxable(Utils::dbBool($this->xpathLookup('Taxable')))
+                ->setIsVirtual(Utils::dbBool($this->xpathLookup('Virtual')))
+                ->setTrackInventory(true);
+
+            // Item Attributes
+
+            // SKUs
+
+            // SKU Attributes
+
+            // SKU Barcodes
+
+            $this->save($item);
+        }
+
+        /*
         foreach ($this->feed['items'] as $record) {
             // Grab the primary key for fast cache lookups.
             $itemNum = $record['itemNum'];
 
             try {
-                $conn->beginTransaction();
-
-                // Item Record
-                $item = [
-                    'account' => $this->account,
-                    'updated_at' => Utils::dbDate(),
-                    'updated_by' => self::AUTHOR,
-                    'status_id' => $this->statuses[$record['status']],
-                    'item_num' => $record['itemNum'],
-                    'display_name' => $record['displayName'],
-                    'weight' => $record['weight'],
-                    'length' => $record['length'],
-                    'width' => $record['width'],
-                    'depth' => $record['depth'],
-                    'is_ship_alone' => Utils::dbBool($record['shipAlone']),
-                    'is_taxable' => Utils::dbBool($record['taxable']),
-                    'is_virtual' => Utils::dbBool($record['virtual'])
-                ];
-
-                if (($itemId = $this->getCachedId('items', $itemNum))) {
-                    $conn->update('item', $item, [
-                        'item_id' => $itemId
-                    ]);
-                } else {
-                    $itemId = $conn->fetchColumn(
-                        $this->nextval('item_item_id_seq')
-                    );
-
-                    $conn->insert('item', $item + [
-                        'item_id' => $itemId,
-                        'created_at' => Utils::dbDate(),
-                        'created_by' => self::AUTHOR
-                    ]);
-
-                    $this->writeCacheId('items', $itemNum, $itemId);
-                }
-
                 // Item Attributes
                 foreach ($record['attributes'] as $attribute => $value) {
                     $query = $conn->createQueryBuilder()
@@ -319,17 +318,6 @@ class CatalogFeedProcessor extends InboundFeedProcessor
     private function initializeCache() : CatalogFeedProcessor
     {
         /*
-        // Placeholder Arrays
-        $this->cache = [
-            'vendors' => [ ],
-            'items' => [ ]
-        ];
-
-        $this->feed = [
-            'vendors' => [ ],
-            'items' => [ ]
-        ];
-
         // Load Vendors
         $vendors = $this->xpathQuery('//Envelope/Vendors/Vendor');
 
@@ -430,61 +418,9 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                 }
             }
         }
-
-        // Cache Vendors
-        $query = $this->entityManager
-            ->getConnection()
-            ->createQueryBuilder()
-            ->select('v.vendor_id', 'v.vendor_num')
-            ->from('vendor', 'v')
-            ->where('v.account = ?');
-
-        $vendors = $this->entityManager
-            ->getConnection()
-            ->fetchAll($query->getSQL(), [$this->account]);
-
-        $this->cache['vendors'] = array_column(
-            $vendors, 'vendor_id', 'vendor_num'
-        );
-
-        // Cache Items
-        $query = $this->entityManager
-            ->getConnection()
-            ->createQueryBuilder()
-            ->select('i.item_id', 'i.item_num')
-            ->from('item', 'i')
-            ->where('i.account = ?');
-
-        $items = $this->entityManager
-            ->getConnection()
-            ->fetchAll($query->getSQL(), [$this->account]);
-
-        $this->cache['items'] = array_column(
-            $items, 'item_id', 'item_num'
-        );
         */
 
         return $this;
     }
-
-    /*
-    private function getCachedId($source, $key)
-    {
-        if (isset($this->cache[$source][$key])) {
-            return $this->cache[$source][$key];
-        }
-
-        return null;
-    }
-
-    private function writeCacheId($source, $key, $id)
-    {
-        if (isset($this->cache[$source]) && is_int($id)) {
-            $this->cache[$source][$key] = $id;
-        }
-
-        return true;
-    }
-    */
 
 }
