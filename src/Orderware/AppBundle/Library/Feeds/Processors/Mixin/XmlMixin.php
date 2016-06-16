@@ -59,25 +59,21 @@ trait XmlMixin
      * Looks up a single value via xpath query.
      *
      * @param string $query
-     * @param mixed $maxlength
+     * @param \DOMNode $xpathRoot
      *
      * @return mixed
      */
-    private function xpathLookup($query, $maxlength = null)
+    private function xpathLookup($query, $xpathRoot = null)
     {
         $result = null;
 
         // Perform the query if initialized.
         if ($this->xpath instanceof DOMXpath) {
             $nodes = $this->xpath
-                ->query($query, $this->xpathRoot);
+                ->query($query, ($xpathRoot ?? $this->xpathRoot));
 
             if (1 === $nodes->length) {
                 $result = trim($nodes->item(0)->textContent);
-
-                if (is_int($maxlength)) {
-                    $result = substr($result, 0, $maxlength);
-                }
             }
         }
 
