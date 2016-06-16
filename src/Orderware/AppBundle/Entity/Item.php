@@ -91,9 +91,22 @@ class Item
     private $trackInventory = true;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $attributes;
+
+    /**
      * @var \Orderware\AppBundle\Entity\Account
      */
     private $account;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->attributes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get itemId
@@ -463,6 +476,40 @@ class Item
     public function getTrackInventory()
     {
         return $this->trackInventory;
+    }
+
+    /**
+     * Add attribute
+     *
+     * @param \Orderware\AppBundle\Entity\ItemAttribute $attribute
+     *
+     * @return Item
+     */
+    public function addAttribute(\Orderware\AppBundle\Entity\ItemAttribute $attribute)
+    {
+        $this->attributes[] = $attribute;
+
+        return $this;
+    }
+
+    /**
+     * Remove attribute
+     *
+     * @param \Orderware\AppBundle\Entity\ItemAttribute $attribute
+     */
+    public function removeAttribute(\Orderware\AppBundle\Entity\ItemAttribute $attribute)
+    {
+        $this->attributes->removeElement($attribute);
+    }
+
+    /**
+     * Get attributes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 
     /**

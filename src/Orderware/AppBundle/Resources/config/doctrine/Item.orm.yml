@@ -64,13 +64,13 @@ Orderware\AppBundle\Entity\Item:
             joinColumn:
                 name: account
                 referencedColumnName: account
-    oneToMany: ~
-        #attributes:
-        #    targetEntity: ItemAttribute
-        #    mappedBy: item
-        #    cascade: [persist]
-        #    orderBy:
-        #        attribute: ASC
+    oneToMany:
+        attributes:
+            targetEntity: ItemAttribute
+            mappedBy: item
+            cascade: [persist, remove]
+            orderBy:
+                attribute: ASC
         #skus:
         #    targetEntity: ItemSku
         #    mappedBy: item
