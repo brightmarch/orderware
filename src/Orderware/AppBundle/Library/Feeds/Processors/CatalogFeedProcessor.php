@@ -123,6 +123,25 @@ class CatalogFeedProcessor extends InboundFeedProcessor
                 ->setTrackInventory(true);
 
             // Item Attributes
+            $attributes = $this->xpathQuery('Attributes/Attribute');
+
+            foreach ($attributes as $attribute) {
+                $key = $this->xpathLookup('Key', $attribute);
+
+                $itemAttribute = $item->getAttribute($key);
+
+                if (!$itemAttribute) {
+                    $itemAttribute = new ItemAttribute;
+                    $itemAttribute->setCreatedBy(self::AUTHOR)
+                        ->setItem($item)
+                        ->setKey($key);
+                }
+
+                $itemAttribute->setUpdatedBy(self::AUTHOR)
+                    ->setValue($this->xpathLookup('Value', $attribute));
+
+                $item->addAttribute($itemAttribute);
+            }
 
             // SKUs
 

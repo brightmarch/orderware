@@ -553,4 +553,15 @@ class Item
         $this->setUpdatedAt(date_create());
     }
 
+    public function getAttribute($key)
+    {
+        $filter = function(ItemAttribute $attribute) use ($key) {
+            return ($attribute->getKey() === $key);
+        };
+
+        return $this->getAttributes()
+            ->filter($filter)
+            ->first();
+    }
+
 }

@@ -13,7 +13,7 @@ Orderware\AppBundle\Entity\Item:
 
 Orderware\AppBundle\Entity\ItemAttribute:
     properties:
-        attribute:
+        key:
             - NotBlank: ~
         value:
             - NotBlank: ~
