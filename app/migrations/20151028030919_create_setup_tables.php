@@ -104,14 +104,14 @@ class CreateSetupTables extends AbstractMigration
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 feed_id integer NOT NULL REFERENCES feed (feed_id) ON DELETE CASCADE,
-                attribute text NOT NULL,
+                key text NOT NULL,
                 value text NOT NULL,
                 CONSTRAINT feed_attribute_pkey PRIMARY KEY (attribute_id)
             ) WITH (OIDS=FALSE)
         ");
 
         $this->execute("CREATE INDEX feed_attribute_feed_id_idx ON feed_attribute (feed_id)");
-        $this->execute("CREATE UNIQUE INDEX feed_attribute_feed_id_attribute_idx ON feed_attribute (feed_id, attribute)");
+        $this->execute("CREATE UNIQUE INDEX feed_attribute_feed_id_key_idx ON feed_attribute (feed_id, key)");
 
         $this->execute("
             CREATE TABLE feed_log (
@@ -284,14 +284,14 @@ class CreateSetupTables extends AbstractMigration
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 item_id integer NOT NULL REFERENCES item (item_id) ON DELETE CASCADE,
-                attribute text NOT NULL,
+                key text NOT NULL,
                 value text NOT NULL,
                 CONSTRAINT item_attribute_pkey PRIMARY KEY (attribute_id)
             ) WITH (OIDS=FALSE)
         ");
 
         $this->execute("CREATE INDEX item_attribute_item_id_idx ON item_attribute (item_id)");
-        $this->execute("CREATE UNIQUE INDEX item_attribute_item_id_attribute_idx ON item_attribute (item_id, attribute)");
+        $this->execute("CREATE UNIQUE INDEX item_attribute_item_id_key_idx ON item_attribute (item_id, key)");
 
         $this->execute("
             CREATE TABLE item_sku (
@@ -326,15 +326,14 @@ class CreateSetupTables extends AbstractMigration
                 created_by text NOT NULL,
                 updated_by text NOT NULL,
                 sku_id integer NOT NULL REFERENCES item_sku (sku_id) ON DELETE CASCADE,
-                attribute text NOT NULL,
+                key text NOT NULL,
                 value text NOT NULL,
                 CONSTRAINT item_sku_attribute_pkey PRIMARY KEY (attribute_id)
             ) WITH (OIDS=FALSE)
         ");
 
         $this->execute("CREATE INDEX item_sku_attribute_sku_id_idx ON item_sku_attribute (sku_id)");
-        $this->execute("CREATE UNIQUE INDEX item_sku_attribute_sku_id_attribute_idx ON item_sku_attribute (sku_id, attribute)");
-
+        $this->execute("CREATE UNIQUE INDEX item_sku_attribute_sku_id_key_idx ON item_sku_attribute (sku_id, key)");
 
         $this->execute("
             CREATE TABLE item_sku_barcode (

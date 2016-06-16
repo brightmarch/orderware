@@ -7,12 +7,12 @@ use Orderware\AppBundle\Entity\FeedAttribute;
 class FeedAttributeTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testSettingAttributeIsLowercased()
+    public function testSettingKeyIsLowercased()
     {
         $feedAttribute = new FeedAttribute;
-        $feedAttribute->setAttribute('ITEM.FTP_SERVER');
+        $feedAttribute->setKey('ITEM.FTP_SERVER');
 
-        $this->assertEquals('item.ftp_server', $feedAttribute->getAttribute());
+        $this->assertEquals('item.ftp_server', $feedAttribute->getKey());
     }
 
 }

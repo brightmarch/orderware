@@ -36,7 +36,7 @@ class FeedAttribute
     /**
      * @var string
      */
-    private $attribute;
+    private $key;
 
     /**
      * @var string
@@ -155,27 +155,27 @@ class FeedAttribute
     }
 
     /**
-     * Set attribute
+     * Set key
      *
-     * @param string $attribute
+     * @param string $key
      *
      * @return FeedAttribute
      */
-    public function setAttribute($attribute)
+    public function setKey($key)
     {
-        $this->attribute = strtolower($attribute);
+        $this->key = strtolower($key);
 
         return $this;
     }
 
     /**
-     * Get attribute
+     * Get key
      *
      * @return string
      */
-    public function getAttribute()
+    public function getKey()
     {
-        return $this->attribute;
+        return $this->key;
     }
 
     /**

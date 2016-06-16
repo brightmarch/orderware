@@ -24,8 +24,8 @@ Orderware\AppBundle\Entity\FeedAttribute:
         updatedBy:
             column: updated_by
             type: string
-        attribute:
-            column: attribute
+        key:
+            column: key
             type: string
         value:
             column: value
