@@ -7,6 +7,7 @@ namespace Orderware\AppBundle\Entity;
  */
 class ItemAttribute
 {
+
     /**
      * @var integer
      */
@@ -46,7 +47,6 @@ class ItemAttribute
      * @var \Orderware\AppBundle\Entity\Item
      */
     private $item;
-
 
     /**
      * Get attributeId
@@ -225,12 +225,14 @@ class ItemAttribute
     {
         return $this->item;
     }
+
     /**
      * @ORM\PrePersist
      */
     public function onCreate()
     {
-        // Add your code here
+        $this->setCreatedAt(date_create())
+            ->setUpdatedAt(date_create());
     }
 
     /**
@@ -238,7 +240,7 @@ class ItemAttribute
      */
     public function onUpdate()
     {
-        // Add your code here
+        $this->setUpdatedAt(date_create());
     }
-}
 
+}
