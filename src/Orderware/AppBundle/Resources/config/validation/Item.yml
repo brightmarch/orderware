@@ -8,3 +8,12 @@ Orderware\AppBundle\Entity\Item:
             - NotBlank: ~
         displayName:
             - NotBlank: ~
+        attributes:
+            - Valid: ~
+
+Orderware\AppBundle\Entity\ItemAttribute:
+    properties:
+        attribute:
+            - NotBlank: ~
+        value:
+            - NotBlank: ~
